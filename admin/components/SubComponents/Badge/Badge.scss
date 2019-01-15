@@ -1,0 +1,12 @@
+@import '../../Globals/Globals';
+
+.badge {
+  position:relative;
+  z-index:5;
+  font-weight:500;
+  font-size: .8em;
+  border-radius: .3em;
+  padding:.1em .5em;
+  background:$arcGray;
+  margin-right:.5em;
+}

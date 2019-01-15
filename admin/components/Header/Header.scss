@@ -1,0 +1,84 @@
+@import '../Globals/Globals';
+
+.arc-header {
+  align-items: center;
+  background: $headerBackgroundColor;
+  border-bottom: 1px solid $dividerColor;
+  display: flex;
+  height: $headerHeight;
+  justify-content: space-between;
+  left: 0;
+  line-height: $headerHeight;
+  padding: 0 $edgePadding;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+
+  &__logo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-style: wavy;
+    }
+  }
+
+  &__left {
+    align-items: center;
+    display: flex;
+  }
+
+  &__right {
+    align-items: center;
+    display: flex;
+  }
+
+  &__build-modal-container {
+    align-items: center;
+    background-color: rgba(0,0,0,0.5);
+    cursor: pointer;
+    display: none;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+  &__build-modal {
+    background-color: white;
+    border: 1px solid $dividerColor;
+    cursor: default;
+    max-width: 500px;
+    position: relative;
+    width: 100%;
+    z-index: 105;
+  }
+
+  &__build-modal-title {
+    align-items: center;
+    border-bottom: 1px solid $dividerColor;
+    display: flex;
+    font-size: 15px;
+    font-weight: bold;
+    height: 60px;
+    padding: 0 15px;
+    width: 100%;
+  }
+
+  &__build-modal-close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+  }
+
+  &__build-modal-body {
+    padding: 15px;
+  }
+}

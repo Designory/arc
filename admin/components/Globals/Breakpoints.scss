@@ -1,0 +1,106 @@
+$breakpoints: (
+	xs: (
+        min: null,
+        max: 479px
+    ),
+	   sm: (
+        min: 480px,
+        max: 767px
+    ),
+    md: (
+        min: 768px,
+        max: 1023px
+    ),
+    lg: (
+        min: 1024px,
+        max: 1280px
+    ),
+	xl: (
+        min: 1281px,
+        max: 1439px
+    ),
+    xxl: (
+        min: 1440px,
+        max: 1920px
+    ),
+    xxxl: (
+        min: 1921px,
+        max: null
+    )
+);
+
+$bp: $breakpoints;
+
+$bpFeatures: "min",
+"max",
+"within";
+@mixin bp($feature, $width:"", $within_max:"") {
+    $stringWidth: false;
+    $within_max_set: false;
+    $mapWidth: null !default;
+    $maxWidth: null !default;
+    $minWidth: null !default;
+    //if width is not blank and string, get values from $breakpoints
+    @if not ($width=="") and (type-of($width)=="string") {
+        @if map-has-key($bp, $width) {
+            $mapWidth: map-get($bp, $width);
+            $maxWidth: map-get($mapWidth, "max");
+            $minWidth: map-get($mapWidth, "min");
+            $stringWidth: true;
+        }
+    }
+    //check if $within_max set and is number
+    @if not($within_max=="") and type-of($within_max=="number") {
+        $within_max_set: true;
+    }
+    // if $feature is a string
+    @if type-of($feature)=="string" {
+        //lowercase the string
+        $feature: to-lower-case($feature);
+        //if $feature within $bpFeatures
+        @if index($bpFeatures, $feature) {
+            // if $feature value is 'within'
+            @if $feature=="within" {
+                //if width is not string and $within_max has a number value
+                @if (not $stringWidth and $within_max_set) or ($stringWidth and not $within_max_set) {
+                    @if not $stringWidth {
+                        $maxWidth: $within_max;
+                        $minWidth: $width;
+                    }
+                    @if $maxWidth < $minWidth {
+                        @error "SASS Mixin bp(): Breakpoint min and max not in correct order. Should follow: bp('within', $min, $max)";
+                    }
+                    @media only screen and (min-width: $minWidth) and (max-width: $maxWidth) {
+                        @content;
+                    }
+                    //if width is string and no within max set
+                }
+                @else {
+                    @error "SASS Mixin bp(): Width values incorrect. Values need to be within $breakpoints or a min and max number.";
+                }
+            }
+            @else {
+                @if $within_max_set {
+                    @warn "SASS Mixin bp(): $within_max value not set."
+                }
+                @if not $stringWidth {
+                    $minWidth: $width;
+                    $maxWidth: $width;
+                }
+                @if $feature=="min" {
+                    @media only screen and (min-width: $minWidth) {
+                        @content;
+                    }
+                }
+                @else if $feature=="max" {
+                    @media only screen and (max-width: $maxWidth) {
+                        @content;
+                    }
+                }
+            }
+        }
+    }
+    @else {
+        @error "SASS Mixin bp(): $feature paramater not string or within $bpFeatures.";
+    }
+}

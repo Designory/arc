@@ -1,0 +1,62 @@
+{
+  "name": "arc-cms",
+  "version": "1.0.0-alpha",
+  "description": "Nodejs page builder CMS built upon Keystonejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Designory/arc.git"
+  },
+  "keywords": [
+    "cms",
+    "page",
+    "builder",
+    "keystonejs",
+    "developer",
+    "and",
+    "designer",
+    "oriented"
+  ],
+  "author": "designory team",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Designory/arc/issues"
+  },
+  "homepage": "https://github.com/Designory/arc#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "axios": "^0.18.0",
+    "clean-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "express-async-handler": "^1.1.4",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "keystone": "^4.0.0",
+    "keystone-publish": "^0.2.2",
+    "lodash": "^4.17.11",
+    "log4js": "^3.0.6",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-cache": "^4.2.0",
+    "offline-plugin": "^5.0.6",
+    "rimraf": "^2.6.3",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "vue": "^2.5.22",
+    "vue-context-menu": "^2.0.6",
+    "vue-loader": "^15.5.1",
+    "vue-router": "^3.0.2",
+    "vue-socket.io": "^3.0.4",
+    "vuedraggable": "^2.17.0",
+    "vuex": "^3.0.1",
+    "vuex-router-sync": "^5.0.0",
+    "webpack": "^4.28.4",
+    "webpack-dev-middleware": "^3.5.0",
+    "webpack-merge": "^4.2.1"
+  }
+}

@@ -1,0 +1,126 @@
+@import '../../Globals/Globals';
+
+.btn-wrapper {
+  position:relative;
+  z-index:5;
+}
+
+.btn {
+  padding:.6em .7em;
+  background-color:inherit;
+  background-position:center;
+  background-repeat:no-repeat;
+  cursor:pointer;
+
+  &:focus {
+    outline: none;
+  }
+  
+  &__rounded-top-right {
+    border-radius: 0 $borderRadiusLarge 0 0;
+  }
+
+  &__rounded-bottom-right {
+    border-radius: 0 0 $borderRadiusLarge 0;
+  }
+
+  &__module-list {
+    height:50px;
+    width:64px;
+
+    &:hover {
+      background-color:$arcGray
+    }
+
+  }
+
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -6px;
+    height:0;
+    left:0;
+    width:100%;
+    background: darken(#FF005E, 20%);  
+  }
+  
+
+  &.delete {
+
+    &.active{
+      
+      background-color:#FF005E;
+
+      &:before {
+        transition:width 5s cubic-bezier(0.71, 0.01, 1, 1);
+        top:0;
+        height:4px;
+        width:0%;
+      }
+    }
+  }
+}
+
+
+
+
+//   /* Colors */
+//   &--blue {
+//     border: 1px solid $arcBlue;
+//     background-color: $arcBlue;
+//     color: $arcBlue;
+
+//     &:hover {
+//       background-color: $arcBlue;
+//     }
+//   }
+  
+//   &--blue-solid {
+//     border: 1px solid $arcBlue;
+//     color: $arcBlue;
+
+//     &:hover {
+//       background-color: $arcBlue;
+//     }
+//   }
+
+//   &--green {
+//     border: 1px solid $headerBackgroundColor;
+//     color: $headerBackgroundColor;
+
+//     &:hover {
+//       background-color: $headerBackgroundColor;
+//     }
+//   }
+
+//   &--white {
+//     border: 1px solid white;
+//     color: white;
+
+//     &:hover {
+//       background-color: white;
+//       color: $mainTypographyColor;
+//     }
+//   }
+
+//   &--red {
+//     border: 1px solid red;
+//     color: red;
+
+//     &:hover {
+//       background-color: red;
+//       color: white;
+//     }
+//   }
+  
+//   /* Sizes */
+//   &--small {
+//     padding: 10px 15px;
+//   }
+
+//   &--full-width {
+//     text-align: center;
+//     width: 100%;
+//   }
+

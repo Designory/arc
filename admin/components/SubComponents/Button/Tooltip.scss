@@ -1,0 +1,74 @@
+@import '../../Globals/Globals';
+
+
+.button-tooltip {
+  position:absolute;
+  top:100%;  
+  font-size:.8em;
+  line-height:1.3em;
+  border-radius: .5em;
+  padding: .4em .5em;
+  top:calc(100% + 4px);
+  width:100px;
+  opacity:1;
+  right:-20px;
+  display:none;
+
+  &:before {
+    content:"";
+    display:block;
+    position:absolute;
+    top:-6px;
+    right:calc(.5em + 15px);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 30px 6px 30px;
+    border-color: transparent;
+  }
+
+  &.active {
+    display:block;
+    opacity:1;
+    animation:showTip 5s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.29);
+  } 
+
+  
+  &.delete {
+    background:#FF005E;
+    color:#fff;
+
+    &:before {
+      border-bottom-color:#FF005E;
+    }
+  }
+}
+
+
+@keyframes showTip {
+  0%   {
+    opacity: 0;
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.29);
+
+  }
+  5% {
+    opacity: 1; 
+    transform: translateY(2px);
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.29);
+  }
+  90% {
+    opacity: 1; 
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.29);
+    transform: translateY(2px);
+  }
+  99% {
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 0; 
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.29);
+  }
+}

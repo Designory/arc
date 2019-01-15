@@ -1,0 +1,49 @@
+@import '../../Globals/Globals';
+
+.add-module {
+  height: 100%;
+  overflow-y: scroll;
+  width: 100%;
+  display:table;
+  
+  &__input_wrapper {
+    display:table-cell;
+    vertical-align: middle;
+    &:last-child{
+      width:70px;
+      text-align:right;
+    };
+  }
+
+  &__name, &__type {
+    font-size: 1em;
+    height:50px;
+    line-height:calc(1em + 20px);
+    color:$mainTypographyColor;
+    border-radius:4px;
+    -webkit-appearance: none;
+    font-family:$OpenSans;
+    vertical-align:top;
+    border: 1px solid #bbb;
+    background:#fff;
+    width:calc(100% - 1em);
+  }
+  
+  &__type {
+    text-indent:1em;
+  }
+
+  &__name {
+    text-indent:1em;
+    &:placeholder{
+      color:$offTypographyColor;
+    }
+  }
+
+  [disabled="disabled"] {
+      opacity:.3;
+      pointer-events:none;
+  }
+
+
+}

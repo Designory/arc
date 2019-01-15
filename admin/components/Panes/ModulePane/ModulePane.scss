@@ -1,0 +1,62 @@
+@import '../../Globals/Globals';
+
+.module-pane {
+  background-color: white;
+  height: calc(100% - #{$headerHeight});
+  overflow-y: scroll;
+  padding: 25px;
+
+  &__list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__list-item {
+    background-color: white;
+    border: 1px solid $dividerColor;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    width: calc(50% - 12.5px);
+
+    &:hover {
+      .module-pane__list-item-title {
+        background-color: white;
+      }
+    }
+  }
+
+  &__list-item-icon {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+  }
+
+  &__list-item-title {
+    background-color: $arcGray;
+    border-top: 1px solid $dividerColor;
+    font-size: 14px;
+    font-weight: bold;
+    height: 50px;
+    padding: 15px 20px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  &__list-item-svg {
+    align-items: center;
+    display: flex;
+    height: auto;
+    justify-content: center;
+    width: 100%;
+  }
+}

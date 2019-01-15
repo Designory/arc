@@ -1,0 +1,120 @@
+@import '../../Globals/Globals';
+
+.template-pane {
+  background-color: white;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 25px;
+  position: relative;
+
+  &__title {
+    align-items: center;
+    backdrop-filter: blur(50px);
+    background-color: rgba(255,255,255, 0.9);
+    border-bottom: 1px solid $dividerColor;
+    border-right: 1px solid $dividerColor;
+    font-size: 15px;
+    font-weight: 800;
+    display: flex;
+    height: $headerHeight;
+    justify-content: center;
+    position: fixed;
+    text-transform: uppercase;
+    top: $headerHeight;
+    left: 0;
+    width: $controlsWidth;
+    z-index: 90;
+  }
+
+  &__bottom {
+    align-items: center;
+    backdrop-filter: blur(50px);
+    background-color: rgba(255,255,255, 0.9);
+    border-top: 1px solid $dividerColor;
+    border-right: 1px solid $dividerColor;
+    display: flex;
+    height: $headerHeight;
+    justify-content: flex-end;
+    padding: 0 25px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: $controlsWidth;
+    z-index: 90;
+  }
+
+  &__search {
+    display: flex;
+    flex-direction: row;
+    margin-top: $headerHeight;
+  }
+
+  &__search-bar {
+    border: 1px solid $dividerColor;
+    border-radius: $borderRadius;
+    font-size: 15px;
+    margin-right: 5px;
+    padding: 15px 25px;
+    transition: 0.2s ease-in-out;
+    max-width: 100%;
+    width: 100%;
+
+    &:hover, &:focus {
+      border: 1px solid $arcBlue;
+      outline: none;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__list-item {
+    border-bottom: 1px solid $dividerColor;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 20px 0;
+    position: relative;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $arcBlue;
+    }
+
+    &:last-child {
+      margin-bottom: $headerHeight;
+      border-bottom: none;
+    }
+  }
+
+  &__form-container {    
+    background-color: white;
+    border-right: 1px solid $dividerColor;
+    border-top: 1px solid $dividerColor;
+    bottom: 0;
+    left: 0;
+    height: $headerHeight * 2 + 20px;
+    position: fixed;
+    transition: transform 0.3s ease-in-out;
+    width: $controlsWidth;
+    z-index: 85;
+
+    &--hidden {
+      transform: translateY(100vh);
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 25px;
+    width: 100%;
+  }
+
+  &__form-button {
+    white-space: nowrap;
+  }
+}

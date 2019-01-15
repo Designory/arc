@@ -1,5 +1,5 @@
 {
-  "name": "arc-cms",
+  "name": "arc",
   "version": "1.0.0-alpha",
   "description": "Nodejs page builder CMS built upon Keystonejs",
   "main": "index.js",

@@ -36,6 +36,7 @@
     "express-async-handler": "^1.1.4",
     "extract-text-webpack-plugin": "^3.0.2",
     "friendly-errors-webpack-plugin": "^1.7.0",
+    "html-webpack-plugin": "^3.2.0",
     "keystone": "^4.0.0",
     "keystone-publish": "^0.2.2",
     "lodash": "^4.17.11",

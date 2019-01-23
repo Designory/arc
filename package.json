@@ -51,6 +51,7 @@
     "node-cache": "^4.2.0",
     "node-sass": "^4.9.2",
     "offline-plugin": "^5.0.6",
+    "postcss-import": "^12.0.1",
     "postcss-loader": "^2.1.6",
     "rimraf": "^2.6.3",
     "sass-loader": "^7.0.3",

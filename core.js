@@ -25,6 +25,7 @@ module.exports = function arcCore() {
 			this.View = keystone.View;
 			this.express = keystone.express;
 			this.theme = null;
+			this.Storage = keystone.Storage;
 
 			// extend keystones utility functions with our own
 			this.utils = _.extend({}, keystone.utils, utilityFn);

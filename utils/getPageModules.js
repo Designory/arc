@@ -6,7 +6,7 @@
 // 	}
 module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true}) => {
 
-	console.log(reqConfig);
+	//console.log(reqConfig);
 
 	return new Promise(async (resolve, reject) => {
 		

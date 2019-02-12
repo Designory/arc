@@ -10,5 +10,8 @@ export default {
 	},
 	created() {
 		console.log('This One: ', this.$store.state);
+	},
+	beforeMount() {
+		document.documentElement.style.setProperty('--primary-color', this.$store.state.globals.app.theme.primaryColor);
 	}
 };

@@ -2,14 +2,14 @@
 
 .arc-header {
   align-items: center;
-  background: $headerBackgroundColor;
-  border-bottom: 1px solid $dividerColor;
+  //background: $headerBackgroundColor;
+  background: var(--primary-color);
   display: flex;
   height: $headerHeight;
   justify-content: space-between;
   left: 0;
   line-height: $headerHeight;
-  padding: 0 $edgePadding;
+  padding: 0 $edgePadding 0 ($edgePadding - 10);
   position: fixed;
   right: 0;
   top: 0;

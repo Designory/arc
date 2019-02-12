@@ -49,6 +49,12 @@ module.exports = (app, arc) => {
 		res.sendFile(templatePath);
 	});
 
+	// assumes using Keystone's authentication
+	// router.get('/api/user', (req, res) => {
+	// 	console.log(res);
+	// 	return res.json({user:res.user, id:res.session.userId});
+	// });
+
 	// app.get('/arc-admin/:assetFile', function (req, res) {
 	// 	res.sendFile(process.cwd() + '/arc/dist/' + req.params.assetFile);
 	// });

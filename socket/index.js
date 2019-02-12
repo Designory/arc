@@ -12,124 +12,132 @@ module.exports = ArcClass => {
                 this.socketConnection();
 
                 socket.on('updateTree', async payload => {
+                    // Note: right now we are emaking a concerted effort to err on 
+                    // the side of making the most immediate updates to  
+                    socket.broadcast.emit('TREECHANGE', {tree:payload});
+
                     // TODO: ensure `payload` is fit for function
+                    const initialRawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
                     const updatedTree = await this.utils.bulkSetTree(this, payload);
                     const rawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
-                    const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
-                    socket.broadcast.emit('updateTree', rawTreeResults);
-                });
-
-                socket.on('updateModules', async payload => {
-                    // TODO: ensure `payload` is fit for function
-                    const pageModel = this.utils.getTreeModel(this);
-
-                    pageModel.findById(payload._id, function (err, pageItem) {
-                        if (err) throw err;
-                        pageItem.pageDataCode = JSON.stringify(payload.modules);
-                        pageItem.save(async function(err) {
-                            if (err) throw err;
-                            
-                            console.log('going to loaded modules');
-
-                            // TODO; add to utils
-                            const loadedModules = await arc.utils.getPageModules(arc, this.pageDataCode, {
-                                select:'name matchesLive visible state archive key __v', 
-                                onRender:null, 
-                                consolidateModules:false
-                            });
-
-                            socket.broadcast.emit('moduleUpdate', {_id:payload._id, modules:loadedModules});
-                        })
-                    });
-
-
-                    // pageModel.findOneAndUpdate({_id:payload._id}, {pageDataCode:JSON.stringify(payload.modules)}, (updateErr, item) => {
-                    //     if (updateErr) this.log('error', updateErr);
-                    //     item.save((saveErr) => {
-                    //         if (updateErr) this.log('error', saveErr);
-                            
-                    //     })
-                    // });
-                });
-
-                socket.on('newModule', async payload => {
-                    // TODO: ensure `payload` is fit for function
-                    const self = this;
-
-                    const pageModel = this.utils.getTreeModel(this);
-                    const moduleModel = this.list(this.keystonePublish.getList(payload.type)).model({name:payload.name});
-
-                    moduleModel.save(function (err, module){
-                        if(err) throw(err);
+                    //const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
                     
-                        pageModel.findById(payload._id, function (err, pageItem) {
-                            
-                            if (err) throw err;
-
-                            const pageDataCode = JSON.parse(pageItem.pageDataCode || '[]')
-
-                            pageDataCode.push({
-                                "moduleName":payload.type,
-                                "itemIds":[module._id]
-                            })
-
-                            pageItem.pageDataCode = JSON.stringify(pageDataCode);
-                            
-                            pageItem.save(async function (err, page) {
-                                if (err) throw err;
-                            });   
-                        });     
-                    });
                 });
 
-                // TODO: consolidate add and remove functions
-                // payload = {
-                //     moduleId: string,
-                //     pageId: string
-                // }
-                //  
-                socket.on('removeModuleFromPage', async payload => {
-                    // TODO: ensure `payload` is fit for function
-                    try {
+                // socket.on('updateModules', async payload => {
+                //     // TODO: ensure `payload` is fit for function
+                //     const pageModel = this.utils.getTreeModel(this);
 
-                        const page = await this.utils.getRawTree(this, {_id:payload.pageId, lean:false});
+                //     pageModel.findById(payload._id, function (err, pageItem) {
+                //         if (err) throw err;
+                //         pageItem.pageDataCode = JSON.stringify(payload.modules);
+                //         pageItem.save(async function(err) {
+                //             if (err) throw err;
+                            
+                //             console.log('going to loaded modules');
 
-                        if (!page || !page.pageDataCode) {
-                            return this.log('error', 'No database results querying for page modules.');
-                        }   
+                //             // TODO; add to utils
+                //             const loadedModules = await arc.utils.getPageModules(arc, this.pageDataCode, {
+                //                 select:'name matchesLive visible state archive key __v', 
+                //                 onRender:null, 
+                //                 consolidateModules:false
+                //             });
 
-                        page.pageDataCode = this.utils.removeModuleFromList(page.pageDataCode, payload.moduleId);
+                //             socket.broadcast.emit('moduleUpdate', {_id:payload._id, modules:loadedModules});
+                //         })
+                //     });
 
-                        page.save((saveErr) => {
-                            if (saveErr) return this.log('error', saveErr);
-                        })
+
+                //     // pageModel.findOneAndUpdate({_id:payload._id}, {pageDataCode:JSON.stringify(payload.modules)}, (updateErr, item) => {
+                //     //     if (updateErr) this.log('error', updateErr);
+                //     //     item.save((saveErr) => {
+                //     //         if (updateErr) this.log('error', saveErr);
+                            
+                //     //     })
+                //     // });
+                // });
+
+                
+                
+                
+                // socket.on('newModule', async payload => {
+                //     // TODO: ensure `payload` is fit for function
+                //     const self = this;
+
+                //     const pageModel = this.utils.getTreeModel(this);
+                //     const moduleModel = this.list(this.keystonePublish.getList(payload.type)).model({name:payload.name});
+
+                //     moduleModel.save(function (err, module){
+                //         if(err) throw(err);
                     
-                    } catch(error) {
-                        return this.log('error', error);
-                    }   
+                //         pageModel.findById(payload._id, function (err, pageItem) {
+                            
+                //             if (err) throw err;
 
-                });
+                //             const pageDataCode = JSON.parse(pageItem.pageDataCode || '[]')
 
-                socket.on('pagePublish', async payload => {
-                    // TODO: ensure `payload` is fit for function
-                    // payload = {
-                    //      _id: mongoId
-                    // }
-                    try {
+                //             pageDataCode.push({
+                //                 "moduleName":payload.type,
+                //                 "itemIds":[module._id]
+                //             })
 
-                        const page = await this.utils.getRawTree(this, {_id:payload.pageId, lean:false});
+                //             pageItem.pageDataCode = JSON.stringify(pageDataCode);
+                            
+                //             pageItem.save(async function (err, page) {
+                //                 if (err) throw err;
+                //             });   
+                //         });     
+                //     });
+                // });
 
-                        page.publishToProduction = true;
+                // // TODO: consolidate add and remove functions
+                // // payload = {
+                // //     moduleId: string,
+                // //     pageId: string
+                // // }
+                // //  
+                // socket.on('removeModuleFromPage', async payload => {
+                //     // TODO: ensure `payload` is fit for function
+                //     try {
+
+                //         const page = await this.utils.getRawTree(this, {_id:payload.pageId, lean:false});
+
+                //         if (!page || !page.pageDataCode) {
+                //             return this.log('error', 'No database results querying for page modules.');
+                //         }   
+
+                //         page.pageDataCode = this.utils.removeModuleFromList(page.pageDataCode, payload.moduleId);
+
+                //         page.save((saveErr) => {
+                //             if (saveErr) return this.log('error', saveErr);
+                //         })
+                    
+                //     } catch(error) {
+                //         return this.log('error', error);
+                //     }   
+
+                // });
+
+                // socket.on('pagePublish', async payload => {
+                //     // TODO: ensure `payload` is fit for function
+                //     // payload = {
+                //     //      _id: mongoId
+                //     // }
+                //     try {
+
+                //         const page = await this.utils.getRawTree(this, {_id:payload.pageId, lean:false});
+
+                //         page.publishToProduction = true;
                         
-                        page.save((saveErr) => {
-                            if (saveErr) return this.log('error', saveErr);
-                        })
+                //         page.save((saveErr) => {
+                //             if (saveErr) return this.log('error', saveErr);
+                //         })
                     
-                    } catch(error) {
-                        return this.log('error', error);
-                    }   
+                //     } catch(error) {
+                //         return this.log('error', error);
+                //     }   
 
-                });
+                // });
 
 
             }));

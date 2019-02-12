@@ -3,6 +3,7 @@ import axios from 'axios';
 import AddModule from '../SubComponents/AddModule/AddModule.vue';
 import Button from '../SubComponents/Button/Button.vue';
 import Badge from '../SubComponents/Badge/Badge.vue';
+import Pill from '../SubComponents/Pill/Pill.vue';
 import universalUtils from '../../../utils/universal';
 
 const css = `
@@ -31,14 +32,17 @@ export default {
       moduleId: null,
       pageOpen: false,
       pageOrigin:window.location.origin,
-      removeId:null
+      removeId:null,
+      contextActive:0,
+      contextPosition:'top',
+      addModulesList:false
     }
   },
   components: {
     draggable,
-    'add-module':AddModule,
     'action-button':Button,
-    'badge':Badge
+    'badge':Badge,
+    'pill':Pill
   },
   computed: {
       pageData(){
@@ -49,7 +53,10 @@ export default {
           return this.$store.state.currentModulesData;
         },
         set(modules) {
-          this.$store.commit('SOCKET_MODULEUPDATE', {_id:this.pageId, modules:modules});
+          
+          this.$socket.emit('updateTree', {_id:this.pageId, modules:modules});
+          this.$store.commit('UPDATE_MODULE', {_id:this.pageId, modules:modules});
+
         }
       },
       previewUrl(){
@@ -60,14 +67,28 @@ export default {
         return this.moduleData.filter(module => {
           return this.moduleId === module.data[0]._id;
         })[0].data[0].name || '[undefined]';
+      },
+      availableModules(){
+        return this.$store.state.globals.model.filter(item => {   
+          return item.type.indexOf('module') != -1;
+        });
       }
   },
+  sockets: {
+    // connect: function () {
+    //         console.log('socket connected')
+    // },
+    SOCKET_CLOSEPAGE: function (data) {
+      console.log(data, 'this method was fired by the socket server. eg: io.emit("customEmit", data)')
+    }
+  },
+
   methods: {
     getModuleData(){
       axios
         .get(`/arc/api/modules/${this.pageId}`)
         .then(response => {
-          this.$store.commit('SOCKET_MODULEUPDATE', {_id:this.pageId, modules:response.data});
+          this.$store.commit('UPDATE_MODULE', response.data);
         }).catch(error => {
           console.log(error);
         });
@@ -76,7 +97,7 @@ export default {
       axios
         .get(`/arc/api/stg-pages/${this.pageId}`)
         .then(response => {
-          this.$store.commit('SOCKET_PAGEUPDATE', response.data.data);
+          this.$store.commit('UPDATE_PAGE', response.data.data);
         }).catch(error => {
           console.log(error);
         });
@@ -106,6 +127,10 @@ export default {
     publishPage(moduleId){
       this.$socket.emit('pagePublish', {pageId:this.pageId});
     },
+    toggleAddModule(){
+      console.log('openmodules')
+      this.addModulesList = !this.addModulesList;
+    },
     roundCorner(index){
       if (index === 0) return 'rounded-top-right';
       if (this.moduleData.length === (index + 1)) return 'rounded-bottom-right';
@@ -117,6 +142,24 @@ export default {
       } else {
         return `Copy ${module.__v + 1}`;
       }
+    },
+    getStatusText(item){
+      if (item.matchesLive === false) return 'draft';
+      if (item.isVisible === false) return 'hidden';
+      else return 'live';
+    },
+    getStatus(item){
+      if (item.matchesLive === false) return 'inactive';
+      if (item.isVisible === false) return 'inactive';
+      else return 'active';
+    },
+    showContext(id, event){
+      this.contextActive = (this.contextActive === id) ? 0 : id;
+      this.contextPosition = (window.innerHeight - event.target.getBoundingClientRect().bottom < 200) ? 'top' : 'bottom';
+    },
+    createAndAddModule(type){
+      console.log(this.$el);
+      console.log(type);
     }
   },
   beforeMount(){

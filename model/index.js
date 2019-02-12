@@ -28,12 +28,12 @@ module.exports = ArcClass => {
 				ProdList.schema.add({ modules: this.keystone.mongoose.Schema.Types.Mixed });
 
 				this.addModel(mergedData, StgList, ProdList);
-
+				
+				this.cacheClearSaveHook(mergedData, StgList, ProdList);
+				
 				this.setTreeConfig(mergedData, StgList, ProdList);
 				
 				this.versionTickSaveHook(StgList);
-
-				this.cacheClearSaveHook(mergedData, StgList, ProdList);
 
 				// enable callback function
 				if (callback && typeof callback === 'function') {
@@ -57,44 +57,64 @@ module.exports = ArcClass => {
 		}
 
 		setTreeConfig(mergedData, StgList, ProdList){
-			// special presave events that are designed only for the tree model
-			if (mergedData.listName !== this.config.treeModel) return false;
-
+			
 			const self = this;
 
-			StgList.schema.pre('save', async function(next){
+			// special presave events that are designed only for the tree model
+			if (mergedData.listName == this.config.treeModel) {
+
+				StgList.schema.pre('save', async function(next){
 				
-				this.key = self.utils.slug(this.name);
-				if (this.keyOverride) this.keyOverride = self.utils.slug(this.keyOverride);
+					this.key = self.utils.slug(this.name);
+					if (this.keyOverride) this.keyOverride = self.utils.slug(this.keyOverride);
 
-				await buildUrls(self, this);
+					await buildUrls(self, this);
 
-				next();
+					next();
 
-			});
+				});
 
-			// special postsave events that are designed only for the tree model
-			// TODO: move this to an overall post save event function for sockets
-			StgList.schema.post('save', async function(doc){
-			
-				self.io.emit('pageUpdate', doc);
+				// special postsave events that are designed only for the tree model
+				// TODO: move this to an overall post save event function for sockets
+				StgList.schema.post('save', async function(doc){
+				
+					self.io.emit('PAGECHANGE', {[doc._id]: doc});
 
-				try {
+					if (!doc.isModified('pageDataCode')) return false;
 
-                    // TODO: consolidate to utils function
-                    const loadedModules = await self.utils.getPageModules(self, doc.pageDataCode, {
-                        select:'name matchesLive visible state archive key __v', 
-                        onRender:null, 
-                        consolidateModules:false
-                    });
+					try {
 
-                    self.io.emit('moduleUpdate', {_id:doc._id, modules:loadedModules});
-                    
-                } catch(err){
-                    // TODO: set up error reporting to the UI
-                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
-                }
-			});
+	                    // TODO: consolidate to utils function
+	                    const loadedModules = await self.utils.getPageModules(self, doc.pageDataCode, {
+	                        select:'name matchesLive visible state archive key __v', 
+	                        onRender:null, 
+	                        consolidateModules:false
+	                    });
+
+	                    self.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
+	                    
+	                } catch(err){
+	                    // TODO: set up error reporting to the UI
+	                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
+	                }
+				});
+
+				StgList.schema.post('remove', async function(doc){
+					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc, {_delete:true})});
+				});
+					
+			} else if (mergedData.type.indexOf('module') != -1) {
+
+				StgList.schema.post('save', async function(doc){
+					console.log("StgList.schema.post('save', a");
+					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]:doc}});
+
+				});
+
+				StgList.schema.post('remove', async function(doc){
+					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc, {_delete:true})});
+				});
+			}			
 		}
 
 		addModel(config, stgList, prodList) {

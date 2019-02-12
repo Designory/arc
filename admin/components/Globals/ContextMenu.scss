@@ -1,0 +1,125 @@
+.context-menu {
+    
+    $width:180px;
+
+    border: none;
+    text-align:left;
+
+    ul {
+    	border:#dadada;
+    	border-radius: 4px;
+  		box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
+  		background-color: #ffffff;
+  		padding:13px 0;
+  		margin:0;
+  		width:$width;
+  		overflow:hidden;
+    }
+
+    li {
+    	color: $mainTypographyColor;
+    	cursor: pointer;
+      	font-size: 14px;
+      	line-height: 14px;
+  		font-weight: 600;
+      	padding: 10px 18px;
+      	transition: background-color 0.2s ease-in-out;
+
+      	&:hover {
+        	//background-color: $arcGray;
+        	color: #000;
+      	}
+    }
+    
+    .disabled {
+      color: #ccc;
+      cursor: default;
+
+      &:hover {
+        background-color: white;
+        color:#ccc;
+      }
+    }
+
+    .spacer {
+      height:10px;
+      &:first-child, &:last-child {
+      	display:none;
+      }
+    }
+
+    &.context-from-button {
+    	position:absolute;
+    	z-index:10;
+    	transform: translateX(50%);
+    	right: 50%;
+
+		ul {
+			box-shadow: 0 -1px 6px 0 rgba(0, 0, 0, 0.16);
+		}
+
+    	&:before, &:after {
+    		content:"";
+		    display:block;
+		    position:absolute;
+		    top:-10px;
+		    transform: translateX(50%);
+    		right: 50%;
+		    width: 0;
+		    height: 0;
+		    border-style: solid;
+		    border-width: 0px 20px 20px;
+		    border-color: transparent;
+		    border-bottom-color:#fff;
+  		}
+
+  		&:after {
+			border-bottom: 12px solid rgba(0,0,0, 0.11);
+			filter:blur(4px);
+			z-index:-1;
+  		}
+
+  		&.top {
+  			transform: translateX(50%) translateY(100%);
+  			bottom:100%;
+  			&:before, &:after {
+  				top:auto;
+  				bottom:-10px;
+		    	transform: translateX(50%) rotate(180deg);
+  			}
+  			.active & {
+	  			animation:showContextTop .2s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
+	  		}
+	  		ul {
+				box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.16);
+			}	
+  		}
+		
+		&.bottom {
+			.active & {
+	  			animation:showContextBottom .2s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
+	  		}	
+		}
+    }
+}
+
+@keyframes showContextBottom {
+  0%   {
+    opacity: .7;
+    transform: translateX(50%) translateY(10px);
+  }
+  100% {
+    opacity: 1; 
+    transform: translateX(50%) translateY(20px);
+  }
+}
+@keyframes showContextTop {
+  0%   {
+    opacity: .7;
+    transform: translateX(50%) translateY(0);
+  }
+  100% {
+    opacity: 1; 
+    transform: translateX(50%) translateY(-10px);
+  }
+}

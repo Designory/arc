@@ -8,7 +8,7 @@ module.exports = async (arc, req, res) => {
 		const cacheKey = `api__modules__${req.params._id}`;
 		const cachedModules = arc.cache.get(cacheKey);
 
-		if (cachedModules !== undefined){
+		if (cachedModules !== undefined && 3 === 5){
   			
   			return res.apiResponse(cachedModules);
 		

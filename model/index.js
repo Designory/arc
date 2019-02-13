@@ -106,13 +106,15 @@ module.exports = ArcClass => {
 			} else if (mergedData.type.indexOf('module') != -1) {
 
 				StgList.schema.post('save', async function(doc){
-					console.log("StgList.schema.post('save', a");
-					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]:doc}});
+					// console.log(doc.__proto__.list);
+					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]:Object.assign({}, doc._doc, {_listName:mergedData.listName})}});
 
 				});
 
 				StgList.schema.post('remove', async function(doc){
-					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc, {_delete:true})});
+					doc.listName = mergedData.listName;
+
+					self.io.emit('PAGECHANGE', {_id:doc._id, modules:{[doc._id]: Object.assign({}, doc._doc, {_delete:true, _listName:mergedData.listName})}});
 				});
 			}			
 		}

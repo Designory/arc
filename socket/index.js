@@ -24,6 +24,26 @@ module.exports = ArcClass => {
                     
                 });
 
+                socket.on('createAndAddModule', async payload => {
+                
+                    if (!payload.listName) return arc.log('error', '`payload.listName` is required.');
+                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`My new module`}, this);
+
+                });
+
+                socket.on('duplicateAndAddModule', async payload => {
+                    
+                    //{pageId:this.pageId, listName:listName, moduleData:data}
+
+
+                    if (!payload.listName) return arc.log('error', '`payload.listName` is required.');
+
+                    payload.moduleData.name = payload.moduleData.name + ' duplicate'
+
+                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, payload.moduleData, this);
+
+                });
+
                 // socket.on('updateModules', async payload => {
                 //     // TODO: ensure `payload` is fit for function
                 //     const pageModel = this.utils.getTreeModel(this);

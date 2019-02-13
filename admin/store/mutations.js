@@ -13,6 +13,12 @@ export default {
 
     },
 
+    MODULE_GHOST(state, payload) {
+
+      state.moduleGhost = payload;
+
+    },
+
     UPDATE_TREE(state, payload) {
 
       state.tree = payload;
@@ -26,4 +32,5 @@ export default {
       state.activePage = payload.pageId;
 
     }
+
 };

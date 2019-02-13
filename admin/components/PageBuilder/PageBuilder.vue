@@ -138,7 +138,7 @@
                         Edit
                       </router-link>
                       <li>Hide on live site</li>
-                      <li>Make a copy</li>
+                      <li @click="duplicateAndAddModule(module.moduleName, module.data[0], index)">Make a copy</li>
                       <div class="spacer"></div>
                       <li>Delete</li>
                     </ul>
@@ -148,6 +148,7 @@
                   <pill :text="getStatusText(module.data[0])" :color="getStatus(module.data[0])" />
                 </div>
               </div>
+              <ghost-module v-if="$store.state.moduleGhost === module.data[0]._id"></ghost-module> 
               <!-- <action-button 
                 :id="module.data[0]._id" 
                 :confirmClick="removeModule" 
@@ -156,8 +157,10 @@
                 icon="delete" 
                 iconColor="#FF005E"
               ></action-button> -->
-            </li> 
+            </li>
+
           </draggable>
+          <ghost-module v-if="$store.state.moduleGhost === true"></ghost-module>
         </ul>
       </div>
     </div>  

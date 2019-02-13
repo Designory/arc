@@ -38,6 +38,8 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 
 	async function populateModule(item) {
 
+		console.log(item);
+
 		return new Promise(async (resolve, reject) => {
 
 			const modelConfig = arc.getModels(item.moduleName);

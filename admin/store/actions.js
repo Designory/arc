@@ -43,7 +43,6 @@ export default {
 				newArr.push(newObject);
 			});
 
-
 			commit('UPDATE_TREE', _.sortBy(newArr, 'sortOrder'));
 
 		}
@@ -59,9 +58,16 @@ export default {
 
 			// update currently viewed page
 			if (state.route.query.pageId === key) {
+				
 				if (payload[key]._delete) commit('UPDATE_PAGE', '');
 				else commit('UPDATE_PAGE', payload[key]);
-				router.replace({query: Object.assign({}, state.route.query, {pageOpen: false})});
+				
+				// close all open editor views for this updated page
+				if (state.route.query && state.route.query.pageOpen) router.replace({query: Object.assign({}, state.route.query, {pageOpen: false})});
+				
+				// remove all ghost elements for this page
+				commit('MODULE_GHOST', false);
+
 			}
 
 			// pass along to ensure the tree takes the proper update as well
@@ -81,7 +87,7 @@ export default {
 		// only continue if the user have the current page selected
 		if (!state.currentModulesData) return false;
 
-		console.log(state.currentModulesData)
+		//console.log(state.currentModulesData)
 
 		let inCurrentModule = false;
 		for (let key in payload) {
@@ -102,21 +108,59 @@ export default {
 		} else {
 
 			const newArr = _.cloneDeep(state.currentModulesData);
+			let updatedIds = Object.keys(payload.modules);
 
+			// update/delete existing items
 			newArr.map(item => {
+				
 				for (let key in payload.modules) {
 					if (item._id === key && payload.modules[key]._delete) item == null;
 					else if (item._id === key) {
-						item = Object.assign({}, item, payload.modules[key]);
+						
+						item = {
+							data:[Object.assign({}, item, payload.modules[key])],
+							moduleName:item._listName
+						}
+						
+						updatedIds = _.without(updatedIds, item._id);
+
 					} 
 				}
+
 				return item;
+
 			}).filter(item => {return item !== null});
+
+			// add new items
+			updatedIds.forEach(item => {
+				
+				let newObject = payload.modules[item];
+				newObject._id = item;
+				
+				if (newObject._insertAfter) {
+					
+					const index = newArr.findIndex(module => module._id === newObject._insertAfter);
+					
+					newArr.splice(index, 0, {
+						data: [newObject],
+						moduleName: newObject._listName
+					});
+
+				} else {
+					
+					newArr.push({
+						data: [newObject],
+						moduleName: newObject._listName
+					});
+				
+				}	
+
+			});
 
 			commit('UPDATE_MODULE', newArr);
 		
 		}
-		router.replace({query: Object.assign({}, state.route.query, {moduleOpen: false})});
+		if (state.route.query && state.route.query.moduleOpen) router.replace({query: Object.assign({}, state.route.query, {moduleOpen: false})});
 
 	}
 }

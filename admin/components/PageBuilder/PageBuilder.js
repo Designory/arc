@@ -4,6 +4,7 @@ import AddModule from '../SubComponents/AddModule/AddModule.vue';
 import Button from '../SubComponents/Button/Button.vue';
 import Badge from '../SubComponents/Badge/Badge.vue';
 import Pill from '../SubComponents/Pill/Pill.vue';
+import GhostModule from '../SubComponents/GhostModule/GhostModule.vue';
 import universalUtils from '../../../utils/universal';
 
 const css = `
@@ -42,7 +43,8 @@ export default {
     draggable,
     'action-button':Button,
     'badge':Badge,
-    'pill':Pill
+    'pill':Pill,
+    'ghost-module':GhostModule
   },
   computed: {
       pageData(){
@@ -74,14 +76,6 @@ export default {
         });
       }
   },
-  sockets: {
-    // connect: function () {
-    //         console.log('socket connected')
-    // },
-    SOCKET_CLOSEPAGE: function (data) {
-      console.log(data, 'this method was fired by the socket server. eg: io.emit("customEmit", data)')
-    }
-  },
 
   methods: {
     getModuleData(){
@@ -109,39 +103,18 @@ export default {
         iframe.style.opacity = '1';
       });
     },
-    modulePluralized(moduleName){
-      // TODO: error handling for when module type no longer exists
-      return this.$store.state.globals.model.filter(item => {
-        return item.listName === moduleName;
-      })[0].staging.path;
-    },
-    removeModule(moduleId){
-      this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
-    },
-    removePage(moduleId){
-      
-      console.log('to remove page');
-
-      //this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
-    },
-    publishPage(moduleId){
-      this.$socket.emit('pagePublish', {pageId:this.pageId});
-    },
+    // modulePluralized(moduleName){
+    //   // TODO: error handling for when module type no longer exists
+    //   return this.$store.state.globals.model.filter(item => {
+    //     return item.listName === moduleName;
+    //   })[0].staging.path;
+    // },
     toggleAddModule(){
       console.log('openmodules')
       this.addModulesList = !this.addModulesList;
     },
-    roundCorner(index){
-      if (index === 0) return 'rounded-top-right';
-      if (this.moduleData.length === (index + 1)) return 'rounded-bottom-right';
-      return '';
-    },
-    badgeText(module){
-      if (module.matchesLive) {
-        return null;
-      } else {
-        return `Copy ${module.__v + 1}`;
-      }
+    removeModule(moduleId){
+      this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
     },
     getStatusText(item){
       if (item.matchesLive === false) return 'draft';
@@ -157,9 +130,30 @@ export default {
       this.contextActive = (this.contextActive === id) ? 0 : id;
       this.contextPosition = (window.innerHeight - event.target.getBoundingClientRect().bottom < 200) ? 'top' : 'bottom';
     },
-    createAndAddModule(type){
-      console.log(this.$el);
-      console.log(type);
+    modulePluralized(moduleName){
+      // TODO: error handling for when module type no longer exists
+      return this.$store.state.globals.model.filter(item => {
+        return item.listName === moduleName;
+      })[0].staging.path;
+    },
+    removePage(moduleId){
+      
+      console.log('to remove page');
+
+      //this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
+    },
+    publishPage(moduleId){
+      this.$socket.emit('pagePublish', {pageId:this.pageId});
+    },
+    createAndAddModule(module){
+      //this.$store.commit('MODULE_GHOST', true);
+      this.$el.scrollTop = this.$el.scrollHeight;
+      this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
+    },
+    duplicateAndAddModule(listName, data, index){
+      this.$store.commit('MODULE_GHOST', data._id);
+      this.$el.scrollTop = this.$el.scrollHeight;
+      this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
     }
   },
   beforeMount(){
@@ -179,6 +173,8 @@ export default {
     styleTag.appendChild(document.createTextNode(css));
 
     this.$store.commit('SET_ACTIVE_PAGE', {_id:this.pageId});
+
+    this.$store.commit('MODULE_GHOST', false);
 
   },
   updated(){

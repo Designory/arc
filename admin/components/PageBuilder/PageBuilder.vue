@@ -117,7 +117,7 @@
             v-model="moduleData"
             style="min-height:25px;">
 
-            <li v-for="(module, index) in moduleData" v-bind:key="module.data[0]._id"
+            <li v-for="(module, index) in moduleData" :key="module.data[0]._id"
                 class="page-builder__modules-list-item" :style="{zIndex:(moduleData.length - index) + 1}">
               <div class="page-builder__row">
                 <div class="page-builder__cell page-builder__type" >

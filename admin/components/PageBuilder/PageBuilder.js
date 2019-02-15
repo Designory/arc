@@ -147,12 +147,11 @@ export default {
     },
     createAndAddModule(module){
       //this.$store.commit('MODULE_GHOST', true);
-      this.$el.scrollTop = this.$el.scrollHeight;
+      //this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
     },
     duplicateAndAddModule(listName, data, index){
-      this.$store.commit('MODULE_GHOST', data._id);
-      this.$el.scrollTop = this.$el.scrollHeight;
+      //this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
     }
   },
@@ -173,8 +172,6 @@ export default {
     styleTag.appendChild(document.createTextNode(css));
 
     this.$store.commit('SET_ACTIVE_PAGE', {_id:this.pageId});
-
-    this.$store.commit('MODULE_GHOST', false);
 
   },
   updated(){

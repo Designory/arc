@@ -26,22 +26,39 @@ module.exports = ArcClass => {
 
                 socket.on('createAndAddModule', async payload => {
                 
-                    if (!payload.listName) return arc.log('error', '`payload.listName` is required.');
-                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`My new module`}, this);
+                    if (!payload.listName) return this.log('error', '`payload.listName` is required.');
+                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`${this.utils.awesomeWords()} New Module`}, this);
 
                 });
 
                 socket.on('duplicateAndAddModule', async payload => {
                     
+                    // TODO: support multiples in an array for bulk duplicate    
+
                     //{pageId:this.pageId, listName:listName, moduleData:data}
+                    try {
+                        if (!payload.listName) return this.log('error', '`payload.listName` is required.');
 
+                        // TODO: consolidate to utils function
+                        const moduleData = await this.utils.getPageModules(this, [{
+                            "moduleName":payload.listName,
+                            "itemIds":[payload.moduleData._id]
+                        }], 
+                        {
+                            consolidateModules:false,
+                            select:"-key",
+                            lean:true
+                        });
 
-                    if (!payload.listName) return arc.log('error', '`payload.listName` is required.');
+                        moduleData[0].data[0].name = moduleData[0].data[0].name + ' Duplicate';
 
-                    payload.moduleData.name = payload.moduleData.name + ' duplicate'
+                        await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, moduleData[0].data[0], this);
+  
+                    } catch(err) {
+                        arc.log('error', err);
+                    }
 
-                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, payload.moduleData, this);
-
+                    
                 });
 
                 // socket.on('updateModules', async payload => {

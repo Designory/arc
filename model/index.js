@@ -75,28 +75,31 @@ module.exports = ArcClass => {
 				});
 
 				// special postsave events that are designed only for the tree model
-				// TODO: move this to an overall post save event function for sockets
-				StgList.schema.post('save', async function(doc){
+				// TODO: move this to better spot
+				StgList.schema.pre('save', async function(next){
 				
-					self.io.emit('PAGECHANGE', {[doc._id]: doc});
+					self.io.emit('PAGECHANGE', {[this._id]: this});
 
-					if (!doc.isModified('pageDataCode')) return false;
+					if (!this.isModified('pageDataCode')) return next();
 
 					try {
 
 	                    // TODO: consolidate to utils function
-	                    const loadedModules = await self.utils.getPageModules(self, doc.pageDataCode, {
+	                    const loadedModules = await self.utils.getPageModules(self, this.pageDataCode, {
 	                        select:'name matchesLive visible state archive key __v', 
 	                        onRender:null, 
 	                        consolidateModules:false
 	                    });
 
-	                    self.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
+	                    self.io.emit('MODULECHANGE', {_id:this._id, modules:loadedModules});
 	                    
 	                } catch(err){
 	                    // TODO: set up error reporting to the UI
 	                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
 	                }
+
+	                next();
+
 				});
 
 				StgList.schema.post('remove', async function(doc){
@@ -105,16 +108,19 @@ module.exports = ArcClass => {
 					
 			} else if (mergedData.type.indexOf('module') != -1) {
 
-				StgList.schema.post('save', async function(doc){
-					// console.log(doc.__proto__.list);
-					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]:Object.assign({}, doc._doc, {_listName:mergedData.listName})}});
+				StgList.schema.pre('save', async function(next){
+
+					// only trigger an update if the item is not new
+					// new items receive thier own special emit via the page change trigger
+					if (!this.isNew) self.io.emit('MODULECHANGE', {_id:this._id, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
+
+					next();
 
 				});
 
 				StgList.schema.post('remove', async function(doc){
 					doc.listName = mergedData.listName;
-
-					self.io.emit('PAGECHANGE', {_id:doc._id, modules:{[doc._id]: Object.assign({}, doc._doc, {_delete:true, _listName:mergedData.listName})}});
+					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]: Object.assign({}, doc._doc, {_delete:true, _listName:mergedData.listName})}});
 				});
 			}			
 		}

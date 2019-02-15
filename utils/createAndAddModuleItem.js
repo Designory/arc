@@ -1,7 +1,9 @@
 
 module.exports = (pageId, listName, updateData, arc) => {
 
-	let duplicateId = updateData._id || false;
+	let duplicateId = updateData._id.toString() || false;
+
+	console.log(duplicateId)
 
 	if (duplicateId) {
 		delete updateData._id;
@@ -27,9 +29,10 @@ module.exports = (pageId, listName, updateData, arc) => {
 						return reject();
 					}
 
-					const pageDataCode = JSON.parse(pageDoc.pageDataCode || '[]')
+					let pageDataCode = JSON.parse(pageDoc.pageDataCode || '[]');
 					
 					if (!duplicateId) {
+
 						pageDataCode.push({
 							"moduleName":listName,
 							"itemIds":[moduleDoc._id]
@@ -37,23 +40,27 @@ module.exports = (pageId, listName, updateData, arc) => {
 					
 					} else {
 
-						const index = pageDataCode.findIndex(module => module.itemIds[0] === duplicateId);
-						
-						pageDataCode.splice(index, 0, {
+						const index = pageDataCode.findIndex(item => {
+							console.log(typeof item.itemIds[0], typeof duplicateId.toString());
+							return item.itemIds[0] === duplicateId.toString()
+						});
+
+						pageDataCode.splice(index + 1, 0, {
 							"moduleName":listName,
 							"itemIds":[moduleDoc._id]
 						});
 
 					}
 
-					pageDoc.pageDataCode = JSON.stringify(pageDataCode);
-					pageDoc.save(function (saveErr, pageDoc) {
+					pageDoc.pageDataCode = JSON.stringify(pageDataCode);					
+
+					pageDoc.save(function(saveErr, pageDoc) {
 						
 						if (saveErr) {
 							return arc.log('error', saveErr);
 							return reject();
 						}
-
+						
 						arc.log(`Finished saving new page ${pageDoc._id} with ${listName} ${moduleDoc._id}`);
 						resolve();
 					});

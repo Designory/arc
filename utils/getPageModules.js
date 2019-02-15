@@ -6,8 +6,6 @@
 // 	}
 module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true}) => {
 
-	//console.log(reqConfig);
-
 	return new Promise(async (resolve, reject) => {
 		
 		try {		
@@ -38,7 +36,7 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 
 	async function populateModule(item) {
 
-		console.log(item);
+		//console.log(item);
 
 		return new Promise(async (resolve, reject) => {
 
@@ -68,6 +66,9 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 				
 				// custom select
 				if (itemConfig.select) itemQuery.select(itemConfig.select);
+
+				// custom select
+				if (itemConfig.lean) itemQuery.lean();
 
 				itemQuery.exec((err, results) => {
 				

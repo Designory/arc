@@ -1,5 +1,5 @@
 <template>
-  <div class="page-builder" v-if="pageData" :style="(pageOpen) ? {background:'#fafafa'} : ''">
+  <div class="page-builder" :class="{deleting: pageData._deleting}" v-if="pageData" :style="(pageOpen) ? {background:'#fafafa'} : ''">
     <div class="page-builder__top">
       <div class="page-builder__top-left">
         <action-button v-if="pageOpen || moduleOpen" :to="{ path: '/page-builder/tree', query: { pageId: pageId}}" text="Back"></action-button>
@@ -50,7 +50,13 @@
                 <li>Hide on live site</li>
                 <li>Make a copy</li>
                 <div class="spacer"></div>
-                <li>Delete</li>
+                <action-button
+                  :id="pageData._id" 
+                  :confirmClick="removePage"
+                  text="Delete"
+                  classAddition="no-style"
+                  confirmText="Confirm Delete">  
+                </action-button>
               </ul>
             </div>
           </div>
@@ -96,7 +102,7 @@
             </div>
           </div>
           
-          <div class="page-builder__filmstrip-wrapper" :class="{active:addModulesList}">
+          <div class="page-builder__filmstrip-wrapper" :class="{active:addModulesList}" ref="filmstripWrapper">
             <ul class="page-builder__filmstrip">
               <li v-for="(module, index) in availableModules" @click="createAndAddModule(module)" class="page-builder__module-thumbnail">
                 <div class="page-builder__module-thumbnail-visual" v-html="module.svg || ''"></div>
@@ -117,7 +123,7 @@
             v-model="moduleData"
             style="min-height:25px;">
 
-            <li v-for="(module, index) in moduleData" :key="module.data[0]._id"
+            <li v-for="(module, index) in moduleData" ref="module" :key="module.data[0]._id"
                 class="page-builder__modules-list-item" :style="{zIndex:(moduleData.length - index) + 1}">
               <div class="page-builder__row">
                 <div class="page-builder__cell page-builder__type" >

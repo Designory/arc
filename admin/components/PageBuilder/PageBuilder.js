@@ -4,7 +4,7 @@ import AddModule from '../SubComponents/AddModule/AddModule.vue';
 import Button from '../SubComponents/Button/Button.vue';
 import Badge from '../SubComponents/Badge/Badge.vue';
 import Pill from '../SubComponents/Pill/Pill.vue';
-import GhostModule from '../SubComponents/GhostModule/GhostModule.vue';
+import GhostModule from './ghostModule.js';
 import universalUtils from '../../../utils/universal';
 
 const css = `
@@ -52,7 +52,15 @@ export default {
       },
       moduleData: {
         get() {
+          
+          // there might be a better way to do this, but
+          // this is the quickest for now. :(
+          [...document.querySelectorAll('.ghost-module')].forEach(item => {
+            item.remove();
+          });
+
           return this.$store.state.currentModulesData;
+
         },
         set(modules) {
           
@@ -110,8 +118,8 @@ export default {
     //   })[0].staging.path;
     // },
     toggleAddModule(){
-      console.log('openmodules')
       this.addModulesList = !this.addModulesList;
+      this.$refs.filmstripWrapper.scrollTo(0, 0);
     },
     removeModule(moduleId){
       this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
@@ -127,6 +135,9 @@ export default {
       else return 'active';
     },
     showContext(id, event){
+
+      if (event.target.classList.contains('btn')) return;
+
       this.contextActive = (this.contextActive === id) ? 0 : id;
       this.contextPosition = (window.innerHeight - event.target.getBoundingClientRect().bottom < 200) ? 'top' : 'bottom';
     },
@@ -138,20 +149,32 @@ export default {
     },
     removePage(moduleId){
       
-      console.log('to remove page');
+      this.$store.commit('UPDATE_PAGE', Object.assign({}, this.$store.state.currentModulesData, {_deleting:true}));
+      this.$socket.emit('removePage', {pageId:this.pageId, lang:null});
 
-      //this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
+      
     },
     publishPage(moduleId){
-      this.$socket.emit('pagePublish', {pageId:this.pageId});
+      this.$socket.emit('publishPage', {pageId:this.pageId});
     },
     createAndAddModule(module){
-      //this.$store.commit('MODULE_GHOST', true);
-      //this.$el.scrollTop = this.$el.scrollHeight;
+      // need to separate out to reusable function
+      const ghostEl = document.createElement('div');
+      ghostEl.classList.add('ghost-module');
+      ghostEl.innerHTML = GhostModule.html;
+      this.$refs.module[this.moduleData.length - 1].after(ghostEl);
+
+      this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
     },
     duplicateAndAddModule(listName, data, index){
-      //this.$el.scrollTop = this.$el.scrollHeight;
+      
+      const ghostEl = document.createElement('div');
+      ghostEl.classList.add('ghost-module');
+      ghostEl.innerHTML = GhostModule.html;
+      this.$refs.module[index].after(ghostEl);
+
+      if (index === (this.moduleData.length - 1)) this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
     }
   },

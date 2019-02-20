@@ -103,7 +103,7 @@ module.exports = ArcClass => {
 				});
 
 				StgList.schema.post('remove', async function(doc){
-					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc, {_delete:true})});
+					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc._doc, {_delete:true})});
 				});
 					
 			} else if (mergedData.type.indexOf('module') != -1) {

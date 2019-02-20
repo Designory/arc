@@ -29,7 +29,9 @@ module.exports = ArcClass => {
                     if (!payload.listName) return this.log('error', '`payload.listName` is required.');
                     await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`${this.utils.awesomeWords()} New Module`}, this);
 
-                });
+                }); 
+
+
 
                 socket.on('duplicateAndAddModule', async payload => {
                     
@@ -61,6 +63,29 @@ module.exports = ArcClass => {
                     
                 });
 
+                socket.on('removePage', async payload => {
+                    // TODO: add function to ensure proper payload
+
+                    // LANG: treeModelSelect will become a function to pass in lang
+                    const treeDeleteItem = await this.utils.getRawTree(this, {_id:payload.pageId, select:this.config.treeModelSelect, lean:false});
+
+                    treeDeleteItem.remove((err) => {
+
+                    });
+
+                });
+
+
+                socket.on('publishPage', async payload => {
+                    // TODO: add function to ensure proper payload
+                    // LANG: treeModelSelect will become a function to pass in lang
+                    // const treeDeleteItem = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, lean:false});
+                    
+                    // treeDeleteItem.remove((err) => {
+                        
+                    // });
+
+                });
                 // socket.on('updateModules', async payload => {
                 //     // TODO: ensure `payload` is fit for function
                 //     const pageModel = this.utils.getTreeModel(this);

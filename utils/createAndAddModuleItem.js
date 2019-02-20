@@ -1,7 +1,7 @@
 
 module.exports = (pageId, listName, updateData, arc) => {
 
-	let duplicateId = updateData._id.toString() || false;
+	let duplicateId = updateData._id || false;
 
 	console.log(duplicateId)
 
@@ -42,7 +42,7 @@ module.exports = (pageId, listName, updateData, arc) => {
 
 						const index = pageDataCode.findIndex(item => {
 							console.log(typeof item.itemIds[0], typeof duplicateId.toString());
-							return item.itemIds[0] === duplicateId.toString()
+							return item.itemIds[0] === duplicateId.toString();
 						});
 
 						pageDataCode.splice(index + 1, 0, {

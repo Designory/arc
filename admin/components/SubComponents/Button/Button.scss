@@ -18,6 +18,29 @@
   text-decoration:none;
   margin:14px 0 14px 10px;
   display:inline-block;
+  
+  &.no-style {
+    padding:10px 18px;
+    color: #2e363b;
+    cursor:pointer;
+    font-weight:600;
+    text-transform:none;
+    text-align:left;
+    border:none;
+    margin:0;
+    display:block;
+    &.active {
+      color:#FF005E !important;
+      font-weight:800;
+      &:hover {
+        color:#000;
+      }
+    }
+    &:hover {
+      color:#000;
+    }
+  }
+
 
   &.primary {
     background:var(--primary-color);
@@ -32,6 +55,8 @@
   &:focus {
     outline: none;
   }
+
+
   
   &__rounded-top-right {
     border-radius: 0 $borderRadiusLarge 0 0;

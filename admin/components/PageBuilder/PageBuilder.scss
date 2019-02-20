@@ -4,6 +4,17 @@
   height: 100%;
   overflow-y: scroll;
   width: 100%;
+
+  transition:all .3s ease;
+  
+  &.deleting {
+    div > div > * {
+      opacity:.5;
+      filter: blur(2px);  
+    }
+    
+  }
+  
   
   &__iframe-full-bleed {
     border: none;
@@ -33,7 +44,7 @@
     padding: 0 $edgePadding;
     position: fixed;
     right: 0;
-    top: $headerHeight;
+    //top: $headerHeight;
     width: calc(100% - #{$controlsWidth});
     z-index:1000;
     background:#ebebeb;
@@ -91,6 +102,7 @@
     font-weight: bold;
     color: #171717;
     margin: 30px 0;
+    cursor:pointer;
   }
   &__add-module {
     position:relative;

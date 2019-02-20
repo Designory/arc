@@ -23,13 +23,15 @@ export default {
 	          	// update tree by hash prop
 				if (payload.tree[item._id]) {
 	            
-					if (payload.tree[item._id]._delete) return null;
+	            	updatedIds = _.without(updatedIds, item._id);
 
-					for (let key in payload.tree[item._id]) {
-						item[key] = payload.tree[item._id][key];
+					if (payload.tree[item._id]._delete) {
+						item = null;
+					} else {
+						for (let key in payload.tree[item._id]) {
+							item[key] = payload.tree[item._id][key];
+						}	
 					}
-
-					updatedIds = _.without(updatedIds, item._id);
 
 				}
 	          
@@ -38,6 +40,10 @@ export default {
 			}).filter(item => {return item !== null});
 
 			updatedIds.forEach(item => {
+				
+				//console.log(item);
+				
+
 				let newObject = payload[item];
 				newObject._id = item;
 				newArr.push(newObject);
@@ -82,6 +88,8 @@ export default {
 
 	SOCKET_MODULECHANGE({ dispatch, commit, state }, payload) {
 		
+		console.log(payload);
+
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 
 		// only continue if the user have the current page selected

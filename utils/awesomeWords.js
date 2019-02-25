@@ -404,22 +404,8 @@ const awesomeWords = [
       ]
    },
    {
-      "word":"horrendous",
-      "score":12275,
-      "tags":[
-         "adj"
-      ]
-   },
-   {
       "word":"immense",
       "score":12099,
-      "tags":[
-         "adj"
-      ]
-   },
-   {
-      "word":"frightening",
-      "score":11950,
       "tags":[
          "adj"
       ]
@@ -495,13 +481,6 @@ const awesomeWords = [
       ]
    },
    {
-      "word":"horrific",
-      "score":9915,
-      "tags":[
-         "adj"
-      ]
-   },
-   {
       "word":"formidable",
       "score":9677,
       "tags":[
@@ -563,6 +542,13 @@ const awesomeWords = [
       "tags":[
          "adj",
          "prop"
+      ]
+   },
+   {
+      "word":"excellent",
+      "score":1,
+      "tags":[
+         "adj"
       ]
    }
 ];

@@ -5,7 +5,7 @@
         Arc
       </router-link> 
     </div>
-    <div class="arc-header__right">
+   <!--  <div class="arc-header__right">
       <button v-on:click="showBuildModal" class="btn btn--white btn--small">
         Build
       </button>
@@ -23,7 +23,7 @@
           Build information will go here
         </div>
       </div>
-    </div>
+    </div> -->
   </header>
 </template>
 

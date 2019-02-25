@@ -3,9 +3,14 @@ import axios from 'axios';
 import AddModule from '../SubComponents/AddModule/AddModule.vue';
 import Button from '../SubComponents/Button/Button.vue';
 import Badge from '../SubComponents/Badge/Badge.vue';
+import Pill from '../SubComponents/Pill/Pill.vue';
+import GhostModule from './ghostModule.js';
 import universalUtils from '../../../utils/universal';
 
 const css = `
+    body {
+      padding: 0px 30px;
+    }
     .primary-navbar,
     .Toolbar,
     [data-keystone-footer],
@@ -31,14 +36,18 @@ export default {
       moduleId: null,
       pageOpen: false,
       pageOrigin:window.location.origin,
-      removeId:null
+      removeId:null,
+      contextActive:0,
+      contextPosition:'top',
+      addModulesList:false
     }
   },
   components: {
     draggable,
-    'add-module':AddModule,
     'action-button':Button,
-    'badge':Badge
+    'badge':Badge,
+    'pill':Pill,
+    'ghost-module':GhostModule
   },
   computed: {
       pageData(){
@@ -46,10 +55,21 @@ export default {
       },
       moduleData: {
         get() {
+          
+          // there might be a better way to do this, but
+          // this is the quickest for now. :(
+          [...document.querySelectorAll('.ghost-module')].forEach(item => {
+            item.remove();
+          });
+
           return this.$store.state.currentModulesData;
+
         },
         set(modules) {
-          this.$store.commit('SOCKET_MODULEUPDATE', {_id:this.pageId, modules:modules});
+          
+          this.$store.commit('UPDATE_MODULE', modules);  // direct commit so that there update delay and glitch
+          this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+          
         }
       },
       previewUrl(){
@@ -60,14 +80,20 @@ export default {
         return this.moduleData.filter(module => {
           return this.moduleId === module.data[0]._id;
         })[0].data[0].name || '[undefined]';
+      },
+      availableModules(){
+        return this.$store.state.globals.model.filter(item => {   
+          return item.type.indexOf('module') != -1;
+        });
       }
   },
+
   methods: {
     getModuleData(){
       axios
         .get(`/arc/api/modules/${this.pageId}`)
         .then(response => {
-          this.$store.commit('SOCKET_MODULEUPDATE', {_id:this.pageId, modules:response.data});
+          this.$store.commit('UPDATE_MODULE', response.data);
         }).catch(error => {
           console.log(error);
         });
@@ -76,7 +102,7 @@ export default {
       axios
         .get(`/arc/api/stg-pages/${this.pageId}`)
         .then(response => {
-          this.$store.commit('SOCKET_PAGEUPDATE', response.data.data);
+          this.$store.commit('UPDATE_PAGE', response.data.data);
         }).catch(error => {
           console.log(error);
         });
@@ -88,35 +114,88 @@ export default {
         iframe.style.opacity = '1';
       });
     },
+    toggleAddModule(){
+      this.addModulesList = !this.addModulesList;
+      this.$refs.filmstripWrapper.scrollTo(0, 0);
+    },
+
+    removeModule(moduleId){
+      
+      const modules = this.$store.state.currentModulesData.filter(item => {
+        return moduleId !== item._id;
+      });
+
+      this.$store.commit('UPDATE_MODULE', modules); // direct commit so that there is not a delay
+      this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+
+    },
+    getStatusText(item){
+      if (item.matchesLive === false) return 'draft';
+      else if (item.isVisible === false) return 'hidden';
+      else return 'live';
+    },
+    getStatus(item){
+      if (item.matchesLive === false) return 'inactive';
+      if (item.isVisible === false) return 'inactive';
+      else return 'active';
+    },
+    showContext(id, event){
+
+      if (event.target.classList.contains('btn')) return;
+
+      this.contextActive = (this.contextActive === id) ? 0 : id;
+      this.contextPosition = (window.innerHeight - event.target.getBoundingClientRect().bottom < 200) ? 'top' : 'bottom';
+    },
     modulePluralized(moduleName){
       // TODO: error handling for when module type no longer exists
       return this.$store.state.globals.model.filter(item => {
         return item.listName === moduleName;
       })[0].staging.path;
     },
-    removeModule(moduleId){
-      this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
-    },
     removePage(moduleId){
       
-      console.log('to remove page');
+      this.$store.commit('UPDATE_PAGE', Object.assign({}, this.$store.state.currentModulesData, {_deleting:true}));
+      this.$socket.emit('removePage', {pageId:this.pageId, lang:null});
+      
+    },
+    publishPage(){
+      this.$socket.emit('publishItem', {_id:this.pageId});
+    },
+    publishModule(listName, moduleId){
+      this.$socket.emit('publishItem', {_id:moduleId, listName:listName});
+    },
+    unPublishPage(){
+      this.$socket.emit('unPublishItem', {_id:this.pageId});
+    },
+    unPublishModule(listName, moduleId){
+      this.$socket.emit('unPublishItem', {_id:moduleId, listName:listName});
+    },
+    hideOnLive(listName, _id){
+      this.$socket.emit('hideOnLive', {_id:_id, listName:listName});
+    },
+    createAndAddModule(module){
+      // need to separate out to reusable function
+      const ghostEl = document.createElement('div');
+      ghostEl.classList.add('ghost-module');
+      ghostEl.innerHTML = GhostModule.html;
+      
+      if (this.$refs.module && this.$refs.module.length) this.$refs.module[this.moduleData.length - 1].after(ghostEl);
+      else this.$refs.moduleWrapper.querySelector('.module-wrapper').appendChild(ghostEl);
 
-      //this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
+      this.$el.scrollTop = this.$el.scrollHeight;
+      this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
     },
-    publishPage(moduleId){
-      this.$socket.emit('pagePublish', {pageId:this.pageId});
-    },
-    roundCorner(index){
-      if (index === 0) return 'rounded-top-right';
-      if (this.moduleData.length === (index + 1)) return 'rounded-bottom-right';
-      return '';
-    },
-    badgeText(module){
-      if (module.matchesLive) {
-        return null;
-      } else {
-        return `Copy ${module.__v + 1}`;
-      }
+    duplicateAndAddModule(listName, data, index, event){
+      console.log(index);
+      const ghostEl = document.createElement('div');
+      ghostEl.classList.add('ghost-module');
+      ghostEl.innerHTML = GhostModule.html;
+      
+      if (event.target.closest) event.target.closest('.page-builder__modules-list-item').after(ghostEl);
+      //this.$refs.module[index].after(ghostEl);
+
+      if (index === (this.moduleData.length - 1)) this.$el.scrollTop = this.$el.scrollHeight;
+      this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
     }
   },
   beforeMount(){

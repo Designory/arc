@@ -1,7 +1,8 @@
 <template>
   <div
     id="app"
-    class="arc-root" >
+    class="arc-root">
+
     <Header />
     <!-- <transition name="fade"> -->
       <router-view class="sidebar" name="navigation" />

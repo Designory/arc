@@ -1,0 +1,21 @@
+@import '../../Globals/Globals';
+
+.pill {
+  position:relative;
+  display:inline-block;
+  width: 75px;
+  height: 26px;
+  border-radius: 15px;
+  background-color: #02944d;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 26px;
+  color: #ffffff;
+  text-transform: uppercase;
+
+  &.inactive {
+  	background:#888c8f;
+  }
+
+}

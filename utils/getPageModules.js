@@ -4,7 +4,7 @@
 // 		onRender,
 // 		populate
 // 	}
-module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true}) => {
+module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true, decode:false, hashify:false}) => {
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -21,7 +21,9 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 	  		});
 
   			Promise.all(promises).then(function(modules) {
-      			resolve(modules);
+  				
+      			resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+
     		}).catch(function(err) {
       			arc.log('error', err);
       			resolve([]);

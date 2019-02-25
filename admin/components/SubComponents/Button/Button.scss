@@ -41,6 +41,11 @@
     }
   }
 
+  &.back {
+    border:1px solid #bbb;
+    background:#bbbbbb40;
+    margin-left:0;
+  }
 
   &.primary {
     background:var(--primary-color);

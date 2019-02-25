@@ -76,29 +76,33 @@ module.exports = ArcClass => {
 
 				// special postsave events that are designed only for the tree model
 				// TODO: move this to better spot
-				StgList.schema.pre('save', async function(next){
+				StgList.schema.pre('save', function(next){
+					this.pageDataCodeWasModified = this.isModified('pageDataCode');
+					next();
+				});
+
+				StgList.schema.post('save', async function(doc){
 				
-					self.io.emit('PAGECHANGE', {[this._id]: this});
+					self.io.emit('PAGECHANGE', {[doc._id]: doc});
 
-					if (!this.isModified('pageDataCode')) return next();
+					if (this.pageDataCodeWasModified) {
 
-					try {
+						try {
 
-	                    // TODO: consolidate to utils function
-	                    const loadedModules = await self.utils.getPageModules(self, this.pageDataCode, {
-	                        select:'name matchesLive visible state archive key __v', 
-	                        onRender:null, 
-	                        consolidateModules:false
-	                    });
+		                    // TODO: consolidate to utils function
+		                    const loadedModules = await self.utils.getPageModules(self, JSON.parse(doc.pageDataCode), {
+		                        select:'name matchesLive existsOnLive visible state archive key __v', 
+		                        onRender:null, 
+		                        consolidateModules:false
+		                    });
 
-	                    self.io.emit('MODULECHANGE', {_id:this._id, modules:loadedModules});
-	                    
-	                } catch(err){
-	                    // TODO: set up error reporting to the UI
-	                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
-	                }
-
-	                next();
+		                    self.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
+		                    
+		                } catch(err){
+		                    // TODO: set up error reporting to the UI
+		                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
+		                }
+		            }
 
 				});
 
@@ -108,13 +112,19 @@ module.exports = ArcClass => {
 					
 			} else if (mergedData.type.indexOf('module') != -1) {
 
-				StgList.schema.pre('save', async function(next){
+				StgList.schema.pre('save', function(next){
+					this.wasNew = this.isNew;
+					next()
+				});
+
+				StgList.schema.post('save', async function(doc){
+					//console.log('doc.matchesLive -> ', {[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})})
 
 					// only trigger an update if the item is not new
 					// new items receive thier own special emit via the page change trigger
-					if (!this.isNew) self.io.emit('MODULECHANGE', {_id:this._id, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
+					if (!this.wasNew) self.io.emit('MODULECHANGE', {_id:this._id, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
 
-					next();
+					//next();
 
 				});
 

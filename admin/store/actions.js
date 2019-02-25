@@ -70,9 +70,6 @@ export default {
 				
 				// close all open editor views for this updated page
 				if (state.route.query && state.route.query.pageOpen) router.replace({query: Object.assign({}, state.route.query, {pageOpen: false})});
-				
-				// remove all ghost elements for this page
-				commit('MODULE_GHOST', false);
 
 			}
 
@@ -88,15 +85,11 @@ export default {
 
 	SOCKET_MODULECHANGE({ dispatch, commit, state }, payload) {
 		
-		console.log(payload);
-
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
-
-		// only continue if the user have the current page selected
+		
 		if (!state.currentModulesData) return false;
-
-		//console.log(state.currentModulesData)
-
+		
+		// only continue if the user has the current page selected
 		let inCurrentModule = false;
 		for (let key in payload) {
 			if (state.currentModulesData.some(item => item._id === key)) {
@@ -110,34 +103,36 @@ export default {
 		if (Array.isArray(payload.modules)) {
 
 			commit('UPDATE_MODULE', payload.modules);
-	      
+	      	
 		// if payload in an object, assume hash, and replace only 
 		// what's in the hash object
 		} else {
 
-			const newArr = _.cloneDeep(state.currentModulesData);
+			let newArr = [];
 			let updatedIds = Object.keys(payload.modules);
 
 			// update/delete existing items
-			newArr.map(item => {
+			[...state.currentModulesData].forEach(item => {
 				
+				const itemId = item._id;
+				let update = item;
+
 				for (let key in payload.modules) {
-					if (item._id === key && payload.modules[key]._delete) item == null;
-					else if (item._id === key) {
+					
+					if (itemId === key) { 
 						
-						item = {
-							data:[Object.assign({}, item, payload.modules[key])],
-							moduleName:item._listName
-						}
-						
-						updatedIds = _.without(updatedIds, item._id);
+						if (payload.modules[key]._delete) update = null;
+						else item = update = payload.modules[key];				
+						updatedIds = _.without(updatedIds, itemId);
 
 					} 
 				}
 
-				return item;
+				newArr.push(update);
 
-			}).filter(item => {return item !== null});
+			});
+
+			newArr = newArr.filter(item => {return item !== null});
 
 			// add new items
 			updatedIds.forEach(item => {
@@ -149,26 +144,23 @@ export default {
 					
 					const index = newArr.findIndex(module => module._id === newObject._insertAfter);
 					
-					newArr.splice(index, 0, {
-						data: [newObject],
-						moduleName: newObject._listName
-					});
+					newArr.splice(index, 0, newObject);
 
 				} else {
-					
-					newArr.push({
-						data: [newObject],
-						moduleName: newObject._listName
-					});
+			
+					newArr.push(newObject);	
 				
 				}	
 
 			});
 
 			commit('UPDATE_MODULE', newArr);
+
+			if (state.route.query && Object.keys(payload.modules).includes(state.route.query.moduleId)) router.replace({query:{pageId:state.route.query.pageId}});
 		
 		}
-		if (state.route.query && state.route.query.moduleOpen) router.replace({query: Object.assign({}, state.route.query, {moduleOpen: false})});
+
+		
 
 	}
 }

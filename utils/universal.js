@@ -5,5 +5,7 @@ module.exports = {
 	removeModuleFromList: require('./removeModuleFromList'),
 	hideTreeChildrenByIds: require('./hideTreeChildrenByIds'),
 	objectDiff: require('./objectDiff'),
-	objArrayDiff: require('./objArrayDiff')
+	objArrayDiff: require('./objArrayDiff'),
+	encodeModuleList: require('./encodeModuleList'),
+	decodeModuleList: require('./decodeModuleList')
 }

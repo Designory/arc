@@ -8,6 +8,9 @@ import GhostModule from './ghostModule.js';
 import universalUtils from '../../../utils/universal';
 
 const css = `
+    body {
+      padding: 0px 30px;
+    }
     .primary-navbar,
     .Toolbar,
     [data-keystone-footer],
@@ -64,9 +67,9 @@ export default {
         },
         set(modules) {
           
-          this.$socket.emit('updateTree', {_id:this.pageId, modules:modules});
-          this.$store.commit('UPDATE_MODULE', {_id:this.pageId, modules:modules});
-
+          this.$store.commit('UPDATE_MODULE', modules);  // direct commit so that there update delay and glitch
+          this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+          
         }
       },
       previewUrl(){
@@ -111,22 +114,24 @@ export default {
         iframe.style.opacity = '1';
       });
     },
-    // modulePluralized(moduleName){
-    //   // TODO: error handling for when module type no longer exists
-    //   return this.$store.state.globals.model.filter(item => {
-    //     return item.listName === moduleName;
-    //   })[0].staging.path;
-    // },
     toggleAddModule(){
       this.addModulesList = !this.addModulesList;
       this.$refs.filmstripWrapper.scrollTo(0, 0);
     },
+
     removeModule(moduleId){
-      this.$socket.emit('removeModuleFromPage', {pageId:this.pageId, moduleId:moduleId});
+      
+      const modules = this.$store.state.currentModulesData.filter(item => {
+        return moduleId !== item._id;
+      });
+
+      this.$store.commit('UPDATE_MODULE', modules); // direct commit so that there is not a delay
+      this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+
     },
     getStatusText(item){
       if (item.matchesLive === false) return 'draft';
-      if (item.isVisible === false) return 'hidden';
+      else if (item.isVisible === false) return 'hidden';
       else return 'live';
     },
     getStatus(item){
@@ -151,28 +156,43 @@ export default {
       
       this.$store.commit('UPDATE_PAGE', Object.assign({}, this.$store.state.currentModulesData, {_deleting:true}));
       this.$socket.emit('removePage', {pageId:this.pageId, lang:null});
-
       
     },
-    publishPage(moduleId){
-      this.$socket.emit('publishPage', {pageId:this.pageId});
+    publishPage(){
+      this.$socket.emit('publishItem', {_id:this.pageId});
+    },
+    publishModule(listName, moduleId){
+      this.$socket.emit('publishItem', {_id:moduleId, listName:listName});
+    },
+    unPublishPage(){
+      this.$socket.emit('unPublishItem', {_id:this.pageId});
+    },
+    unPublishModule(listName, moduleId){
+      this.$socket.emit('unPublishItem', {_id:moduleId, listName:listName});
+    },
+    hideOnLive(listName, _id){
+      this.$socket.emit('hideOnLive', {_id:_id, listName:listName});
     },
     createAndAddModule(module){
       // need to separate out to reusable function
       const ghostEl = document.createElement('div');
       ghostEl.classList.add('ghost-module');
       ghostEl.innerHTML = GhostModule.html;
-      this.$refs.module[this.moduleData.length - 1].after(ghostEl);
+      
+      if (this.$refs.module && this.$refs.module.length) this.$refs.module[this.moduleData.length - 1].after(ghostEl);
+      else this.$refs.moduleWrapper.querySelector('.module-wrapper').appendChild(ghostEl);
 
       this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
     },
-    duplicateAndAddModule(listName, data, index){
-      
+    duplicateAndAddModule(listName, data, index, event){
+      console.log(index);
       const ghostEl = document.createElement('div');
       ghostEl.classList.add('ghost-module');
       ghostEl.innerHTML = GhostModule.html;
-      this.$refs.module[index].after(ghostEl);
+      
+      if (event.target.closest) event.target.closest('.page-builder__modules-list-item').after(ghostEl);
+      //this.$refs.module[index].after(ghostEl);
 
       if (index === (this.moduleData.length - 1)) this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});

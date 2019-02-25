@@ -1,16 +1,21 @@
 <template>
-  <div class="page-builder" :class="{deleting: pageData._deleting}" v-if="pageData" :style="(pageOpen) ? {background:'#fafafa'} : ''">
-    <div class="page-builder__top">
+  <div class="page-builder" :class="{deleting: pageData._deleting}" v-if="pageData"  :style="(pageOpen || moduleOpen) ? { background:'#fafafa'} : {}">
+    <div class="page-builder__top" :style="(pageOpen || moduleOpen) ? { background:'#fafafa'} : {}">
       <div class="page-builder__top-left">
-        <action-button v-if="pageOpen || moduleOpen" :to="{ path: '/page-builder/tree', query: { pageId: pageId}}" text="Back"></action-button>
+        <action-button 
+          v-if="pageOpen || moduleOpen" 
+          :to="{ path: '/page-builder/tree', query: { pageId: pageId}}" 
+          text="Back"
+          classAddition="back">  
+        </action-button>
       </div>
-      <div class="page-builder__top-right" v-if="!pageOpen || !moduleOpen"> 
-        <button class="btn primary">
-          Publish Page
-        </button>
+      <div class="page-builder__top-right" v-if="!pageOpen && !moduleOpen"> 
         <a :href="previewUrl" target="_blank" class="btn secondary">
           Preview on Stage
         </a>
+        <button class="btn primary" @click="publishPage()">
+          Publish Page
+        </button>
       </div>    
     </div>
     <div class="page-builder__iframe-container" v-if="pageOpen">
@@ -46,8 +51,12 @@
             <div class="page-builder__edit-icon"></div>
             <div v-if="contextActive === pageData._id" class="context-menu context-from-button" :class="contextPosition">
               <ul>
-                <li>Edit</li>
-                <li>Hide on live site</li>
+                <router-link
+                  :to="{path: '/page-builder/tree', query: { pageId: pageId, pageOpen: true}}" 
+                  tag="li">Edit
+                </router-link>
+                <li v-if="pageData.existsOnLive" @click="unPublishPage()">Hide on live site</li>
+                <li @click="publishPage()">Publish to live site</li>
                 <li>Make a copy</li>
                 <div class="spacer"></div>
                 <action-button
@@ -93,12 +102,12 @@
           <div class="page-builder__row">
             <div class="page-builder__cell page-builder__cell--no-border">
               <h6 class="page-builder__modules-title">
-                Modules on this page
+                {{(moduleData && moduleData.length) ? 'Modules on this page' : 'No module on this page yet'}}
               </h6>
             </div>
 
             <div class="page-builder__cell page-builder__cell--no-border page-builder__cell--width-auto">
-                <button @click="toggleAddModule()" class="page-builder__add-module" :class="{active:addModulesList}">CREATE NEW MODULE</button>
+                <button @click="toggleAddModule()" class="page-builder__add-module" :class="{active:addModulesList}">{{(moduleData && moduleData.length) ? 'CREATE NEW MODULE' : 'CREATE FIRST MODULE'}}</button>
             </div>
           </div>
           
@@ -107,7 +116,7 @@
               <li v-for="(module, index) in availableModules" @click="createAndAddModule(module)" class="page-builder__module-thumbnail">
                 <div class="page-builder__module-thumbnail-visual" v-html="module.svg || ''"></div>
                 <div class="page-builder__module-thumbnail-label">
-                  {{module.label || module.listname}}
+                  {{module.label || module._listName}}
                 </div>
               </li>
             </ul>
@@ -115,48 +124,54 @@
         
         </div>
         
-        <div class="page-builder__subhead">
+        <div class="page-builder__subhead" v-if="moduleData && moduleData.length">
           Drag modules to reorder
         </div>
-        <ul class="page-builder__modules-list" v-if="moduleData">
+        <ul class="page-builder__modules-list" ref="moduleWrapper" v-if="moduleData">
           <draggable class="module-wrapper" 
             v-model="moduleData"
             style="min-height:25px;">
 
-            <li v-for="(module, index) in moduleData" ref="module" :key="module.data[0]._id"
+            <li v-for="(module, index) in moduleData" ref="module" :key="module._id"
                 class="page-builder__modules-list-item" :style="{zIndex:(moduleData.length - index) + 1}">
               <div class="page-builder__row">
                 <div class="page-builder__cell page-builder__type" >
-                  {{module.moduleName}}
+                  {{module._listName}}
                 </div>
                 <div class="page-builder__cell page-builder__title" >
                   <router-link 
-                    :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module.data[0]._id, moduleName: modulePluralized(module.moduleName), moduleOpen: true}}"
+                    :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}"
                     tag="div" class="page-builder__modules-list-title">
-                    {{module.data[0].name}}
+                    <span class="page-builder__title--text">{{module.name}}</span>
                   </router-link>
                 </div>
-                <div @click="showContext(module.data[0]._id, $event)" class="page-builder__cell page-builder__edit-control" :class="{active:contextActive === module.data[0]._id}">
+                <div @click="showContext(module._id, $event)" class="page-builder__cell page-builder__edit-control" :class="{active:contextActive === module._id}">
                   <div class="page-builder__edit-icon"></div>
-                  <div v-if="contextActive === module.data[0]._id" class="context-menu context-from-button" :class="contextPosition">
+                  <div v-if="contextActive === module._id" class="context-menu context-from-button" :class="contextPosition">
                     <ul>
-                      <router-link :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module.data[0]._id, moduleName: modulePluralized(module.moduleName), moduleOpen: true}}" tag="li">
+                      <router-link :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}" tag="li">
                         Edit
                       </router-link>
-                      <li>Hide on live site</li>
-                      <li @click="duplicateAndAddModule(module.moduleName, module.data[0], index)">Make a copy</li>
+                      <li v-if="module.existsOnLive" @click="unPublishModule(module._listName, module._id)">Hide on live site</li>
+                      <li v-if="!module.matchesLive" @click="publishModule(module._listName, module._id)">Publish to live site</li>
+                      <li @click="duplicateAndAddModule(module._listName, module, index, $event)">Make a copy</li>
                       <div class="spacer"></div>
-                      <li>Delete</li>
+                      <action-button
+                        :id="module._id" 
+                        :confirmClick="removeModule"
+                        text="Remove"
+                        classAddition="no-style"
+                        confirmText="Confirm Remove">  
+                      </action-button>
                     </ul>
                   </div>
                 </div>
                 <div class="page-builder__cell page-builder__pill">
-                  <pill :text="getStatusText(module.data[0])" :color="getStatus(module.data[0])" />
+                  <pill :text="getStatusText(module)" :color="getStatus(module)" />
                 </div>
               </div>
-              <ghost-module v-if="$store.state.moduleGhost === module.data[0]._id"></ghost-module> 
               <!-- <action-button 
-                :id="module.data[0]._id" 
+                :id="module._id" 
                 :confirmClick="removeModule" 
                 :classAddition="`btn__module-list ${roundCorner(index)}`" 
                 tooltipMsg="Click again to remove" 
@@ -164,9 +179,7 @@
                 iconColor="#FF005E"
               ></action-button> -->
             </li>
-
           </draggable>
-          <ghost-module v-if="$store.state.moduleGhost === true"></ghost-module>
         </ul>
       </div>
     </div>  

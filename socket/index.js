@@ -25,7 +25,9 @@ module.exports = ArcClass => {
                 });
 
                 socket.on('createAndAddModule', async payload => {
-                
+                    
+                    //return console.log(payload);
+
                     if (!payload.listName) return this.log('error', '`payload.listName` is required.');
                     await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`${this.utils.awesomeWords()} New Module`}, this);
 
@@ -52,12 +54,24 @@ module.exports = ArcClass => {
                             lean:true
                         });
 
-                        moduleData[0].data[0].name = moduleData[0].data[0].name + ' Duplicate';
+                        if (moduleData[0].name.indexOf(' Duplicate') != -1) {
 
-                        await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, moduleData[0].data[0], this);
+                            const nameArr = moduleData[0].name.split(' Duplicate');
+                            const duplicateIterator = nameArr.pop();
+                            const newDuplicateIterator = (duplicateIterator) ? parseInt(duplicateIterator) + 1 : 1;
+
+                            moduleData[0].name = nameArr.join('') + ' Duplicate ' + newDuplicateIterator;
+
+                        } else {
+
+                            moduleData[0].name = moduleData[0].name + ' Duplicate';
+
+                        }
+
+                        await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, moduleData[0], this);
   
                     } catch(err) {
-                        arc.log('error', err);
+                        this.log('error', err);
                     }
 
                     
@@ -76,14 +90,40 @@ module.exports = ArcClass => {
                 });
 
 
-                socket.on('publishPage', async payload => {
+                socket.on('publishItem', async payload => {
                     // TODO: add function to ensure proper payload
-                    // LANG: treeModelSelect will become a function to pass in lang
-                    // const treeDeleteItem = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, lean:false});
+                    const publishObj = {
+                        listName:payload.listName || null, 
+                        _id:payload._id, 
+                        publish:true, 
+                        lang:payload.lang || null
+                    }
+
+                    await this.utils.publishUnPublishItem(publishObj, this);
+
+                });
+
+                socket.on('unPublishItem', async payload => {
+                    // TODO: add function to ensure proper payload
+                    const publishObj = {
+                        listName:payload.listName || null, 
+                        _id:payload._id, 
+                        publish:false, 
+                        lang:payload.lang || null
+                    }
+
+                    await this.utils.publishUnPublishItem(publishObj, this);
+
+                });
+
+                socket.on('updateModules', async payload => {
+                    // TODO: add function to ensure proper payload
                     
-                    // treeDeleteItem.remove((err) => {
-                        
-                    // });
+                    const modules = payload.modules.filter(item => {
+                        console.log(item);
+                    });
+
+                    await this.utils.setModuleOrder(payload._id, null, payload.modules, this);
 
                 });
                 // socket.on('updateModules', async payload => {

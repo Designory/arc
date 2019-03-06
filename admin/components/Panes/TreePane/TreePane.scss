@@ -24,160 +24,245 @@
     padding: 16px 9px 3px;
   }
 
-  &__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  &__list-item {
-    // border-bottom: 1px solid $dividerColor;
-    // cursor: ns-resize;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 8px 0;
+  .sl-vue-tree {
     position: relative;
-    //transition: all 0.2s ease-in-out;
-    
-    //
-    ///
-    //// BEGIN Tree lines
-    ///
-    //
-
-    // &:before, &:after {
-    //   content:'';
-    //   position:absolute;
-    //   display:block;
-    // }
-
-    // &:before {
-    //   top:0;
-    //   bottom:0;
-    //   border-left:1px solid $lineBgColor;
-    //   border-bottom:1px solid $lineBgColor;
-    // }
-
-    // &:after {
-    //   border-bottom:1px solid $lineBgColor;
-    //   top:50%;
-    //   width:($indentWidth / 2.6);
-    // }
-
-    // &:first-child:before, 
-    // &--lastchild + li:before { 
-    //   top:50%;
-    // }
-  
-    // &--parent:before {
-    //   width:$indentWidth;
-    // }
-
-    // &:last-child:before, &--lastchild:before {
-    //   bottom:50%;
-    // }
-    
-
-    //
-    ///
-    //// END Tree lines
-    ///
-    //
-
-    &:hover {
-      color: $arcBlue;
-    }
-
-    &--active {
-      color:$accentColor;
-    }
+    cursor: default;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
   }
 
-  &__toggle {
-    cursor: pointer;
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    margin: ($toggleSize / -2) 0 0 (($toggleSize / 2) + 2);
-    height:$toggleSize;
-    width:$toggleSize;
-    z-index: 2;
-    background-color:transparent;
-    border-radius: 4px;
+  .sl-vue-tree.sl-vue-tree-root {
+      color:$expandTreeColor;
+  }
 
-    // &:hover {
-    //   background-color:rgba(#ccc, .7);
-    // }
+  .sl-vue-tree-root > .sl-vue-tree-nodes-list {
+      overflow: hidden;
+      position: relative;
+      padding-bottom: 4px;
+  }
 
-    &:focus {
-      outline: none;
-    }
-  
-    &:before, &:after {
-      content:"";
+  .sl-vue-tree-selected > .sl-vue-tree-node-item > .sl-vue-tree-title {
+      // background-color: #eee;
+      // color: $expandTreeColor;
+      font-weight:bold;
+  }
+
+  .sl-vue-tree-node-item:hover,
+  .sl-vue-tree-node-item.sl-vue-tree-cursor-hover {
+      color:$expandTreeColor;
+  }
+
+  .sl-vue-tree-node-item {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+
+      padding-left: 10px;
+      padding-right: 10px;
+      line-height: 28px;
+      border: 1px solid transparent;
+  }
+
+
+  .sl-vue-tree-node-item.sl-vue-tree-cursor-inside {
+      border: 1px solid #bbb;
+  }
+
+  .sl-vue-tree-gap {
+      width: 25px;
+      min-height: 1px;
+
+  }
+
+  .sl-vue-tree-toggle {
+      display: inline-block;
+      text-align: left;
+      width: 20px;
+  }
+
+  .sl-vue-tree-sidebar {
+      margin-left: auto;
+  }
+
+  .sl-vue-tree-cursor {
       position: absolute;
-      top: ($toggleSize / 2) - 1;
-      right: 15%;
-      border-bottom: 3px solid #bbb;
-      width: 70%;
-    }
-    &--collapsed:after {
-      transform: rotate(90deg);
-    }
-
-    // &--active {
-    //   &:after {
-    //     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8"> <g fill="none" fill-rule="evenodd"> <path d="M0-1h13v9H0z"/><path fill="#056ec8" d="M1.442 0l6.329 6.33-1.243 1.242L.2 1.243 1.442.001zm10.172 0l1.242 1.242-5.087 5.086-1.241-1.242L11.614 0z"/></g></svg>');
-    //     position: absolute;
-    //     top: 2px;
-    //     right: 0;
-    //     transform: rotate(180deg);
-    //     height: 25px;
-    //     width: 25px;
-    //   }
-    // }
+      border: 1px solid #bbb;
+      height: 1px;
+      width: 100%;
   }
 
-  .sortable-chosen {
-    border: none;
+  .sl-vue-tree-drag-info {
+      position: absolute;
+      background-color: #fff;
+      opacity: 0.5;
+      margin-left: 20px;
+      padding: 5px 10px;
   }
 
-  .ui-sortable-helper, .sortable-helper {
-    overflow:hidden;
-    margin-left:0 !important;
-    height:0;
-    border-bottom:#056ec8;
-  }
+  // &__list {
+  //   list-style: none;
+  //   margin: 0;
+  //   padding: 0;
+  // }
 
-  // &__footer {
-  //   display: flex;
-  //   flex-direction: row;
-  //   margin-top: 25px;
+  // &__list-item {
+  //   // border-bottom: 1px solid $dividerColor;
+  //   // cursor: ns-resize;
+  //   font-size: 15px;
+  //   font-weight: bold;
+  //   padding: 8px 0;
+  //   position: relative;
+  //   //transition: all 0.2s ease-in-out;
+    
+  //   //
+  //   ///
+  //   //// BEGIN Tree lines
+  //   ///
+  //   //
 
-  //   button {
-  //     margin-right: 15px;
+  //   // &:before, &:after {
+  //   //   content:'';
+  //   //   position:absolute;
+  //   //   display:block;
+  //   // }
+
+  //   // &:before {
+  //   //   top:0;
+  //   //   bottom:0;
+  //   //   border-left:1px solid $lineBgColor;
+  //   //   border-bottom:1px solid $lineBgColor;
+  //   // }
+
+  //   // &:after {
+  //   //   border-bottom:1px solid $lineBgColor;
+  //   //   top:50%;
+  //   //   width:($indentWidth / 2.6);
+  //   // }
+
+  //   // &:first-child:before, 
+  //   // &--lastchild + li:before { 
+  //   //   top:50%;
+  //   // }
+  
+  //   // &--parent:before {
+  //   //   width:$indentWidth;
+  //   // }
+
+  //   // &:last-child:before, &--lastchild:before {
+  //   //   bottom:50%;
+  //   // }
+    
+
+  //   //
+  //   ///
+  //   //// END Tree lines
+  //   ///
+  //   //
+
+  //   &:hover {
+  //     color: $arcBlue;
+  //   }
+
+  //   &--active {
+  //     color:$accentColor;
   //   }
   // }
 
+  // &__drag-block {
+  //   min-height: 40px;
+  //   outline: 1px dashed;
+  //   padding-left:40px;
+  // }
 
-  &__right-click-area {
-    display: inline-block;
-    height: 100%;
-    width: calc(100% - 25px);
-    margin-left:$textIndentWidth;
-    cursor:pointer;
+  // &__toggle {
+  //   cursor: pointer;
+  //   display: block;
+  //   position: absolute;
+  //   top: 50%;
+  //   left: 0;
+  //   margin: ($toggleSize / -2) 0 0 (($toggleSize / 2) + 2);
+  //   height:$toggleSize;
+  //   width:$toggleSize;
+  //   z-index: 2;
+  //   background-color:transparent;
+  //   border-radius: 4px;
 
-    &--not-published {
-      &:before {
-        content: '\25C9';
-        color: $headerBackgroundColor;
-        display: inline;
-        padding-right: 5px;
-      }
-    }
-  }
-  .disabled {
-    pointer-events:none;
-  }
+  //   // &:hover {
+  //   //   background-color:rgba(#ccc, .7);
+  //   // }
+
+  //   &:focus {
+  //     outline: none;
+  //   }
+  
+  //   &:before, &:after {
+  //     content:"";
+  //     position: absolute;
+  //     top: ($toggleSize / 2) - 1;
+  //     right: 15%;
+  //     border-bottom: 3px solid #bbb;
+  //     width: 70%;
+  //   }
+  //   &--collapsed:after {
+  //     transform: rotate(90deg);
+  //   }
+
+  //   // &--active {
+  //   //   &:after {
+  //   //     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8"> <g fill="none" fill-rule="evenodd"> <path d="M0-1h13v9H0z"/><path fill="#056ec8" d="M1.442 0l6.329 6.33-1.243 1.242L.2 1.243 1.442.001zm10.172 0l1.242 1.242-5.087 5.086-1.241-1.242L11.614 0z"/></g></svg>');
+  //   //     position: absolute;
+  //   //     top: 2px;
+  //   //     right: 0;
+  //   //     transform: rotate(180deg);
+  //   //     height: 25px;
+  //   //     width: 25px;
+  //   //   }
+  //   // }
+  // }
+
+  // .sortable-chosen {
+  //   border: none;
+  // }
+
+  // .ui-sortable-helper, .sortable-helper {
+  //   overflow:hidden;
+  //   margin-left:0 !important;
+  //   height:0;
+  //   border-bottom:#056ec8;
+  // }
+
+  // // &__footer {
+  // //   display: flex;
+  // //   flex-direction: row;
+  // //   margin-top: 25px;
+
+  // //   button {
+  // //     margin-right: 15px;
+  // //   }
+  // // }
+
+
+  // &__right-click-area {
+  //   display: inline-block;
+  //   height: 100%;
+  //   width: calc(100% - 25px);
+  //   margin-left:$textIndentWidth;
+  //   cursor:pointer;
+
+  //   &--not-published {
+  //     &:before {
+  //       content: '\25C9';
+  //       color: $headerBackgroundColor;
+  //       display: inline;
+  //       padding-right: 5px;
+  //     }
+  //   }
+  // }
+  // .disabled {
+  //   pointer-events:none;
+  // }
 }

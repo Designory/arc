@@ -11,11 +11,13 @@
 
       <!-- <draggable-tree :items="nestedTree" /> -->
       <sl-vue-tree 
-        v-model="nestedTree"
-        ref="slVueTree"
-        @toggle="nodeToggled"
+        v-model="nestedTree" 
+        ref="slVueTree" 
+        @toggle="nodeToggled" 
         @select="nodeSelected"
-        @nodeContextmenu="showContextMenu">
+        @drop=""
+        @nodecontextmenu="showContextMenu"
+      >
         
         <template slot="title" slot-scope="{node}">
           <!-- <span class="item-icon">
@@ -25,7 +27,13 @@
           {{node.title}}
         </template>
 
+        <template slot="draginfo"></template>
+
       </sl-vue-tree>
+
+      <ul class="contextmenu tree__context-menu" ref="contextmenu" v-show="contextMenuIsVisible">
+        <li>Remove</li>
+      </ul>
 
     </div>
   </div>

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import _ from 'lodash';
-import DraggableTree from './DraggableTree.vue';
 import SlVueTree from 'sl-vue-tree';
 import universalUtils from '../../../../utils/universal';
 
@@ -11,7 +10,8 @@ export default {
   },
   data(){
     return {
-      nestedTree:[]
+      nestedTree:[],
+      contextMenuIsVisible: false
     }
   },
   computed: {
@@ -52,13 +52,13 @@ export default {
 
       this.$router.push({query:{pageId:node[0].data._id}})
     
-    },
+    }, 
     showContextMenu(node, event) {
-        event.preventDefault();
-        this.contextMenuIsVisible = true;
-        const $contextMenu = this.$refs.contextmenu;
-        $contextMenu.style.left = event.clientX + 'px';
-        $contextMenu.style.top = event.clientY + 'px';
+      event.preventDefault();
+      this.contextMenuIsVisible = true;
+      const $contextMenu = this.$refs.contextmenu;
+      $contextMenu.style.left = event.clientX + 'px';
+      $contextMenu.style.top = event.clientY + 'px';
     },
     flatten(node, event) {
       
@@ -116,5 +116,8 @@ export default {
       this.$socket.emit('updateTree', universalUtils.objArrayDiff(this.flatten(), stateTreeClone));
 
     }
+  },
+  mounted() {
+    window.slVueTree = this.$refs.slVueTree;
   }
 };

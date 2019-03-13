@@ -7,6 +7,9 @@ export default {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 
+
+		console.log(payload);
+
 	    // if message value is an array, straight replace
 		if (Array.isArray(payload.tree)) {
 
@@ -39,12 +42,8 @@ export default {
 	        
 			}).filter(item => {return item !== null});
 
-			updatedIds.forEach(item => {
-				
-				//console.log(item);
-				
-
-				let newObject = payload[item];
+			updatedIds.forEach(item => {		
+				let newObject = payload.tree[item];
 				newObject._id = item;
 				newArr.push(newObject);
 			});

@@ -12,16 +12,32 @@ module.exports = ArcClass => {
                 this.socketConnection();
 
                 socket.on('updateTree', async payload => {
-                    // Note: right now we are emaking a concerted effort to err on 
-                    // the side of making the most immediate updates to  
-                    socket.broadcast.emit('TREECHANGE', {tree:payload});
-
-                    // TODO: ensure `payload` is fit for function
-                    const initialRawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
-                    const updatedTree = await this.utils.bulkSetTree(this, payload);
-                    const rawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
-                    //const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
                     
+                    try {
+
+                        // Note: right now we are emaking a concerted effort to err on 
+                        // the side of making the most immediate updates to  
+                        socket.broadcast.emit('TREECHANGE', {tree:payload});
+
+                        // TODO: ensure `payload` is fit for function
+                        //const initialRawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
+                        const updatedTree = await this.utils.bulkSetTree(this, payload);
+                        const rawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
+                        //const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
+                            
+                        console.log(updatedTree);
+
+                        // if updated tree array has length after update that means that there are new
+                        // items to add to the tree, for now, we are expecting only one possible new
+                        // item per `updateTree` this could soon change, though
+                        if (updatedTree.length) {
+                            console.log(updatedTree);
+                            await this.utils.createTreePage(this, updatedTree[0], 'en-us');
+                        }
+                    } catch(err) {
+                        this.log('error', err);
+                    }
+                      
                 });
 
                 socket.on('createAndAddModule', async payload => {

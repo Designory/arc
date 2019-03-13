@@ -24,16 +24,21 @@
             <i class="fa fa-file" v-if="node.isLeaf"></i>
             <i class="fa fa-folder" v-if="!node.isLeaf"></i>
           </span> -->
-          {{node.title}}
+          {{node.title}} {{node._id}}
         </template>
 
         <template slot="draginfo"></template>
 
       </sl-vue-tree>
 
-      <ul class="contextmenu tree__context-menu" ref="contextmenu" v-show="contextMenuIsVisible">
-        <li>Remove</li>
-      </ul>
+      <div class="context-menu" ref="contextmenu" v-show="contextMenuIsVisible" :style="{position: 'absolute'}">
+        <ul>
+          <li @click="newPage(contextMenuNode)">Create Page</li>
+          <li v-if="contextMenuNode && contextMenuNode.isLeaf && !contextMenuNode.children.length" @click="makeNodeParent(contextMenuNode.path)">Make parent</li>
+          <li v-else-if="contextMenuNode && !contextMenuNode.isLeaf && !contextMenuNode.children.length" @click="unMakeNodeParent(contextMenuNode.path)">Unmake Parent</li>
+          <li @click="">Remove</li>
+        </ul>
+      </div>
 
     </div>
   </div>

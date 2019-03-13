@@ -217,6 +217,12 @@ export default {
     this.$store.commit('SET_ACTIVE_PAGE', {_id:this.pageId});
 
   },
+  mounted(){
+    // this is a cheat and is bad....need to fix later with vuex
+    // document.querySelector('body').addEventListener('click', event => {
+    //   if (this.contextActive) this.contextActive = 0;
+    // });
+  },
   updated(){
     
     if(this.moduleOpen || this.pageOpen){

@@ -1,4 +1,5 @@
 module.exports = {
+	awesomeWords: require('./awesomeWords'),
 	mapUrlsToTree: require('./mapUrlsToTree'),
 	nestUrlsToTree: require('./nestUrlsToTree'),
 	diffTrees: require('./diffTrees'),

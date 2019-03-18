@@ -161,5 +161,9 @@ export default {
 
 		
 
+	},
+
+	SOCKET_LOCKTREE({ dispatch, commit, state }, payload) {
+		console.log(typeof payload, ' -- ', payload);
 	}
 }

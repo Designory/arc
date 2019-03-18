@@ -32,13 +32,17 @@ module.exports = async (arc, context) => {
 			});
 		
 			await updateAllUrls(treeToBeUpdated);
+
+			//console.log(treeToBeUpdated);
+
+			resolve();
 		
 		} catch(err) {
 			arc.log('error', err);
 			return reject();
 		}
 		
-		resolve();		
+				
 
   	});
 

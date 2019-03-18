@@ -18,6 +18,8 @@ module.exports = ArcClass => {
 			// if the list is archived, do nothing with it
 			if (configObject.archive) return this.log('info', `${configObject.listName} list is archived and will not be visible in Arc.`);
 
+			this.addFieldConfig(configObject);
+
 			this.keystonePublish.register(configObject, (StgList, ProdList, next) => {
 				// get data merged with defaults
 				const mergedData = defaults.merge(configObject);
@@ -47,8 +49,6 @@ module.exports = ArcClass => {
 		versionTickSaveHook(StgList){
 			StgList.schema.pre('save', async function(next){
 					
-				//console.log(this.modifiedPaths().length, this.modifiedPaths());
-
 				if (this.modifiedPaths().length) this.increment();
 
 				next();
@@ -61,34 +61,43 @@ module.exports = ArcClass => {
 			const self = this;
 
 			// special presave events that are designed only for the tree model
+			// TODO make work for lang
 			if (mergedData.listName == this.config.treeModel) {
 
 				StgList.schema.pre('save', async function(next){
-				
-					this.key = self.utils.slug(this.name);
+
 					if (this.keyOverride) this.keyOverride = self.utils.slug(this.keyOverride);
 
-					await buildUrls(self, this);
+					console.log('this.triggerSaveHook ==> ', this.triggerSaveHook);
 
-					next();
+					// for creating new tree items, we want to omit the typical page save hookd
+					// but we don't want this to be carried through in the database, 
+					// so we reset it after adding it to the context for post save access
+					this.stoppingPostSaveHook = this.stopPostSaveHook;
+					this.stopPostSaveHook = false;
 
-				});
-
-				// special postsave events that are designed only for the tree model
-				// TODO: move this to better spot
-				StgList.schema.pre('save', function(next){
 					this.pageDataCodeWasModified = this.isModified('pageDataCode');
+
+					
 					next();
+
 				});
 
 				StgList.schema.post('save', async function(doc){
-				
+					
+					console.log('this.stoppingPostSaveHook --> ', this.stoppingPostSaveHook)
+
+					if (this.stoppingPostSaveHook) return;
+
+					console.log('should not be happenning');
+
+					await buildUrls(self, doc);
+
 					self.io.emit('PAGECHANGE', {[doc._id]: doc});
 
 					if (this.pageDataCodeWasModified) {
 
 						try {
-
 		                    // TODO: consolidate to utils function
 		                    const loadedModules = await self.utils.getPageModules(self, JSON.parse(doc.pageDataCode), {
 		                        select:'name matchesLive existsOnLive visible state archive key __v', 
@@ -135,6 +144,16 @@ module.exports = ArcClass => {
 			}			
 		}
 
+		addFieldConfig(configObject) {
+			configObject.fieldConfig.push({
+				stopPostSaveHook: { 
+					type: this.Field.Types.Boolean,
+					hidden: true,
+					default: false
+				}
+			});
+		}
+ 
 		addModel(config, stgList, prodList) {
 			//console.log(config.listName);
 

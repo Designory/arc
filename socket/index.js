@@ -13,27 +13,73 @@ module.exports = ArcClass => {
 
                 socket.on('updateTree', async payload => {
                     
+                    // TODO: ensure `payload` is fit for function
+                    
                     try {
+
+                        console.log(1);
+
+                        //return false;
 
                         // Note: right now we are emaking a concerted effort to err on 
                         // the side of making the most immediate updates to  
-                        socket.broadcast.emit('TREECHANGE', {tree:payload});
+                        //socket.broadcast.emit('TREECHANGE', {tree:payload});
+                        socket.broadcast.emit('LOCKTREE', true);
 
-                        // TODO: ensure `payload` is fit for function
-                        //const initialRawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
-                        const updatedTree = await this.utils.bulkSetTree(this, payload);
-                        const rawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
-                        //const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
-                            
-                        console.log(updatedTree);
+                        
+                        
+                        
+                        console.log(2);
 
-                        // if updated tree array has length after update that means that there are new
-                        // items to add to the tree, for now, we are expecting only one possible new
-                        // item per `updateTree` this could soon change, though
-                        if (updatedTree.length) {
-                            console.log(updatedTree);
-                            await this.utils.createTreePage(this, updatedTree[0], 'en-us');
+                        // if ()
+
+                        // // pull new items from list
+                        // let newTreeItems = [];
+
+                        // updatedTree = updatedTree.filter(item => {
+                        //     // if undefined, we need to add to the create list 
+                        //     if (item._id === undefined) {
+                        //         delete item._id;
+                        //         newTreeItems.push(item);
+                        //         return false;
+                        //     } else {
+                        //         return true;
+                        //     }
+                        // });
+
+                        // console.log(3);
+
+                        // // if updated tree array has length after update that means 
+                        // // that there are new items to add to the tree
+                        // if (newTreeItems.length) {
+                        //     // add new items prior to bulk updates
+                        //     for (let item of newTreeItems) {
+                        //         await this.utils.createTreePage(this, item, 'en-us');
+                        //     }
+                        // }
+                        
+                        let newTreeItem = null;
+                        if (payload.undefined) {
+                            const newTreeItem = await this.utils.createTreePage(this, payload.undefined, {lang:'en-us', stopPostSaveHook:true});
+                            delete payload.undefined;
                         }
+
+                        let updatedTree = await this.utils.bulkSetTree(this, payload);
+
+                        socket.broadcast.emit('TREECHANGE', {tree:(!newTreeItem) ? payload : Object.assign(payload, {[newTreeItem._id]:newTreeItem})});
+
+                        console.log(4);
+                        return;
+                        // const rawTreeResults = await this.utils.getRawTree(this, {select:this.config.treeModelSelect, sort:'sortOrder'});
+                        // const treeResultsWithUrls = this.utils.mapUrlsToTree(rawTreeResults); 
+
+                        // console.log(treeResultsWithUrls);
+
+                        
+                        socket.broadcast.emit('LOCKTREE', false);
+
+                        console.log(5);
+
                     } catch(err) {
                         this.log('error', err);
                     }

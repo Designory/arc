@@ -15,7 +15,7 @@
         ref="slVueTree" 
         @toggle="nodeToggled" 
         @select="nodeSelected"
-        @drop=""
+        @drop="treeOrderUpdated"
         @nodecontextmenu="showContextMenu"
       >
         
@@ -24,7 +24,7 @@
             <i class="fa fa-file" v-if="node.isLeaf"></i>
             <i class="fa fa-folder" v-if="!node.isLeaf"></i>
           </span> -->
-          {{node.title}} {{node._id}}
+          {{node.title}}
         </template>
 
         <template slot="draginfo"></template>

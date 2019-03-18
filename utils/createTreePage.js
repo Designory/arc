@@ -1,11 +1,17 @@
 
-module.exports = (arc, 	updateData, lang) => {
+module.exports = (arc, 	updateData, config = {lang:null, stopPostSaveHook:true}) => {
 
 	return new Promise((resolve, reject) => {
 		
 		try {
-			
-			const treeModel = arc.utils.getTreeModel(arc, lang);
+				
+			console.log('config ---> ', config);
+
+			const treeModel = arc.utils.getTreeModel(arc, config.lang);
+
+			updateData.stopPostSaveHook = config.stopPostSaveHook;
+
+			console.log(updateData);
 
 			treeModel.create(updateData, function (pageErr, pageDoc) {
 				if (pageErr) {
@@ -19,6 +25,7 @@ module.exports = (arc, 	updateData, lang) => {
 
 		} catch(err) {
 			arc.log('error', `Error trying to update ${updateData.name}`);
+			arc.log('error', err);
 			reject();
 		}
   	});

@@ -34,7 +34,7 @@ module.exports = (req, expandedList, selected) => {
       }
    }
 
-   console.log('activeindex -->', activeIndex);
+   //console.log('activeindex -->', activeIndex);
 
    // we need to make sure that any selected page defaults to expanded parents
    if (activeIndex) {

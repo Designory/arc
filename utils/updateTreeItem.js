@@ -32,7 +32,7 @@ module.exports = (itemId, updateData, arc, lang) => {
     				return reject();
     			}
     			
-    			arc.log(`Finished saving ${itemId}`);
+    			//arc.log(`Finished saving ${itemId}`);
 
     			resolve();
 

@@ -10,9 +10,6 @@
         </action-button>
       </div>
       <div class="page-builder__top-right" v-if="!pageOpen && !moduleOpen"> 
-        <a :href="previewUrl" target="_blank" class="btn secondary">
-          Preview on Stage
-        </a>
         <button class="btn primary" @click="publishPage()">
           Publish Page
         </button>
@@ -73,6 +70,9 @@
             <pill :text="getStatusText(pageData)" :color="getStatus(pageData)"  />
           </div>
         </div>
+        <p>
+            <a :href="previewUrl" target="_blank">{{pageData.url}}</a>
+          </p>
       </div>
 
       <div class="page-builder__modules page-builder__modules-first">

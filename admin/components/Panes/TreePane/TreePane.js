@@ -13,7 +13,8 @@ export default {
       nestedTree:[],
       contextMenuIsVisible: false,
       contextMenuNode: null,
-      newNode:false
+      newNode:false,
+      test:true
     }
   },
   computed: {
@@ -72,42 +73,46 @@ export default {
       this.$refs.slVueTree.updateNode(path, {isLeaf:true, isExpanded:false});
     },
     newPage(node){
-		//this.newNode = true;
-		console.log('node.isExpanded', node.isExpanded);
 		const placement = (node.isExpanded === true && !node.isLeaf) ? 'inside' : 'after';
 		this.$refs.slVueTree.insert({node, placement:placement}, {title: `${universalUtils.awesomeWords()} New Page`, isLeaf: true});
-		//this.newNode = false;
+		
+		const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
+		if (!_.isEmpty(changeDiff)) {
+			
+			//console.log(" ==> ", changeDiff);	
+			
+			this.$socket.emit('updateTree', changeDiff);	
+
+			//this.$store.dispatch('SOCKET_TREECHANGE', {tree:{changeDiff}});
+		}	
 
     },
-    flatten(list) {
-      
-      let count = 0;
+    treeOrderUpdated(){
+    	const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
+		if (!_.isEmpty(changeDiff)) this.$socket.emit('updateTree', changeDiff);
+    },
+    flattenNodes() {
 
-      return flattenTree(list || this.nestedTree, 1);
+  		const returnArr = [];
+  		let count = 0;
 
-      function flattenTree(list, indentLevel){
-        let returnArr = [];
-          
-        for (let i = 0, len = list.length; i < len; i++){
-          
-          //console.log(list[i]);
-          returnArr.push({
-            _id: list[i]._id,
-            indentLevel: indentLevel,
-            sortOrder:count++,
-            name:list[i].title
-          });
-          
-          if (list[i].children) {
-            returnArr = returnArr.concat(flattenTree(list[i].children, indentLevel + 1))
-          } else {
-            indentLevel = 1;
-          }
-          
-        }
-        return returnArr;
-      }
+  		this.$refs.slVueTree.traverse((node, nodeModel, path) => {
+
+			returnArr.push({
+				hideFromMenu: nodeModel.hideFromMenu,
+				indentLevel: node.path.length,
+				matchesLive: nodeModel.matchesLive,
+				name: node.title,
+				sortOrder: count++,
+				_id: nodeModel._id
+			});
+
+		});
+
+    	return returnArr;
+
     }
+
   },
   beforeMount(){
 
@@ -119,21 +124,25 @@ export default {
   watch: {
     tree(newFlattTree, oldFlattTree) {
       
-      console.log('------- tree update -------');
+      //if (this.test === true) 
+      	this.nestedTree = universalUtils.nestUrlsToTree(_.cloneDeep(newFlattTree), this.getPreOpenedNodes(), this.$route.query.pageId);
 
-      this.nestedTree = universalUtils.nestUrlsToTree(_.cloneDeep(newFlattTree), this.getPreOpenedNodes(), this.$route.query.pageId);
-    },
-    nestedTree(newNestedTree, oldNestedTree) {
+      //this.test = false;
 
-		const changeDiff = universalUtils.objArrayDiff(this.flatten(newNestedTree), this.flatten(oldNestedTree));
+    }//,
+  //   nestedTree(newNestedTree, oldNestedTree) {
 
-		if (!_.isEmpty(changeDiff) && oldNestedTree.length) {
-			
-			console.log('changeDiff --> ', changeDiff);
+ 
 
-			//this.$socket.emit('updateTree', this.flatten(newNestedTree));
-		}
-    }
+		// const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
+
+		// console.log('changeDiff -->', changeDiff);
+
+
+		// if (!_.isEmpty(changeDiff) && oldNestedTree.length) {
+		// 	this.$socket.emit('updateTree', changeDiff);
+		// }
+  //   }
   },
   mounted() {
     

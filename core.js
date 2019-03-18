@@ -57,7 +57,7 @@ module.exports = function arcCore() {
 			this.config = configObject;
 
 			this.config.treeModel = this.config.treeModel || 'Tree';
-			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu url __v';
+			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu';
 			this.config.homeSlug = this.config.homeSlug || 'home';
 
 		}

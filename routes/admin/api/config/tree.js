@@ -6,6 +6,8 @@ module.exports = async (arc, req, res) => {
 	//asyncHandler(async (arc, req, res) => {
 		try {
 
+			console.log(arc.config.treeModelSelect);
+
 			const rawTreeResults = await arc.utils.getRawTree(arc, {select:arc.config.treeModelSelect, sort:'sortOrder'});
 			const treeResultsWithUrls = arc.utils.mapUrlsToTree(rawTreeResults);
 		

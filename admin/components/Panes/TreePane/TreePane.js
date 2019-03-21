@@ -33,7 +33,9 @@ export default {
       axios
         .get('/arc/api/tree')
         .then(response => { 
+
           this.$store.commit('UPDATE_TREE', response.data);
+
         }).catch(error => {
           console.log(error);
         });
@@ -73,18 +75,15 @@ export default {
       this.$refs.slVueTree.updateNode(path, {isLeaf:true, isExpanded:false});
     },
     newPage(node){
-		const placement = (node.isExpanded === true && !node.isLeaf) ? 'inside' : 'after';
-		this.$refs.slVueTree.insert({node, placement:placement}, {title: `${universalUtils.awesomeWords()} New Page`, isLeaf: true});
-		
-		const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
-		if (!_.isEmpty(changeDiff)) {
-			
-			//console.log(" ==> ", changeDiff);	
-			
-			this.$socket.emit('updateTree', changeDiff);	
+  		const placement = (node.isExpanded === true && !node.isLeaf) ? 'inside' : 'after';
+  		this.$refs.slVueTree.insert({node, placement:placement}, {title: `${universalUtils.awesomeWords()} New Page`, isLeaf: true, isExpanded:true});
+  		
+  		const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
+  		if (!_.isEmpty(changeDiff)) {
+			 console.log('dlhd lskjhdkjhkj hjkhsfjkhdfkj hjdfh');
+			 this.$socket.emit('updateTree', changeDiff);	
 
-			//this.$store.dispatch('SOCKET_TREECHANGE', {tree:{changeDiff}});
-		}	
+		  }	
 
     },
     treeOrderUpdated(){
@@ -123,26 +122,10 @@ export default {
   },
   watch: {
     tree(newFlattTree, oldFlattTree) {
-      
-      //if (this.test === true) 
+    	
       	this.nestedTree = universalUtils.nestUrlsToTree(_.cloneDeep(newFlattTree), this.getPreOpenedNodes(), this.$route.query.pageId);
 
-      //this.test = false;
-
-    }//,
-  //   nestedTree(newNestedTree, oldNestedTree) {
-
- 
-
-		// const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
-
-		// console.log('changeDiff -->', changeDiff);
-
-
-		// if (!_.isEmpty(changeDiff) && oldNestedTree.length) {
-		// 	this.$socket.emit('updateTree', changeDiff);
-		// }
-  //   }
+    }
   },
   mounted() {
     

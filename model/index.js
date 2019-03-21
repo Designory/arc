@@ -68,8 +68,6 @@ module.exports = ArcClass => {
 
 					if (this.keyOverride) this.keyOverride = self.utils.slug(this.keyOverride);
 
-					console.log('this.triggerSaveHook ==> ', this.triggerSaveHook);
-
 					// for creating new tree items, we want to omit the typical page save hookd
 					// but we don't want this to be carried through in the database, 
 					// so we reset it after adding it to the context for post save access
@@ -77,19 +75,14 @@ module.exports = ArcClass => {
 					this.stopPostSaveHook = false;
 
 					this.pageDataCodeWasModified = this.isModified('pageDataCode');
-
 					
 					next();
 
 				});
 
 				StgList.schema.post('save', async function(doc){
-					
-					console.log('this.stoppingPostSaveHook --> ', this.stoppingPostSaveHook)
 
 					if (this.stoppingPostSaveHook) return;
-
-					console.log('should not be happenning');
 
 					await buildUrls(self, doc);
 
@@ -127,13 +120,9 @@ module.exports = ArcClass => {
 				});
 
 				StgList.schema.post('save', async function(doc){
-					//console.log('doc.matchesLive -> ', {[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})})
-
 					// only trigger an update if the item is not new
 					// new items receive thier own special emit via the page change trigger
 					if (!this.wasNew) self.io.emit('MODULECHANGE', {_id:this._id, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
-
-					//next();
 
 				});
 

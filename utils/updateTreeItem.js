@@ -21,7 +21,6 @@ module.exports = (itemId, updateData, arc, lang) => {
 			}
 
 			const model = arc.utils.getTreeModel(arc, lang);
-			//const properUrl = item.properUrl || 
 
 			// updates data without triggering any publishing hooks
     		model.update({_id:itemId}, updateData, {}, (err) => {

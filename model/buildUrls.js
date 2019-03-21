@@ -5,6 +5,8 @@ module.exports = async (arc, context) => {
 
 	return new Promise(async (resolve, reject) => {
 		
+		console.log('buildUrls.js');
+
 		try {
 
 			// get all site tree documents
@@ -32,8 +34,6 @@ module.exports = async (arc, context) => {
 			});
 		
 			await updateAllUrls(treeToBeUpdated);
-
-			//console.log(treeToBeUpdated);
 
 			resolve();
 		

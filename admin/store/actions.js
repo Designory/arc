@@ -7,9 +7,6 @@ export default {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 
-
-		console.log(payload);
-
 	    // if message value is an array, straight replace
 		if (Array.isArray(payload.tree)) {
 
@@ -85,18 +82,9 @@ export default {
 	SOCKET_MODULECHANGE({ dispatch, commit, state }, payload) {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
-		
-		if (!state.currentModulesData) return false;
-		
+				
 		// only continue if the user has the current page selected
-		let inCurrentModule = false;
-		for (let key in payload) {
-			if (state.currentModulesData.some(item => item._id === key)) {
-				inCurrentModule = true;
-				break;
-			}
-		}
-		if (inCurrentModule) return false;
+		if (!state.route.query || !state.route.query.pageId || state.route.query.pageId !== payload._id) return false;
 
 		// if message value is an array, straight replace
 		if (Array.isArray(payload.modules)) {

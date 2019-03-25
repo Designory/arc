@@ -21,8 +21,11 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true, 
 	  		});
 
   			Promise.all(promises).then(function(modules) {
-  				
-      			resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+					
+					resolve(modules)
+
+					// TODO: This line was here before, but broke module consolidation. Leaving this here for now.
+      		// resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
 
     		}).catch(function(err) {
       			arc.log('error', err);

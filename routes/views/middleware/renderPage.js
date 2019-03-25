@@ -10,7 +10,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 		//return res.json(res.locals);;
 		//console.log(view);
 
-		view.render('index');
+		return view.render('index');
 		//
 		//
 		//

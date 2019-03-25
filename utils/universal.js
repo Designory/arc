@@ -3,5 +3,9 @@ module.exports = {
 	diffTrees: require('./diffTrees'),
 	modulesToData: require('./convertModulesToData'),
 	removeModuleFromList: require('./removeModuleFromList'),
-	hideTreeChildrenByIds: require('./hideTreeChildrenByIds')
+	hideTreeChildrenByIds: require('./hideTreeChildrenByIds'),
+	objectDiff: require('./objectDiff'),
+	objArrayDiff: require('./objArrayDiff'),
+	encodeModuleList: require('./encodeModuleList'),
+	decodeModuleList: require('./decodeModuleList')
 }

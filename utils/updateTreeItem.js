@@ -8,8 +8,6 @@ module.exports = (itemId, updateData, arc) => {
 		delete updateData._id;
 	}
 
-	console.log(updateData);
-
 	return new Promise((resolve, reject) => {
 		
 		try {

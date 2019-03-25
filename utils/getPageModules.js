@@ -4,9 +4,7 @@
 // 		onRender,
 // 		populate
 // 	}
-module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true}) => {
-
-	console.log(reqConfig);
+module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true, decode:false, hashify:false}) => {
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -23,7 +21,9 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 	  		});
 
   			Promise.all(promises).then(function(modules) {
-      			resolve(modules);
+  				
+      			resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+
     		}).catch(function(err) {
       			arc.log('error', err);
       			resolve([]);
@@ -37,6 +37,8 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 
 
 	async function populateModule(item) {
+
+		//console.log(item);
 
 		return new Promise(async (resolve, reject) => {
 
@@ -66,6 +68,9 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true})
 				
 				// custom select
 				if (itemConfig.select) itemQuery.select(itemConfig.select);
+
+				// custom select
+				if (itemConfig.lean) itemQuery.lean();
 
 				itemQuery.exec((err, results) => {
 				

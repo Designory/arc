@@ -8,7 +8,7 @@ module.exports = async (arc, req, res) => {
 		const cacheKey = `api__modules__${req.params._id}`;
 		const cachedModules = arc.cache.get(cacheKey);
 
-		if (cachedModules !== undefined){
+		if (cachedModules !== undefined && 3 === 5){
   			
   			return res.apiResponse(cachedModules);
 		
@@ -16,9 +16,11 @@ module.exports = async (arc, req, res) => {
 
 			const currentPageModel = await arc.utils.getRawTree(arc, {'_id': req.params._id, select:'pageDataCode'});
 			const loadedModules = await arc.utils.getPageModules(arc, currentPageModel.pageDataCode, {
-				select:'name matchesLive visible state archive key __v', 
+				select:'name matchesLive existsOnLive visible state archive key __v', 
 				onRender:null, 
-				consolidateModules:false
+				consolidateModules:false,
+				lean:true,
+				decode: true
 			});
 
 			arc.cache.set(cacheKey, loadedModules, function( err, success ){

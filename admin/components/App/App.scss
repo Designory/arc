@@ -81,6 +81,7 @@ strong {
 .arc-body {
   height: calc(100vh - #{$headerHeight});
   width: calc(100% - #{$controlsWidth});
+  background:#f2f2f2;
 }
 
 .sidebar {

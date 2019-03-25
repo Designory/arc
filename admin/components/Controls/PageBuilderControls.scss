@@ -4,7 +4,7 @@
 
   &__controls {
     align-items: center;
-    border-bottom: 1px solid $dividerColor;
+    border-bottom: 1px solid #e8e8e8;
     display: flex;
     height: $headerHeight;
     justify-content: space-around;
@@ -15,37 +15,21 @@
   }
 
   &__controls-item {
-    position:relative;
     align-items: center;
-    background-color: $arcGray;
-    border-right: 1px solid $dividerColor;
+    background-color: #fff;
     cursor: pointer;
     display: flex;
     font-size: 12px;
-    font-weight: 800;
+    color:#999ea2;
+    font-weight: 700;
     height: 100%;
     justify-content: center;
     text-transform: uppercase;
-    transition: background-color 0.2s ease-in-out;
     width: 100%;
     position:relative;
-
-    &:last-child {
-      border: none;
-    }
-
   }
 
   &:hover, .router-link-active {
-    background-color: white;
-    &:after {
-      content:"";
-      position:absolute;
-      background: #fff;
-      bottom:-1px;
-      left:0;
-      right:0;
-      height:1px;
-    }
+    color:#000;
   }
 }

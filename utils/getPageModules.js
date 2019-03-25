@@ -4,7 +4,13 @@
 // 		onRender,
 // 		populate
 // 	}
-module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true, decode:false, hashify:false}) => {
+module.exports = async (arc, pageModules, reqConfig) => {
+
+	reqConfig = {
+		consolidateModules: reqConfig.consolidateModules || false,
+		decode: reqConfig.decode || false,
+		hashify: reqConfig.hashify || false
+	}
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -21,11 +27,12 @@ module.exports = async (arc, pageModules, reqConfig = {consolidateModules:true, 
 	  		});
 
   			Promise.all(promises).then(function(modules) {
-					
-					resolve(modules)
 
-					// TODO: This line was here before, but broke module consolidation. Leaving this here for now.
-      		// resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+					if(reqConfig.consolidateModules){
+						resolve(modules)
+					} else {
+						resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+					}
 
     		}).catch(function(err) {
       			arc.log('error', err);

@@ -4,10 +4,10 @@ const keystone = require('keystone');
 const keystonePublish = require('keystone-publish');
 const dotenv = require('dotenv');
 const _ = require('lodash');
-const arcRouter = require('./routes/admin/');
-const viewRouter = require('./routes/views/');
-const logger = require('./logging/');
-const utilityFn = keystone.importer(__dirname)('./utils');
+const arcRouter = require('../routes/admin/');
+const viewRouter = require('../routes/views/');
+const logger = require('../logging/');
+const utilityFn = keystone.importer(__dirname)('../utils');
 
 dotenv.load();
 
@@ -47,7 +47,9 @@ module.exports = function arcCore() {
 			this.setConfig(configObject);
 
 			this.keystone.init(configObject);
-
+			
+			this.langInit(configObject);
+			
 			this.cacheInit();
 
 		}
@@ -76,8 +78,8 @@ module.exports = function arcCore() {
 					// without needing any ajax calls, thus, increasing 
 					// performance and elliminating race condition 
 					// complexities
-					const settingsJsFile = path.join(__dirname, 'admin', 'settings.json');
-					fs.writeFileSync(settingsJsFile, JSON.stringify({language:this.config.language || null, app:this.config.adminUi, model:this.getModels()}));
+					const settingsJsFile = path.join(__dirname, '../admin', 'settings.json');
+					fs.writeFileSync(settingsJsFile, JSON.stringify({lang:this.config.lang || null, app:this.config.adminUi, model:this.getModels()}));
 
 			    }
 			});

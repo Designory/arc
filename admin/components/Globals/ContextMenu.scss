@@ -99,8 +99,55 @@
 			.active & {
 	  			animation:showContextBottom .2s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
 	  		}	
-		}
+		  }
     }
+    &.context-from-select {
+      position: absolute;
+      top: 44px;
+      z-index: 10;
+      transform: translateX(0);
+      right: 0;
+      min-width: 100%;      
+      ul {
+        min-width:100%;
+        border-top-left-radius:0;
+        border-top-right-radius:0;
+        box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.06);
+        width:auto;
+      }
+
+      &:before, &:after {
+        display:none;
+      }
+
+      .active & {
+          animation:showSelectContext .2s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
+          ul {
+            animation:showSelectContextUl .2s normal forwards cubic-bezier(0.71, 0.01, 1, 1);
+          }
+        } 
+      }
+    
+}
+
+@keyframes showSelectContextUl {
+  0%   {
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.16);
+  }
+}
+
+@keyframes showSelectContext {
+  0%   {
+    opacity: .7;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1; 
+    transform:translateY(0);
+  }
 }
 
 @keyframes showContextBottom {

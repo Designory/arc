@@ -5,12 +5,20 @@
         Arc
       </router-link> 
     </div>
-   <!--  <div class="arc-header__right">
-      <button v-on:click="showBuildModal" class="btn btn--white btn--small">
+    <div class="arc-header__right">
+      <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">
         Build
-      </button>
+      </button> -->
+      <div v-if="langs.length" @click="langSelectActive = !langSelectActive" class="arc-header__lang-select" :class="{active:langSelectActive}">
+        <div class="">{{activeLang.label}}</div>
+          <div v-if="langSelectActive" class="context-menu context-from-select">
+          <ul>
+            <li v-for="lang in langs" @click="changeLang(lang)">{{lang.label}}</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="arc-header__build-modal-container" v-on:click="closeBuildModal" data-build-modal>
+    <!-- <div class="arc-header__build-modal-container" v-on:click="closeBuildModal" data-build-modal>
       <div class="arc-header__build-modal">
         <div class="arc-header__build-modal-title">
           Build
@@ -22,8 +30,8 @@
         <div class="arc-header__build-modal-body">
           Build information will go here
         </div>
-      </div>
-    </div> -->
+      </div> -->
+    </div>
   </header>
 </template>
 

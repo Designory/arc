@@ -3,8 +3,6 @@ module.exports = (pageId, listName, updateData, arc) => {
 
 	let duplicateId = updateData._id || false;
 
-	console.log(duplicateId)
-
 	if (duplicateId) {
 		delete updateData._id;
 	}

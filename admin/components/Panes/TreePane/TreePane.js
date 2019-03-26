@@ -68,8 +68,11 @@ export default {
       $contextMenu.style.top = event.clientY + 'px';
 
     },
-    makeNodeParent(path) {
-      this.$refs.slVueTree.updateNode(path, {isLeaf:false, isExpanded:false});
+    makeNodeParent(node) {
+      this.$refs.slVueTree.updateNode(node.path, {isLeaf:false, isExpanded:true});
+
+      this.newPage(node);
+
     },
     unMakeNodeParent(path) {
       this.$refs.slVueTree.updateNode(path, {isLeaf:true, isExpanded:false});

@@ -17,6 +17,8 @@ module.exports = ArcClass => {
                     
                     try {
 
+                        // so far, we are not using LOCKTREE, but we have it here
+                        // for when the time is right to add it
                         socket.broadcast.emit('LOCKTREE', true);
                         
                         // new items can only be added one call at a time, 
@@ -24,8 +26,6 @@ module.exports = ArcClass => {
                         // from the arc tree
                         // eventually, we need to have the frontend generate temp keys so that we 
                         // can bulk generate new pages as needed
-    
-
                         let newTreeItem = null;
                         if (payload.undefined) {
                             newTreeItem = await this.utils.createTreePage(this, payload.undefined, {lang:'en-us', stopPostSaveHook:true});
@@ -33,8 +33,6 @@ module.exports = ArcClass => {
                         }
 
                         let updatedTree = await this.utils.bulkSetTree(this, payload);
-
-                        console.log('updatedTree ===>> ', {[newTreeItem._id]:newTreeItem});
 
                         socket.broadcast.emit('TREECHANGE', {tree:(!newTreeItem) ? payload : Object.assign(payload, {[newTreeItem._id]:newTreeItem})});
                         

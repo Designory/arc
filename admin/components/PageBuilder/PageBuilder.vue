@@ -40,7 +40,7 @@
         <div class="page-builder__row">
           <div class="page-builder__cell page-builder__title" >
             <router-link
-              :to="{path: '/page-builder/tree', query: { pageId: pageId, pageOpen: true}}" 
+              :to="{path: `/${this.$route.params.lang || null}/page-builder/tree`, query: { pageId: pageId, pageOpen: true}}" 
               tag="span" class="page-builder__title--text">{{(moduleEditName) ? moduleEditName : pageData.name}}
             </router-link>
           </div>
@@ -49,7 +49,7 @@
             <div v-if="contextActive === pageData._id" class="context-menu context-from-button" :class="contextPosition">
               <ul>
                 <router-link
-                  :to="{path: '/page-builder/tree', query: { pageId: pageId, pageOpen: true}}" 
+                  :to="{path: `/${this.$route.params.lang || null}/page-builder/tree, query: { pageId: pageId, pageOpen: true}}" 
                   tag="li">Edit
                 </router-link>
                 <li v-if="pageData.existsOnLive" @click="unPublishPage()">Hide on live site</li>
@@ -140,7 +140,7 @@
                 </div>
                 <div class="page-builder__cell page-builder__title" >
                   <router-link 
-                    :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}"
+                    :to="{path: `/${this.$route.params.lang || null}/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}"
                     tag="div" class="page-builder__modules-list-title">
                     <span class="page-builder__title--text">{{module.name}}</span>
                   </router-link>

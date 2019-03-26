@@ -1,24 +1,38 @@
 export default {
+  data() {
+    return {
+      langSelectActive:null,
+      activeLang: (this.$store.state.globals.lang) ? this.$store.state.globals.lang.primary : null
+    }
+  },
   computed: {
-      // languages(){
-      //   return this.$store.state.globals.model.filter(item => {
-      //     return item.type.includes('module');
-      //   });
-      // }
+    langs(){
+      
+      if (!this.$store.state.globals.lang) return [];
+
+      //return this.$store.state.globals.lang.secondaries;
+
+      // const langList = [this.$store.state.globals.lang.primary].concat(this.$store.state.globals.lang.secondaries)
+
+      // console.log(this.activeLang, langList);
+
+      // return [];
+
+      return [this.$store.state.globals.lang.primary]
+        .concat(this.$store.state.globals.lang.secondaries)
+        .filter(item => {
+          return this.activeLang.path !== item.path;
+        });
+    }
   },
   methods: {
-    showBuildModal(){
-      let modal = document.querySelector('[data-build-modal]'); 
-
-      modal.style.display = 'flex';
+    changeLang(lang){
+      this.activeLang = lang;
+      //this.state.route.params
+      this.$router.push({params:Object.assign(this.$store.state.route.params || {}, {lang:lang.path}), query:Object.assign(this.$store.state.route.query || {})});
     },
     closeBuildModal(event){
-      let modal = document.querySelector('[data-build-modal]'); 
-      let closeButton = document.querySelector('[data-close-button]');
-
-      if(event.target === modal || event.target === closeButton){
-        modal.style.display = 'none';
-      }
+      
     }
   }
 };

@@ -24,7 +24,7 @@ module.exports = (arc, config = {lean:true, select:null, _id:null, sort:'sortOrd
 			
 			if (!results) {
 				arc.log('error', 'No database results querying for building site tree.');
-				return reject('Cannot find the site tree.');
+				return reject('No results from getRawTree function.');
 			}		
 
 			return resolve(results);

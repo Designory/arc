@@ -30,8 +30,8 @@ export default new Router({
 			}
 		},
 		{
-			path: '/page-builder',
-			redirect: '/page-builder/tree',
+			path: '/:lang/page-builder',
+			redirect: '/:lang/page-builder/tree',
 			components: {
 				main: PageBuilder,
 				navigation: SideBar,
@@ -62,7 +62,7 @@ export default new Router({
 			]
 		},
 		{
-			path: '/template-view/:listName',
+			path: '/:lang/template-view/:listName',
 			name: 'templateView',
 			components: {
 				main: TemplateEditor,

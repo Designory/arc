@@ -1,4 +1,4 @@
-module.exports = (req, expandedList, selected) => {
+module.exports = (req, expandedList, selected, editOnly) => {
    
    req = [...req];
    
@@ -13,6 +13,7 @@ module.exports = (req, expandedList, selected) => {
       req[i].title = req[i].name;
       req[i].isExpanded = false;
       req[i].indentLevel = parseInt(req[i].indentLevel);
+      if (editOnly) req[i].isDraggable = false;
 
       const nextLevel = (req[i + 1]) ? parseInt(req[i + 1].indentLevel) : null;
 
@@ -33,8 +34,6 @@ module.exports = (req, expandedList, selected) => {
          activeIndex = i;
       }
    }
-
-   //console.log('activeindex -->', activeIndex);
 
    // we need to make sure that any selected page defaults to expanded parents
    if (activeIndex) {

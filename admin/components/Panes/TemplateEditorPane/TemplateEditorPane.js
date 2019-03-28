@@ -23,7 +23,7 @@ export default {
       this.moduleId = this.$route.query.moduleId;
 
       axios
-        .get(`/arc/api/${this.listName}`)
+        .get(`/arc/api/${this.listName}`, this.$store.getters.getRequestHeaders)
         .then(response => {
           this.list = response.data.data;
         }).catch(error => {

@@ -73,7 +73,7 @@ export default {
         }
       },
       previewUrl(){
-        return this.pageOrigin + this.pageData.url;
+        return this.getUrlLangPath() + this.pageOrigin + this.pageData.url;
       },
       moduleEditName(){
         if (!this.moduleId || !this.moduleData || !this.moduleData.length) return false;
@@ -196,6 +196,10 @@ export default {
 
       if (index === (this.moduleData.length - 1)) this.$el.scrollTop = this.$el.scrollHeight;
       this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
+    },
+    getUrlLangPath(){
+      if (this.$store.state.route.params.lang === null || this.$store.state.route.params.lang === 'null') return '';
+      else return `/${this.$store.state.route.params.lang}`;
     }
   },
   beforeMount(){

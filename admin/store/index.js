@@ -4,7 +4,7 @@ import createLogger from 'vuex/dist/logger';
 
 // relative imports
 import actions from './actions';
-// import getters from './getters';
+import getters from './getters';
 import mutations from './mutations';
 import state from './state';
 import navigation from './modules/navigation';
@@ -17,6 +17,7 @@ export default new Vuex.Store({
 	state,
 	mutations,
 	actions,
+	getters,
 	modules: {
 		navigation
 	},

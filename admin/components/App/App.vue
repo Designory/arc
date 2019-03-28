@@ -1,14 +1,14 @@
 <template>
   <div
     id="app"
-    class="arc-root">
+    class="arc-root" ondragstart="return false;" ondrop="return false;">
 
     <Header />
     <!-- <transition name="fade"> -->
       <router-view class="sidebar" name="navigation" />
     <!-- </transition> -->
     <!-- <transition name="fade"> -->
-      <main class="arc-body">
+      <main class="arc-body" :class="$route.name">
         <router-view name="main" :key="$route.fullPath"/>
       </main>
     <!-- </transition> -->

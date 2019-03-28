@@ -11,6 +11,7 @@ export default {
   data(){
     return {
       nestedTree:[],
+      disableContextMenu: this.$store.getters.isEditOnlyMode,
       contextMenuIsVisible: false,
       contextMenuNode: null,
       newNode:false,
@@ -60,13 +61,14 @@ export default {
     }, 
     showContextMenu(node, event) {
 
-      this.contextMenuNode = node;
-      event.preventDefault();
-      this.contextMenuIsVisible = true;
-      const $contextMenu = this.$refs.contextmenu;
-      $contextMenu.style.left = event.clientX + 'px';
-      $contextMenu.style.top = event.clientY + 'px';
-
+      if (!this.disableContextMenu) {
+        this.contextMenuNode = node;
+        event.preventDefault();
+        this.contextMenuIsVisible = true;
+        const $contextMenu = this.$refs.contextmenu;
+        $contextMenu.style.left = event.clientX + 'px';
+        $contextMenu.style.top = event.clientY + 'px';
+      }
     },
     makeNodeParent(node) {
       this.$refs.slVueTree.updateNode(node.path, {isLeaf:false, isExpanded:true});
@@ -114,7 +116,6 @@ export default {
     	return returnArr;
 
     }
-
   },
   beforeMount(){
 
@@ -126,7 +127,7 @@ export default {
   watch: {
     tree(newFlattTree, oldFlattTree) {
     	
-      	this.nestedTree = universalUtils.nestUrlsToTree(_.cloneDeep(newFlattTree), this.getPreOpenedNodes(), this.$route.query.pageId);
+      	this.nestedTree = universalUtils.nestUrlsToTree(_.cloneDeep(newFlattTree), this.getPreOpenedNodes(), this.$route.query.pageId, this.$store.getters.isEditOnlyMode);
 
     }
   },
@@ -138,6 +139,5 @@ export default {
       this.contextMenuNode = null;
     });
 
-    window.slVueTree = this.$refs.slVueTree;
   }
 };

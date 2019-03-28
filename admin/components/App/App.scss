@@ -40,30 +40,6 @@ strong {
   font-family:'Open Sans', sans-serif !important;
 }
 
-/*Modal Styles*/
-.swal2-confirm{
-  margin: 15px 5px 0;
-  padding: 10px 32px;
-  color: $arcBlue;
-  transition: all .3s ease;
-  &:hover{
-    border: 1px solid $arcBlue;
-    color: $arcBlue;
-    border-radius: 2px;
-  }
-}
-.swal2-cancel{
-  margin: 15px 5px 0;
-  padding: 10px 32px;
-  color: $mainTypographyColor;
-  transition: all .3s ease;
-  &:hover{
-    border: 1px solid $arcBlue;
-    color: $mainTypographyColor;
-    border-radius:2px;
-  }
-}
-
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
@@ -82,6 +58,11 @@ strong {
   height: calc(100vh - #{$headerHeight});
   width: calc(100% - #{$controlsWidth});
   background:#f2f2f2;
+  &.dashboard {
+    width: 100%;
+    min-height: calc(100vh - #{$headerHeight});
+    height:auto;
+  }
 }
 
 .sidebar {

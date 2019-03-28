@@ -2,7 +2,7 @@
 <div class="module-list">
   <div class="module-list__top">
     <router-link 
-      :to="{ path: '/page-builder/modules', query: {pageId: this.$route.query.pageId}}"
+      :to="{ path: `/${$store.getters.getLangPath}/page-builder/modules`, query: {pageId: this.$route.query.pageId}}"
       tag="div" class="module-list__left">
       <svg class="arrow" width="21px" height="16px" viewBox="0 0 21 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="arrow" transform="translate(2.000000, 2.000000)" stroke="#979797" stroke-width="2">

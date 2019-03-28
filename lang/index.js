@@ -25,7 +25,7 @@ module.exports = ArcClass => {
                 process.exit(1);
             }
             return {
-                primaryEditOnly:item.primaryEditOnly,
+                secondaryEditOnly:item.secondaryEditOnly,
                 globalLabelsListName:item.globalLabelsList
             };
         }
@@ -35,14 +35,27 @@ module.exports = ArcClass => {
                 process.exit(1);
             }
 
-            //process.exit(1);
-
             return {
                 path:item.path,
                 primary: item.primary,
                 label: item.label || _.startCase(item.path),
                 modelPostfix: item.modelPostfix || '__' + _.upperFirst(_.camelCase(item.path))
             } 
+        }
+        getLangFromPath(path){
+            
+            if (path === null || path === 'null' || !this.config.lang) return null;
+
+            if (this.config.lang.primary[path]) return Object.assign(this.config.lang.primary[path], {isPrimary:true});
+
+            const secondaryMatch = this.config.lang.secondaries.filter(item => {
+                return item.path === path;
+            })[0];
+
+            if (secondaryMatch) return secondaryMatch;
+
+            return null;
+
         }
     };
 };

@@ -16,14 +16,21 @@ import TemplateEditorPane from '../components/Panes/TemplateEditorPane/TemplateE
 
 import settings from '../settings.json';
 
-// import routeUtil from './helpers';
-
 Vue.use(Router);
 
 export default new Router({
 	routes: [
 		{
 			path: '/',
+			name:'dashboard',
+			components: {
+				main: LandingScreen,
+				navigation: null
+			}
+		},
+		{
+			path: '/:lang/',
+			name:'dashboard',
 			components: {
 				main: LandingScreen,
 				navigation: null
@@ -77,29 +84,6 @@ export default new Router({
 					}
 				},
 			]
-		},
-		// {
-		// 	path: '/:pageID/',
-		// 	components: {
-		// 		body: PageView,
-		// 		// navigation: ModuleNavigation
-		// 	}
-		// }
-		// {
-		// 	path: '/:pageID',
-		// 	component: ModuleListView,
-		// 	children: [
-		// 		{
-		// 			path: ':moduleID',
-		// 			component: ModuleView
-		// 		}
-		// 	]
-		// },
-		// { path: '/:application', component: AppBody },
-		// { path: '/:application/entity/:listId', component: AppBody },
-		// { path: '/:application/entity/:listId/:listMetaId', component: AppBody },
-		// { path: `/:application${routeUtil.getRoutes(1)}`, component: AppBody },
-		// { path: `/:application${routeUtil.getRoutes(2)}`, component: AppBody },
-		// { path: `/:application${routeUtil.getRoutes(3)}`, component: AppBody }
+		}
 	]
 });

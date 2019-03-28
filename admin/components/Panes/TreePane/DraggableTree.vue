@@ -16,7 +16,7 @@
           
           <router-link 
             tag="span" 
-            :to="{path: `/page-builder/tree`, query: { pageId : item._id} }"
+            :to="{path: `/${$store.getters.getLangPath}/page-builder/tree`, query: { pageId : item._id} }"
             class="tree__right-click-area"> 
             
             {{item.name}}

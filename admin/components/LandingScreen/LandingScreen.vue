@@ -1,7 +1,10 @@
 <template>
 	<div class="landing-screen">
 		<ul class="landing-screen__list">
-			<router-link class="landing-screen__list-item" tag="li" to="/page-builder">
+			<router-link 
+				class="landing-screen__list-item" 
+				tag="li" 
+				:to="{ path: `/${$store.getters.getLangPath}/page-builder`}">
 				Page Builder
 			</router-link>
 		</ul>
@@ -10,8 +13,12 @@
 				{{item.title}}
 			</h6>
 			<ul class="landing-screen__list">
-				<router-link v-for="list in item.lists" :key="list" class="landing-screen__list-item" tag="li" 
-										:to="{ path: `/template-view/${list}`}">
+				<router-link 
+					v-for="list in item.lists" 
+					:key="list" 
+					class="landing-screen__list-item" 
+					tag="li" 
+					:to="{ path: `/${$store.getters.getLangPath}/template-view/${list}`}">
 					{{list}}
 				</router-link>
 			</ul>

@@ -9,7 +9,7 @@
       <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">
         Build
       </button> -->
-      <div v-if="langs.length" @click="langSelectActive = !langSelectActive" class="arc-header__lang-select" :class="{active:langSelectActive}">
+      <div v-if="langs.length && activeLang" @click="langSelectActive = !langSelectActive" class="arc-header__lang-select" :class="{active:langSelectActive}">
         <div class="">{{activeLang.label}}</div>
           <div v-if="langSelectActive" class="context-menu context-from-select">
           <ul>

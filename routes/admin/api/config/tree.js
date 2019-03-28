@@ -2,6 +2,9 @@ const asyncHandler = require('express-async-handler');
 
 module.exports = async (arc, req, res) => {
 
+	//console.log('all --> ', req.headers);
+	console.log('one --> ', arc.getLangFromPath(req.header('Content-Language')));
+
 	// temp workaround to handler issue
 	//asyncHandler(async (arc, req, res) => {
 		try {

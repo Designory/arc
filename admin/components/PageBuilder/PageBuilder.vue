@@ -40,7 +40,7 @@
         <div class="page-builder__row">
           <div class="page-builder__cell page-builder__title" >
             <router-link
-              :to="{path: `/${this.$route.params.lang || null}/page-builder/tree`, query: { pageId: pageId, pageOpen: true}}" 
+              :to="{path: `/${$store.getters.getLangPath}/page-builder/tree`, query: { pageId: pageId, pageOpen: true}}" 
               tag="span" class="page-builder__title--text">{{(moduleEditName) ? moduleEditName : pageData.name}}
             </router-link>
           </div>
@@ -49,14 +49,14 @@
             <div v-if="contextActive === pageData._id" class="context-menu context-from-button" :class="contextPosition">
               <ul>
                 <router-link
-                  :to="{path: `/${this.$route.params.lang || null}/page-builder/tree, query: { pageId: pageId, pageOpen: true}}" 
+                  :to="{path: `/${$store.getters.getLangPath}/page-builder/tree`, query: { pageId: pageId, pageOpen: true}}" 
                   tag="li">Edit
                 </router-link>
-                <li v-if="pageData.existsOnLive" @click="unPublishPage()">Hide on live site</li>
+                <li v-if="pageData.existsOnLive && !$store.getters.isEditOnlyMode" @click="unPublishPage()">Hide on live site</li>
                 <li @click="publishPage()">Publish to live site</li>
-                <li>Make a copy</li>
                 <div class="spacer"></div>
                 <action-button
+                  v-if="!$store.getters.isEditOnlyMode" 
                   :id="pageData._id" 
                   :confirmClick="removePage"
                   text="Delete"
@@ -71,7 +71,7 @@
           </div>
         </div>
         <p>
-            <a :href="previewUrl" target="_blank">{{pageData.url}}</a>
+            <a :href="previewUrl" target="_blank">{{getUrlLangPath()}}{{pageData.url}}</a>
           </p>
       </div>
 
@@ -107,7 +107,7 @@
             </div>
 
             <div class="page-builder__cell page-builder__cell--no-border page-builder__cell--width-auto">
-                <button @click="toggleAddModule()" class="page-builder__add-module" :class="{active:addModulesList}">{{(moduleData && moduleData.length) ? 'CREATE NEW MODULE' : 'CREATE FIRST MODULE'}}</button>
+                <button v-if="!$store.getters.isEditOnlyMode" @click="toggleAddModule()" class="page-builder__add-module" :class="{active:addModulesList}">{{(moduleData && moduleData.length) ? 'CREATE NEW MODULE' : 'CREATE FIRST MODULE'}}</button>
             </div>
           </div>
           
@@ -125,11 +125,12 @@
         </div>
         
         <div class="page-builder__subhead" v-if="moduleData && moduleData.length">
-          Drag modules to reorder
+          {{(!$store.getters.isEditOnlyMode) ? 'Drag modules to reorder' : 'Click to edit'}}
         </div>
         <ul class="page-builder__modules-list" ref="moduleWrapper" v-if="moduleData">
           <draggable class="module-wrapper" 
             v-model="moduleData"
+            v-bind="{disabled:this.$store.getters.isEditOnlyMode}"
             style="min-height:25px;">
 
             <li v-for="(module, index) in moduleData" ref="module" :key="module._id"
@@ -140,7 +141,7 @@
                 </div>
                 <div class="page-builder__cell page-builder__title" >
                   <router-link 
-                    :to="{path: `/${this.$route.params.lang || null}/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}"
+                    :to="{path: `/${$store.getters.getLangPath}/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}"
                     tag="div" class="page-builder__modules-list-title">
                     <span class="page-builder__title--text">{{module.name}}</span>
                   </router-link>
@@ -152,11 +153,12 @@
                       <router-link :to="{path: `/page-builder/tree/`, query: {pageId: pageId, moduleId: module._id, moduleName: modulePluralized(module._listName), moduleOpen: true}}" tag="li">
                         Edit
                       </router-link>
-                      <li v-if="module.existsOnLive" @click="unPublishModule(module._listName, module._id)">Hide on live site</li>
+                      <li v-if="module.existsOnLive && !$store.getters.isEditOnlyMode" @click="unPublishModule(module._listName, module._id)">Hide on live site</li>
                       <li v-if="!module.matchesLive" @click="publishModule(module._listName, module._id)">Publish to live site</li>
-                      <li @click="duplicateAndAddModule(module._listName, module, index, $event)">Make a copy</li>
-                      <div class="spacer"></div>
+                      <li v-if="!$store.getters.isEditOnlyMode" @click="duplicateAndAddModule(module._listName, module, index, $event)">Make a copy</li>
+                      <div v-if="!$store.getters.isEditOnlyMode" class="spacer"></div>
                       <action-button
+                        v-if="!$store.getters.isEditOnlyMode"
                         :id="module._id" 
                         :confirmClick="removeModule"
                         text="Remove"

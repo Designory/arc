@@ -7,6 +7,11 @@ export default {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 
+		console.log('treechange is triggered --> ', typeof payload.tree);
+
+		// funny enough, we might not need to worry about {lang}, 
+		// although we include it in the payload
+
 	    // if message value is an array, straight replace
 		if (Array.isArray(payload.tree)) {
 

@@ -8,8 +8,6 @@ module.exports = (req) => {
       const id = req[i].indentLevel;
       const key = req[i].keyOverride || req[i].key
       last[id] = key;
-      
-      //console.log(`${[...last.slice(0, id), key].join('/')}`)
       res[i].url = `${[...last.slice(0, id), key].join('/')}`;
    }
    return res

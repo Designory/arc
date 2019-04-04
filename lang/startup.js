@@ -1,12 +1,11 @@
 const _ = require('lodash');
-const startup = require('./startup');
 
 module.exports = ArcClass => {
     return class ArcLang extends ArcClass {
         constructor() {
             super();
         }
-
+        
         langInit(configObject){
 
             if (configObject.lang) return this.resetConfig(configObject.lang);
@@ -14,7 +13,8 @@ module.exports = ArcClass => {
         }
 
         resetConfig(configObject) {
-            console.log(this.setLangListItem(configObject.primary, true))
+
+            console.log('resetConfig(configObject)');
 
             this.config.lang = {
                 config: this.setLangConfig(configObject.config),
@@ -23,8 +23,6 @@ module.exports = ArcClass => {
                     return this.setLangListItem(item);
                 })
             };
-
-            console.log()
         }
 
         setLangConfig(item){
@@ -47,7 +45,7 @@ module.exports = ArcClass => {
             // then we do not use a prefix on the model on account of it being 
             // primary. This allows the easy conversion of a site from single to
             // multi language
-            let modelPostfix = null;
+            let modelPostfix;
             if (primary) {
                 modelPostfix = (item.modelPostfix) ? '__' + item.modelPostfix : '';
                 item.primary = true;
@@ -65,9 +63,11 @@ module.exports = ArcClass => {
 
         getLangFromPath(path){
             
+            console.log(path);
+
             if (path === null || path === 'null' || !this.config.lang) return null;
 
-            if (this.config.lang.primary.path === path) return this.config.lang.primary;
+            if (this.config.lang.primary[path]) return Object.assign(this.config.lang.primary[path], {isPrimary:true});
 
             const secondaryMatch = this.config.lang.secondaries.filter(item => {
                 return item.path === path;
@@ -85,10 +85,6 @@ module.exports = ArcClass => {
 
         removeSecondaryLangTreeItems(_id) {
             // TDOD: lang make the magic all happen!
-        }
-
-        multilangStartup(){
-
         }
     };
 };

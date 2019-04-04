@@ -17,18 +17,15 @@ module.exports = async (arc, treeItems, lang) => {
 			} else {
 
 				for (let key in treeItems) {
+
 					promises.push(arc.utils.updateTreeItem(key, treeItems[key], arc, lang));
 				}
 			}
 	  		
 
   			Promise.all(promises).then(function(modules) {
-      			
-      			//console.log('Promise.all(promises).then(function(modules)');
-      			//console.log(modules);
-
       			resolve(modules.filter(item => {
-      				return item && item !== 'undefined';  
+      				return item && item !== 'undefined' && item._id !== 'undefined';  
       			}));
     		}).catch(function(err) {
       			arc.log('error', err);

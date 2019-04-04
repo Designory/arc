@@ -1,5 +1,10 @@
 
-module.exports = (arc, 	updateData, config = {lang:null, stopPostSaveHook:true}) => {
+module.exports = (arc, 	updateData, config) => {
+
+	config = Object.assign({
+		lang:null,
+		stopPostSaveHook:true
+	}, config);
 
 	return new Promise((resolve, reject) => {
 		

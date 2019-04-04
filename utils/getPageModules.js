@@ -6,11 +6,21 @@
 // 	}
 module.exports = async (arc, pageModules, reqConfig) => {
 
-	reqConfig = {
-		consolidateModules: reqConfig.consolidateModules || false,
-		decode: reqConfig.decode || false,
-		hashify: reqConfig.hashify || false
-	}
+	reqConfig = Object.assign({
+		consolidateModules: false,
+		decode: false,
+		hashify: false,
+	}, reqConfig);
+
+	// reqConfig can also receive:
+	// 		onRender
+	// 		lean
+	// 		select
+	// 		customQuery
+	// 		populate
+	// 		archive
+	// 		...and maybe more?
+	// called at `populateModule(item)` below
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -28,11 +38,11 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
   			Promise.all(promises).then(function(modules) {
 
-					if(reqConfig.consolidateModules){
-						resolve(modules)
-					} else {
-						resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
-					}
+				if (reqConfig.consolidateModules){
+					resolve(modules)
+				} else {
+					resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+				}
 
     		}).catch(function(err) {
       			arc.log('error', err);
@@ -45,12 +55,15 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
   	});
 
-
 	async function populateModule(item) {
 
 		return new Promise(async (resolve, reject) => {
 
+			//return resolve();
+
 			const modelConfig = arc.getModels(item.moduleName);
+
+			//console.log(modelConfig.onRender);
 
 			if (!modelConfig) {
 				arc.log('error', 'Cannot get models for a module. Be sure that all models are registered with `Arc.register(...)`');

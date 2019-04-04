@@ -48,8 +48,10 @@ export default {
       
     }
   },
-  create(){
+  beforeCreate(){
     
+    console.log(this.$store.getters.getRequestHeaders);
+
     axios.defaults.headers = this.$store.getters.getRequestHeaders;
 
   }

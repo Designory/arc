@@ -1,5 +1,5 @@
 
-module.exports = (pageId, listName, updateData, arc) => {
+module.exports = (pageId, listName, updateData, lang, arc) => {
 
 	let duplicateId = updateData._id || false;
 
@@ -39,7 +39,6 @@ module.exports = (pageId, listName, updateData, arc) => {
 					} else {
 
 						const index = pageDataCode.findIndex(item => {
-							console.log(typeof item.itemIds[0], typeof duplicateId.toString());
 							return item.itemIds[0] === duplicateId.toString();
 						});
 

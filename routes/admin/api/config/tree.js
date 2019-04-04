@@ -2,17 +2,15 @@ const asyncHandler = require('express-async-handler');
 
 module.exports = async (arc, req, res) => {
 
-	//console.log('all --> ', req.headers);
-	console.log('one --> ', arc.getLangFromPath(req.header('Content-Language')));
+	const langObj = arc.getLangFromPath(req.header('Content-Language'));
 
 	// temp workaround to handler issue
 	//asyncHandler(async (arc, req, res) => {
 		try {
 
-			console.log(arc.config.treeModelSelect);
-
-			const rawTreeResults = await arc.utils.getRawTree(arc, {select:arc.config.treeModelSelect, sort:'sortOrder'});
-			const treeResultsWithUrls = arc.utils.mapUrlsToTree(rawTreeResults);
+			//console.log(arc.config.treeModelSelect);
+			const rawTreeResults = await arc.utils.getRawTree(arc, {select:arc.config.treeModelSelect, sort:'sortOrder', lang:langObj});
+			const treeResultsWithUrls = arc.utils.mapUrlsToTree(rawTreeResults, {lang:langObj});
 		
 			return res.apiResponse(treeResultsWithUrls);
 		

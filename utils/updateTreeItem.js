@@ -3,7 +3,7 @@
 module.exports = (itemId, updateData, arc, lang) => {
 
 	return new Promise((resolve, reject) => {
-			
+		
 		try {
 
 			// if no id is supplied, we must have a new item

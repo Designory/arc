@@ -17,6 +17,8 @@ module.exports = ArcClass => {
                     
                     try {
 
+                        const langObj = this.getLangFromPath(payload.lang);
+
                         // so far, we are not using LOCKTREE, but we have it here
                         // for when the time is right to add it
                         socket.broadcast.emit('LOCKTREE', true);
@@ -27,16 +29,20 @@ module.exports = ArcClass => {
                         // eventually, we need to have the frontend generate temp keys so that we 
                         // can bulk generate new pages as needed
                         let newTreeItem = null;
-                        if (payload.undefined) {
-                            newTreeItem = await this.utils.createTreePage(this, payload.undefined, {lang:'en-us', stopPostSaveHook:true});
+                        if (payload.data.undefined) {
+                            newTreeItem = await this.utils.createTreePage(this, payload.data.undefined, {lang:langObj, stopPostSaveHook:true});
                             delete payload.undefined;
                         }
 
-                        let updatedTree = await this.utils.bulkSetTree(this, payload);
+                        if (langObj) paload.lang = langObj;
 
-                        socket.broadcast.emit('TREECHANGE', {tree:(!newTreeItem) ? payload : Object.assign(payload, {[newTreeItem._id]:newTreeItem})});
+                        let updatedTree = await this.utils.bulkSetTree(this, payload.data, langObj);
+
+                        socket.broadcast.emit('TREECHANGE', {lang: langObj, tree:(!newTreeItem) ? payload.tree : Object.assign(payload.tree, {[newTreeItem._id]:newTreeItem})});
                         
                         socket.broadcast.emit('LOCKTREE', false);
+
+                        if (newTreeItem) socket.emit('TREECHANGE', {lang: langObj, tree:{[newTreeItem._id]:newTreeItem}});
 
                     } catch(err) {
                         this.log('error', err);
@@ -46,8 +52,10 @@ module.exports = ArcClass => {
 
                 socket.on('createAndAddModule', async payload => {
 
+                    const langObj = this.getLangFromPath(payload.lang);
+
                     if (!payload.listName) return this.log('error', '`payload.listName` is required.');
-                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`${this.utils.awesomeWords()} New Module`}, this);
+                    await this.utils.createAndAddModuleItem(payload.pageId, payload.listName, {name:`${this.utils.awesomeWords()} New Module`}, langObj, this);
 
                 }); 
 
@@ -56,6 +64,7 @@ module.exports = ArcClass => {
                 socket.on('duplicateAndAddModule', async payload => {
                     
                     // TODO: support multiples in an array for bulk duplicate    
+                    const langObj = this.getLangFromPath(payload.lang);
 
                     try {
 
@@ -98,11 +107,13 @@ module.exports = ArcClass => {
                 socket.on('removePage', async payload => {
                     // TODO: add function to ensure proper payload
 
+                    const langObj = this.getLangFromPath(payload.lang);
+
                     // LANG: treeModelSelect will become a function to pass in lang
-                    const treeDeleteItem = await this.utils.getRawTree(this, {_id:payload.pageId, select:this.config.treeModelSelect, lean:false});
+                    const treeDeleteItem = await this.utils.getRawTree(this, {_id:payload.pageId, select:this.config.treeModelSelect, lean:false, lang:langObj});
 
                     treeDeleteItem.remove((err) => {
-
+                        if (err) this.log('error', err);
                     });
 
                 });
@@ -110,11 +121,13 @@ module.exports = ArcClass => {
 
                 socket.on('publishItem', async payload => {
                     // TODO: add function to ensure proper payload
+                    const langObj = this.getLangFromPath(payload.lang);
+
                     const publishObj = {
                         listName:payload.listName || null, 
                         _id:payload._id, 
                         publish:true, 
-                        lang:payload.lang || null
+                        lang:langObja || null
                     }
 
                     await this.utils.publishUnPublishItem(publishObj, this);
@@ -123,11 +136,13 @@ module.exports = ArcClass => {
 
                 socket.on('unPublishItem', async payload => {
                     // TODO: add function to ensure proper payload
+                    const langObj = this.getLangFromPath(payload.lang);
+                    
                     const publishObj = {
                         listName:payload.listName || null, 
                         _id:payload._id, 
                         publish:false, 
-                        lang:payload.lang || null
+                        lang:langObj || null
                     }
 
                     await this.utils.publishUnPublishItem(publishObj, this);
@@ -137,9 +152,10 @@ module.exports = ArcClass => {
                 socket.on('updateModules', async payload => {
                     // TODO: add function to ensure proper payload
                     
-                    const modules = payload.modules.filter(item => {
-                        console.log(item);
-                    });
+                    // not sure what this was supposed to be doing....commenting out for now
+                    // const modules = payload.modules.filter(item => {
+                    //     console.log(item);
+                    // });
 
                     await this.utils.setModuleOrder(payload._id, null, payload.modules, this);
 

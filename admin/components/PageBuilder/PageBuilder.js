@@ -68,7 +68,7 @@ export default {
         set(modules) {
           
           this.$store.commit('UPDATE_MODULE', modules);  // direct commit so that there update delay and glitch
-          this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+          this.$socket.emit('updateModules', {_id:this.pageId, modules:modules, lang:this.$store.getters.getLangObjFromPath});
           
         }
       },
@@ -126,7 +126,7 @@ export default {
       });
 
       this.$store.commit('UPDATE_MODULE', modules); // direct commit so that there is not a delay
-      this.$socket.emit('updateModules', {_id:this.pageId, modules:modules});
+      this.$socket.emit('updateModules', {_id:this.pageId, modules:modules, lang:this.$store.getters.getLangObjFromPath});
 
     },
     getStatusText(item){
@@ -155,23 +155,23 @@ export default {
     removePage(moduleId){
       
       this.$store.commit('UPDATE_PAGE', Object.assign({}, this.$store.state.currentModulesData, {_deleting:true}));
-      this.$socket.emit('removePage', {pageId:this.pageId, lang:null});
+      this.$socket.emit('removePage', {pageId:this.pageId, lang:this.$store.getters.getLangObjFromPath});
       
     },
     publishPage(){
-      this.$socket.emit('publishItem', {_id:this.pageId});
+      this.$socket.emit('publishItem', {_id:this.pageId, lang:this.$store.getters.getLangObjFromPath});
     },
     publishModule(listName, moduleId){
-      this.$socket.emit('publishItem', {_id:moduleId, listName:listName});
+      this.$socket.emit('publishItem', {_id:moduleId, listName:listName, lang:this.$store.getters.getLangObjFromPath});
     },
     unPublishPage(){
-      this.$socket.emit('unPublishItem', {_id:this.pageId});
+      this.$socket.emit('unPublishItem', {_id:this.pageId, lang:this.$store.getters.getLangObjFromPath});
     },
     unPublishModule(listName, moduleId){
-      this.$socket.emit('unPublishItem', {_id:moduleId, listName:listName});
+      this.$socket.emit('unPublishItem', {_id:moduleId, listName:listName, lang:this.$store.getters.getLangObjFromPath});
     },
     hideOnLive(listName, _id){
-      this.$socket.emit('hideOnLive', {_id:_id, listName:listName});
+      this.$socket.emit('hideOnLive', {_id:_id, listName:listName, lang:this.$store.getters.getLangObjFromPath});
     },
     createAndAddModule(module){
       // need to separate out to reusable function
@@ -183,7 +183,7 @@ export default {
       else this.$refs.moduleWrapper.querySelector('.module-wrapper').appendChild(ghostEl);
 
       this.$el.scrollTop = this.$el.scrollHeight;
-      this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName});
+      this.$socket.emit('createAndAddModule', {pageId:this.pageId, listName:module.listName, lang:this.$store.getters.getLangObjFromPath});
     },
     duplicateAndAddModule(listName, data, index, event){
       console.log(index);
@@ -195,7 +195,7 @@ export default {
       //this.$refs.module[index].after(ghostEl);
 
       if (index === (this.moduleData.length - 1)) this.$el.scrollTop = this.$el.scrollHeight;
-      this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data});
+      this.$socket.emit('duplicateAndAddModule', {pageId:this.pageId, listName:listName, moduleData:data, lang:this.$store.getters.getLangObjFromPath});
     },
     getUrlLangPath(){
       if (this.$store.state.route.params.lang === null || this.$store.state.route.params.lang === 'null') return '';

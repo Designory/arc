@@ -26,16 +26,15 @@ module.exports = ArcClass => {
 
 				if (!mergedData || mergedData.archive) return next();
 
-				StgList.schema.add({ modules: this.keystone.mongoose.Schema.Types.Mixed });
-				ProdList.schema.add({ modules: this.keystone.mongoose.Schema.Types.Mixed });
-
+				this.addSchemas(StgList, ProdList);
+				
 				this.addModel(mergedData, StgList, ProdList);
 				
 				this.cacheClearSaveHook(mergedData, StgList, ProdList);
 				
 				this.setTreeConfig(mergedData, StgList, ProdList);
 				
-				this.versionTickSaveHook(StgList);
+				this.versionTickSaveHook(StgList, ProdList);
 
 				// enable callback function
 				if (callback && typeof callback === 'function') {
@@ -46,13 +45,23 @@ module.exports = ArcClass => {
 			});
 		}
 
-		versionTickSaveHook(StgList){
-			StgList.schema.pre('save', async function(next){
-					
+		addSchemas(StgList, ProdList){
+			StgList.schema.add({ modules: this.keystone.mongoose.Schema.Types.Mixed });
+			ProdList.schema.add({ modules: this.keystone.mongoose.Schema.Types.Mixed });
+
+			StgList.schema.add({ arc_custom: this.keystone.mongoose.Schema.Types.Mixed });
+			ProdList.schema.add({ arc_custom: this.keystone.mongoose.Schema.Types.Mixed });
+
+		}
+
+		versionTickSaveHook(StgList, ProdList){
+			StgList.schema.pre('save', function(next){
 				if (this.modifiedPaths().length) this.increment();
-
 				next();
-
+			});
+			ProdList.schema.pre('save', function(next){
+				if (this.modifiedPaths().length) this.increment();
+				next();
 			});
 		}
 
@@ -61,7 +70,6 @@ module.exports = ArcClass => {
 			const self = this;
 
 			// special presave events that are designed only for the tree model
-			// TODO make work for lang
 			if (mergedData.listName == this.config.treeModel) {
 
 				StgList.schema.pre('save', async function(next){
@@ -73,7 +81,6 @@ module.exports = ArcClass => {
 					// so we reset it after adding it to the context for post save access
 					this.stoppingPostSaveHook = this.stopPostSaveHook;
 					this.stopPostSaveHook = false;
-
 					this.pageDataCodeWasModified = this.isModified('pageDataCode');
 					
 					next();
@@ -84,7 +91,7 @@ module.exports = ArcClass => {
 
 					if (this.stoppingPostSaveHook) return;
 
-					await buildUrls(self, doc);
+					await buildUrls(self, doc, mergedData.lang);
 
 					self.io.emit('PAGECHANGE', {[doc._id]: doc});
 
@@ -109,7 +116,10 @@ module.exports = ArcClass => {
 				});
 
 				StgList.schema.post('remove', async function(doc){
-					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc._doc, {_delete:true})});
+					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc._doc, {_delete:true, _lang:mergedData.lang})});
+					if (mergedData.lang && mergedData.lang.primary) {
+						self.removeSecondaryLangTreeItems(mergedData, doc._id);
+					}
 				});
 					
 			} else if (mergedData.type.indexOf('module') != -1) {
@@ -130,6 +140,11 @@ module.exports = ArcClass => {
 					doc.listName = mergedData.listName;
 					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]: Object.assign({}, doc._doc, {_delete:true, _listName:mergedData.listName})}});
 				});
+			
+			} else if (mergedData.type.indexOf('template') != -1) {
+
+				// add template stuff here
+				
 			}			
 		}
 
@@ -144,7 +159,6 @@ module.exports = ArcClass => {
 		}
  
 		addModel(config, stgList, prodList) {
-			//console.log(config.listName);
 
 			this.addModelPopulations(stgList, prodList, config.populate);
 			this.addModelSelections(stgList, prodList, config.select);

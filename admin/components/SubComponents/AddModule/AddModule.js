@@ -28,7 +28,7 @@ export default {
       
       if (event) event.preventDefault();
       
-      this.$socket.emit('newModule', {name:this.name, type:this.type, _id:this.pageId, pageDataCode:this.pageDataCode});
+      this.$socket.emit('newModule', {lang:this.$store.getters.getLangObjFromPath, name:this.name, type:this.type, _id:this.pageId, pageDataCode:this.pageDataCode});
       
       this.name = this.type = '';
     }//,

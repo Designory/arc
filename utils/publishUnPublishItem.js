@@ -2,16 +2,11 @@
 //if listname is null, we default to the page model itself, otherwise, we use provided list name
 module.exports = ({listName, _id, publish, lang}, arc) => {
 
-	//console.log(_id, listName);
-
 	return new Promise((resolve, reject) => {
 		
 		try {
 
-			console.log(listName, _id, publish, lang);
-
 			const model = (!listName) ? arc.utils.getTreeModel(arc, lang) : arc.list(arc.keystonePublish.getList(listName)).model;
-
 
 			model.findById(_id, function (pageErr, pageDoc) {
 				if (pageErr) {
@@ -23,9 +18,6 @@ module.exports = ({listName, _id, publish, lang}, arc) => {
 					return arc.log('error', `No items returns for ${arc.keystonePublish.getList(listName)} ${_id}`);
 					return reject();
 				}
-
-				console.log(" pageDoc ----> ");
-				console.log(pageDoc);
 
 				if (publish) pageDoc.publishToProduction = true;
 				else pageDoc.unpublishProduction = true;

@@ -1,17 +1,15 @@
 const async = require('async');
 const _ = require('lodash');
 
-module.exports = async (arc, context) => {
+module.exports = async (arc, context, lang) => {
 
 	return new Promise(async (resolve, reject) => {
 		
-		console.log('buildUrls.js');
-
 		try {
 
 			// get all site tree documents
-			const treeModel = arc.utils.getTreeModel(arc);
-			let treeDocumentsRaw = [...await arc.utils.getRawTree(arc)];
+			const treeModel = arc.utils.getTreeModel(arc, lang);
+			let treeDocumentsRaw = [...await arc.utils.getRawTree(arc, {lang})];
 			let treeDocumentsTreated = [...treeDocumentsRaw];
 
 			// simplify the raw array from the db
@@ -54,7 +52,7 @@ module.exports = async (arc, context) => {
 				if (item._id === context._id) {
 					context.url = item.url;
 				} else {
-					await arc.utils.updateTreeItem(item._id, {url: item.url}, arc);
+					await arc.utils.updateTreeItem(item._id, {url: item.url}, arc, lang);
 				}
   			}		
 

@@ -44,8 +44,6 @@ module.exports = (req, expandedList, selected, editOnly) => {
 
          if (currentIndentLevel === 1) break;
 
-         console.log(currentIndentLevel);
-
          if (currentIndentLevel <= req[i].indentLevel) continue;
          else if (currentIndentLevel > req[i].indentLevel) req[i].isExpanded = true;  
 
@@ -54,8 +52,6 @@ module.exports = (req, expandedList, selected, editOnly) => {
 
    }
    
-
-
    // thank you Constantin Pojoga! 
    // https://codepen.io/pojoga84/pen/xybGeV?editors=0110
    // I have no idea how this really works

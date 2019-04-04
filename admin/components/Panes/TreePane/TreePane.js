@@ -73,7 +73,7 @@ export default {
     makeNodeParent(node) {
       this.$refs.slVueTree.updateNode(node.path, {isLeaf:false, isExpanded:true});
 
-      this.newPage(node);
+      //this.newPage(node);
 
     },
     unMakeNodeParent(path) {
@@ -85,15 +85,15 @@ export default {
   		
   		const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
   		if (!_.isEmpty(changeDiff)) {
-			 console.log('dlhd lskjhdkjhkj hjkhsfjkhdfkj hjdfh');
-			 this.$socket.emit('updateTree', changeDiff);	
-
+        //console.log('this.$store.getters.getLangObjFromPath --->', this.$store.getters.getLangPath);
+        this.$socket.emit('updateTree', {lang:this.$store.getters.getLangObjFromPath, data:changeDiff});	
+        console.log(changeDiff);
 		  }	
 
     },
     treeOrderUpdated(){
     	const changeDiff = universalUtils.objArrayDiff(this.flattenNodes(), _.cloneDeep(this.tree));
-		if (!_.isEmpty(changeDiff)) this.$socket.emit('updateTree', changeDiff);
+		if (!_.isEmpty(changeDiff)) this.$socket.emit('updateTree', {lang:this.$store.getters.getLangObjFromPath, data:changeDiff});
     },
     flattenNodes() {
 

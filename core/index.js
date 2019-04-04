@@ -35,9 +35,6 @@ module.exports = function arcCore() {
 		init(configObject) {
 			const {stgPrefix, prodPreviewParam} = configObject;
 
-			// define arc routing
-			this.set('pre:routes', app => arcRouter(app, this));
-
 			this.keystonePublish.init({
 				stgPrefix,
 				keystone,
@@ -47,8 +44,6 @@ module.exports = function arcCore() {
 			this.setConfig(configObject);
 
 			this.keystone.init(configObject);
-			
-			this.langInit(configObject);
 			
 			this.cacheInit();
 
@@ -61,6 +56,8 @@ module.exports = function arcCore() {
 			this.config.treeModel = this.config.treeModel || 'Tree';
 			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu';
 			this.config.homeSlug = this.config.homeSlug || 'home';
+
+			this.langInit(configObject);
 
 		}
 
@@ -113,10 +110,11 @@ module.exports = function arcCore() {
 			return this.keystone.list(modelName);
 		}
 
-		setViewRoutes(siteRoutes) {
+		setViewRoutes(customRoutes) {
 			return this.set('routes', app => {
-				siteRoutes(app, this);
-				viewRouter(app, this);
+				arcRouter(app, this); // arc application routes
+				customRoutes(app, this); // developer generates routes
+				viewRouter(app, this); // default page routes based on tree nesting
 			});
 		}
 

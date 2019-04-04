@@ -15,7 +15,12 @@ module.exports = (app, arc) => {
 	// runs once on first /arc/ request.
 	// TODO: filter out api requests
 	// TODO: hot-reload?
+	
+
 	router.use(routes.middleware.webpack);
+	
+
+
 	//router.use(routes.middleware.checkAuth);
 
 	router.use('/static', arc.express.static(path.join(__dirname, '../../admin/public')));

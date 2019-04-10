@@ -8,7 +8,7 @@ module.exports = {
 		initialConfig: null, // required - keystone/mongoose init config
 		fieldConfig: null, // required - keystone/mongoose field types
 		sortOrder: 100, // optional - define the order of display on the arc admin UI
-		type: 'module', // options: module, template, meta, archive
+		type: null, // options: module, template, meta, archive
 		archive: false, // pulls list from all available entry
 		listDependants: null, // optional - tells arc admin about supporting lists
 		populate: null, // optional - mongoose populations for list

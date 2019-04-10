@@ -61,23 +61,37 @@ module.exports = function arcCore() {
 
 		}
 
-		start() {
+		async start() {
 			
 			if (process.env.NODE_ENV === 'production') return this.keystone.start();
 
 			return this.keystone.start({
 			    onStart: () => {
-			        const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
-			        this.socketInit(server);
+			        
+			    	const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
 
-			        // write config file to the admin client side 
+					this.socketInit(server);
+
+					// write config file to the admin client side 
 					// this allows the admin interface to start up 
 					// without needing any ajax calls, thus, increasing 
 					// performance and elliminating race condition 
 					// complexities
 					const settingsJsFile = path.join(__dirname, '../admin', 'settings.json');
-					fs.writeFileSync(settingsJsFile, JSON.stringify({lang:this.config.lang || null, app:this.config.adminUi, model:this.getModels()}));
+					fs.writeFileSync(settingsJsFile, JSON.stringify({
+						lang:this.config.lang || null, 
+						app:this.config.adminUi, 
+						model:this.getModels(),
+						treeModel:this.config.treeModel
+					}));
 
+					// this is not ideal, but we'll go with a little delay for now
+					// and do all the needed db adjustments once we have good reason 
+					if (this.config.lang) {
+						setTimeout(async () => {
+						 await this.langStartup();
+						}, 1000);
+					}
 			    }
 			});
 		}
@@ -113,7 +127,7 @@ module.exports = function arcCore() {
 		setViewRoutes(customRoutes) {
 			return this.set('routes', app => {
 				arcRouter(app, this); // arc application routes
-				customRoutes(app, this); // developer generates routes
+				customRoutes(app, this); // developer generated routes
 				viewRouter(app, this); // default page routes based on tree nesting
 			});
 		}

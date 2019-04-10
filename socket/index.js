@@ -127,7 +127,7 @@ module.exports = ArcClass => {
                         listName:payload.listName || null, 
                         _id:payload._id, 
                         publish:true, 
-                        lang:langObja || null
+                        lang:langObj || null
                     }
 
                     await this.utils.publishUnPublishItem(publishObj, this);

@@ -226,6 +226,7 @@ export default {
     // document.querySelector('body').addEventListener('click', event => {
     //   if (this.contextActive) this.contextActive = 0;
     // });
+    console.log(this.$store.getters.getModelFromPath);
   },
   updated(){
     
@@ -234,8 +235,11 @@ export default {
       // TODO: Probably should make this promise based
       let iframeFinder = setInterval(() => {
         let iframe = document.querySelector('[data-iframe]');
-        if(iframe){
+        if (iframe) {
           this.iframeStyle(iframe);
+
+          
+
           clearInterval(iframeFinder);
         }
       }, 100);

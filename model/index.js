@@ -2,6 +2,9 @@ const dotenv = require('dotenv');
 const _ = require('lodash');
 const defaults = require('./defaults');
 const buildUrls = require('./buildUrls');
+const treeModelHooks = require('./hooks/tree');
+const templateModelHooks = require('./hooks/template');
+const moduleModelHooks = require('./hooks/module');
 
 dotenv.load();
 
@@ -12,27 +15,57 @@ module.exports = ArcClass => {
 			this.modelList = [];
 		}
 
-		register(configObject, callback) {
-			// if there is nor config object, bail
+		register(configObject, callback){	
+			// if there is no config object, bail
 			if (!configObject) return this.log('error', 'An object must be registered.');
 			// if the list is archived, do nothing with it
 			if (configObject.archive) return this.log('info', `${configObject.listName} list is archived and will not be visible in Arc.`);
 
-			this.addFieldConfig(configObject);
+			configObject = defaults.merge(configObject);
+
+			if (this.config.lang) configObject = this.langModuleFieldConfig(configObject);
+
+			//console.log(configObject.fieldConfig);
+
+			this.addPageFieldConfig(configObject);
+			// do all the model magic
+			this.modelInit(configObject, callback);	
+
+			if (this.config.lang && configObject.listName === this.config.treeModel) {
+
+				this.config.lang.secondaries.forEach(item => {
+
+					const newConfigObject = Object.assign({}, configObject);
+
+					newConfigObject.baseListName = newConfigObject.listName;
+					newConfigObject.listName += item.modelPostfix;
+					newConfigObject.lang = item;
+					
+					this.addPageFieldConfig(newConfigObject, true);
+
+					this.modelInit(newConfigObject, callback)
+
+				});
+
+			}
+
+		}
+
+		modelInit(configObject, callback) {
 
 			this.keystonePublish.register(configObject, (StgList, ProdList, next) => {
 				// get data merged with defaults
-				const mergedData = defaults.merge(configObject);
+				//const mergedData = defaults.merge(configObject);
 
-				if (!mergedData || mergedData.archive) return next();
+				if (!configObject || configObject.archive) return next();
 
 				this.addSchemas(StgList, ProdList);
 				
-				this.addModel(mergedData, StgList, ProdList);
+				this.addModel(configObject, StgList, ProdList);
 				
-				this.cacheClearSaveHook(mergedData, StgList, ProdList);
+				this.cacheClearSaveHook(configObject, StgList, ProdList);
 				
-				this.setTreeConfig(mergedData, StgList, ProdList);
+				this.setTreeConfig(configObject, StgList, ProdList);
 				
 				this.versionTickSaveHook(StgList, ProdList);
 
@@ -70,85 +103,22 @@ module.exports = ArcClass => {
 			const self = this;
 
 			// special presave events that are designed only for the tree model
-			if (mergedData.listName == this.config.treeModel) {
+			if (mergedData.listName === this.config.treeModel) {
 
-				StgList.schema.pre('save', async function(next){
-
-					if (this.keyOverride) this.keyOverride = self.utils.slug(this.keyOverride);
-
-					// for creating new tree items, we want to omit the typical page save hookd
-					// but we don't want this to be carried through in the database, 
-					// so we reset it after adding it to the context for post save access
-					this.stoppingPostSaveHook = this.stopPostSaveHook;
-					this.stopPostSaveHook = false;
-					this.pageDataCodeWasModified = this.isModified('pageDataCode');
-					
-					next();
-
-				});
-
-				StgList.schema.post('save', async function(doc){
-
-					if (this.stoppingPostSaveHook) return;
-
-					await buildUrls(self, doc, mergedData.lang);
-
-					self.io.emit('PAGECHANGE', {[doc._id]: doc});
-
-					if (this.pageDataCodeWasModified) {
-
-						try {
-		                    // TODO: consolidate to utils function
-		                    const loadedModules = await self.utils.getPageModules(self, JSON.parse(doc.pageDataCode), {
-		                        select:'name matchesLive existsOnLive visible state archive key __v', 
-		                        onRender:null, 
-		                        consolidateModules:false
-		                    });
-
-		                    self.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
-		                    
-		                } catch(err){
-		                    // TODO: set up error reporting to the UI
-		                    //self.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});
-		                }
-		            }
-
-				});
-
-				StgList.schema.post('remove', async function(doc){
-					self.io.emit('PAGECHANGE', {[doc._id]: Object.assign({}, doc._doc, {_delete:true, _lang:mergedData.lang})});
-					if (mergedData.lang && mergedData.lang.primary) {
-						self.removeSecondaryLangTreeItems(mergedData, doc._id);
-					}
-				});
+				treeModelHooks(mergedData, StgList, ProdList, this);
 					
 			} else if (mergedData.type.indexOf('module') != -1) {
 
-				StgList.schema.pre('save', function(next){
-					this.wasNew = this.isNew;
-					next()
-				});
-
-				StgList.schema.post('save', async function(doc){
-					// only trigger an update if the item is not new
-					// new items receive thier own special emit via the page change trigger
-					if (!this.wasNew) self.io.emit('MODULECHANGE', {_id:this._id, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
-
-				});
-
-				StgList.schema.post('remove', async function(doc){
-					doc.listName = mergedData.listName;
-					self.io.emit('MODULECHANGE', {_id:doc._id, modules:{[doc._id]: Object.assign({}, doc._doc, {_delete:true, _listName:mergedData.listName})}});
-				});
+				moduleModelHooks(mergedData, StgList, ProdList, this);
 			
 			} else if (mergedData.type.indexOf('template') != -1) {
 
-				// add template stuff here
+				templateModelHooks(mergedData, StgList, ProdList, this);
 				
 			}			
 		}
 
-		addFieldConfig(configObject) {
+		addPageFieldConfig(configObject, secondaryLang) {
 			configObject.fieldConfig.push({
 				stopPostSaveHook: { 
 					type: this.Field.Types.Boolean,
@@ -156,6 +126,12 @@ module.exports = ArcClass => {
 					default: false
 				}
 			});
+
+			if (configObject.listName === this.config.treeModel) this.langPrimaryFieldConfig(configObject);
+			if (secondaryLang) this.langSecondaryFieldConfig(configObject);
+
+
+
 		}
  
 		addModel(config, stgList, prodList) {

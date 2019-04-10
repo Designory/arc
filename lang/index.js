@@ -1,7 +1,11 @@
 const _ = require('lodash');
-const startup = require('./startup');
+const globalLabels = require('./startups/globalLabels');
+const updateSecondaries = require('./startups/updateSecondaries');
+const primaryFieldConfigs = require('./primaryFieldConfigs');
+const secondaryFieldConfigs = require('./secondaryFieldConfigs');
 
 module.exports = ArcClass => {
+
     return class ArcLang extends ArcClass {
         constructor() {
             super();
@@ -14,7 +18,7 @@ module.exports = ArcClass => {
         }
 
         resetConfig(configObject) {
-            console.log(this.setLangListItem(configObject.primary, true))
+            //console.log(this.setLangListItem(configObject.primary, true))
 
             this.config.lang = {
                 config: this.setLangConfig(configObject.config),
@@ -23,8 +27,11 @@ module.exports = ArcClass => {
                     return this.setLangListItem(item);
                 })
             };
+        }
 
-            console.log()
+        getAllLangs(){
+            if (!this.config.lang) return [];
+            return [...[this.config.lang.primary], ...this.config.lang.secondaries];
         }
 
         setLangConfig(item){
@@ -33,8 +40,8 @@ module.exports = ArcClass => {
                 process.exit(1);
             }
             return {
-                secondaryEditOnly:item.secondaryEditOnly,
-                globalLabelsListName:item.globalLabelsList
+                globalLabelsListName:item.globalLabelsList,
+                treeItemPrimaryLocks: item.treeItemPrimaryLocks || 'name url keyOverride indentLevel'
             };
         }
 
@@ -59,7 +66,8 @@ module.exports = ArcClass => {
                 path:item.path,
                 primary: item.primary,
                 label: item.label || _.startCase(item.path),
-                modelPostfix: modelPostfix
+                modelPostfix: modelPostfix,
+                fullModel:this.config.treeModel + modelPostfix
             } 
         }
 
@@ -87,8 +95,119 @@ module.exports = ArcClass => {
             // TDOD: lang make the magic all happen!
         }
 
-        multilangStartup(){
-
+        langPrimaryFieldConfig(config){
+            return primaryFieldConfigs(config, this);
         }
+
+        langSecondaryFieldConfig(config){
+            return secondaryFieldConfigs(config, this);
+        }
+
+        langModuleFieldConfig(config){
+            if (config.type.indexOf('module') != -1) {
+
+                config.fieldConfig.push({
+                    heading:'Module Language Settings'
+                });
+
+                config.fieldConfig.push({
+                    langParentId: { 
+                        type:this.Field.Types.Text,    
+                        noedit:true 
+                    },
+                    langPath: { 
+                        type:this.Field.Types.Text,    
+                        noedit:true 
+                    },
+                    lastSavedPageId: {
+                        type:this.Field.Types.Text,
+                        noedit:true
+                    }
+                });
+
+                //console.log('config.fieldConfig --->', config.fieldConfig)
+            } 
+
+            return config;
+        }
+
+        async langStartup(){
+            return new Promise(async (resolve, reject) => {
+                try {
+                    //await globalLabels(this);
+                    await updateSecondaries(this);
+                    resolve();
+                } catch(err){
+                    this.log('error', err);
+                }
+            });
+        }
+
+        async langModuleCheckAndUpdate(pageAndLang){
+            return new Promise(async (resolve, reject) => {
+            
+                const pageDataCode = JSON.parse(pageAndLang.doc.pageDataCode);
+
+                const promises = pageDataCode.map(item => {
+                    return this.itemCheckOrUpdate(item, pageAndLang.doc, pageAndLang.lang);
+                });
+
+                Promise.all(promises).then(async newPageDataCode => {
+                    pageAndLang.doc.pageDataCode = JSON.stringify(newPageDataCode);
+                    
+                    console.log(pageAndLang.doc.pageDataCode);
+                    resolve({doc:pageAndLang.doc, lang:pageAndLang.lang, count:newPageDataCode.length});
+                }).catch(function(err) {
+                    this.log('error', err);
+                    resolve(null);
+                });
+            });
+        }
+
+        async itemCheckOrUpdate(item, doc, lang) {
+            return new Promise(async (resolve, reject) => {
+
+                const model = this.list(this.keystonePublish.getList(item.moduleName)).model;
+
+                model.findOne({langParentId:item.itemIds[0], langPath:lang.path}).lean().exec((err, moduleDoc) => {
+
+                    if (err) this.log('error', err);
+                    
+                    if (moduleDoc) {
+                        resolve({itemIds:[item.itemIds[0]], moduleName:item.moduleName});
+                    } else {
+                        
+                        model.findById(item.itemIds[0]).lean().exec((err, masterModuleDoc) => { 
+
+                            if (err) this.log('error', err);
+
+                            if (!masterModuleDoc) return resolve(null);
+
+                            // todo...add suffix to relational fields aaaahhh!
+                            const updateItem = Object.assign({}, masterModuleDoc);
+                            updateItem.langParentId = item.itemIds[0];
+                            updateItem.langPath = lang.path;
+                            updateItem.name = `${updateItem.name} in ${lang.label}`;
+
+                            delete updateItem._id;
+                            delete updateItem.key;
+
+                            model.create(updateItem, (err, createdDoc) => {
+
+                                if (err) this.log('error', err);
+
+                                resolve({itemIds:[createdDoc._id], moduleName:item.moduleName})
+
+                            });
+
+                        });
+
+                    }
+                    
+                }); 
+
+            });
+        }
+
     };
 };

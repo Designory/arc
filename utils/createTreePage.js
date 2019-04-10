@@ -1,5 +1,5 @@
 
-module.exports = (arc, 	updateData, config) => {
+module.exports = (arc, updateData, config) => {
 
 	config = Object.assign({
 		lang:null,

@@ -87,72 +87,82 @@ export default {
 	SOCKET_MODULECHANGE({ dispatch, commit, state }, payload) {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
-				
-		// only continue if the user has the current page selected
-		if (!state.route.query || !state.route.query.pageId || state.route.query.pageId !== payload._id) return false;
+		
+
+		// only continue if the user has the current module
+		//if (!state.route.query || !state.route.query.pageId || state.route.query.pageId !== payload._id) return false;
 
 		// if message value is an array, straight replace
-		if (Array.isArray(payload.modules)) {
+		if (Array.isArray(payload.modules) && state.route.query.pageId !== payload._id) {
 
 			commit('UPDATE_MODULE', payload.modules);
 	      	
 		// if payload in an object, assume hash, and replace only 
 		// what's in the hash object
-		} else {
+		} else if (!Array.isArray(payload.modules)) {
 
-			let newArr = [];
-			let updatedIds = Object.keys(payload.modules);
-
-			// update/delete existing items
+			let moduleIsOnPage = false;
+			const payloadIds = Object.keys(payload.modules);
 			[...state.currentModulesData].forEach(item => {
-				
-				const itemId = item._id;
-				let update = item;
+				if (payloadIds.includes(item._id)) moduleIsOnPage = true;
+			});
 
-				for (let key in payload.modules) {
+			if (moduleIsOnPage) {
+
+				state.route.query.pageId !== payload._id
+
+				let newArr = [];
+				let updatedIds = Object.keys(payload.modules);
+
+				// update/delete existing items
+				[...state.currentModulesData].forEach(item => {
 					
-					if (itemId === key) { 
+					const itemId = item._id;
+					let update = item;
+
+					for (let key in payload.modules) {
 						
-						if (payload.modules[key]._delete) update = null;
-						else item = update = payload.modules[key];				
-						updatedIds = _.without(updatedIds, itemId);
+						if (itemId === key) { 
+							
+							if (payload.modules[key]._delete) update = null;
+							else item = update = payload.modules[key];				
+							updatedIds = _.without(updatedIds, itemId);
 
-					} 
-				}
+						} 
+					}
 
-				newArr.push(update);
+					newArr.push(update);
 
-			});
+				});
 
-			newArr = newArr.filter(item => {return item !== null});
+				newArr = newArr.filter(item => {return item !== null});
 
-			// add new items
-			updatedIds.forEach(item => {
-				
-				let newObject = payload.modules[item];
-				newObject._id = item;
-				
-				if (newObject._insertAfter) {
+				// add new items
+				updatedIds.forEach(item => {
 					
-					const index = newArr.findIndex(module => module._id === newObject._insertAfter);
+					let newObject = payload.modules[item];
+					newObject._id = item;
 					
-					newArr.splice(index, 0, newObject);
+					if (newObject._insertAfter) {
+						
+						const index = newArr.findIndex(module => module._id === newObject._insertAfter);
+						
+						newArr.splice(index, 0, newObject);
 
-				} else {
-			
-					newArr.push(newObject);	
+					} else {
 				
-				}	
+						newArr.push(newObject);	
+					
+					}	
 
-			});
+				});
 
-			commit('UPDATE_MODULE', newArr);
-
-			if (state.route.query && Object.keys(payload.modules).includes(state.route.query.moduleId)) router.replace({query:{pageId:state.route.query.pageId}});
+				commit('UPDATE_MODULE', newArr);
+			}
 		
 		}
 
-		
+		if (state.route.query && Object.keys(payload.modules).includes(state.route.query.moduleId)) router.replace({query:{pageId:state.route.query.pageId}});
 
 	},
 

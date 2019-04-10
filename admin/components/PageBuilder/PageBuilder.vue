@@ -4,7 +4,7 @@
       <div class="page-builder__top-left">
         <action-button 
           v-if="pageOpen || moduleOpen" 
-          :to="{ path: '/page-builder/tree', query: { pageId: pageId}}" 
+          :to="{ path: `/${$store.getters.getLangPath}/page-builder/tree`, query: { pageId: pageId}}" 
           text="Back"
           classAddition="back">  
         </action-button>
@@ -16,8 +16,9 @@
       </div>    
     </div>
     <div class="page-builder__iframe-container" v-if="pageOpen">
+      <!-- addgetter -->
       <iframe
-        :src="`${pageOrigin}/keystone/stg-pages/${pageId}`"
+        :src="`${pageOrigin}/keystone/${modulePluralized($store.getters.getModelFromPath)}/${pageId}`"
         class="page-builder__iframe-full-bleed"
         name="keystone-iframe"
         data-iframe>

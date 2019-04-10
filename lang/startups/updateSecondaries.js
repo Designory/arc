@@ -142,16 +142,22 @@ const makeNewModulesForDocs = (arc, docs) => {
     
     return new Promise((resolve, reject) => {
         
-        const promises = docs.map(item => {
-            return arc.langModuleCheckAndUpdate(item);
-        });
+        try {
 
-        Promise.all(promises).then(async docsWithNewModules => {
-            resolve(docsWithNewModules);
-        }).catch(function(err) {
+            const promises = docs.map(item => {
+                return arc.langModuleCheckAndUpdate(item);
+            });
+
+            Promise.all(promises).then(async docsWithNewModules => {
+                resolve(docsWithNewModules);
+            }).catch(function(err) {
+                arc.log('error', err);
+                resolve(null);
+            });
+
+        } catch(err) {
             arc.log('error', err);
-            resolve(null);
-        });
+        }
 
     });
 

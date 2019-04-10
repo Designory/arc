@@ -65,8 +65,13 @@ const getAllTreesData = (arc, config) => {
 
 const getTreeData = async (arc, lang, config = {}) => {
 
+    console.log('sdlkhjsdibdskjhds lksjdhdsjl ldskjdf kj sdh lsdkjhsdkjhlsfdj sdkj');
+
     return new Promise(async (resolve, reject) => {
-        const model = arc.utils.getTreeModel(arc, lang);
+        
+        try {
+
+            const model = arc.utils.getTreeModel(arc, lang);
 
             model.find().lean().exec((err, docs) => {
             
@@ -85,6 +90,9 @@ const getTreeData = async (arc, lang, config = {}) => {
                 else resolve(docs);
                 
             }); 
+        } catch(err) {
+            arc.log('error', err);
+        }
     });
 }
 

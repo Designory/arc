@@ -127,8 +127,8 @@ module.exports = ArcClass => {
 				}
 			});
 
-			if (configObject.listName === this.config.treeModel) this.langPrimaryFieldConfig(configObject);
-			if (secondaryLang) this.langSecondaryFieldConfig(configObject);
+			if (this.config.lang && configObject.listName === this.config.treeModel) this.langPrimaryFieldConfig(configObject);
+			if (this.config.lang && secondaryLang) this.langSecondaryFieldConfig(configObject);
 
 
 

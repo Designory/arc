@@ -57,7 +57,7 @@ module.exports = function arcCore() {
 			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu';
 			this.config.homeSlug = this.config.homeSlug || 'home';
 
-			this.langInit(configObject);
+			if (arc.config.lang) this.langInit(configObject);
 
 		}
 

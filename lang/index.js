@@ -155,7 +155,7 @@ module.exports = ArcClass => {
                 Promise.all(promises).then(async newPageDataCode => {
                     pageAndLang.doc.pageDataCode = JSON.stringify(newPageDataCode);
                     
-                    console.log(pageAndLang.doc.pageDataCode);
+                    //console.log(pageAndLang.doc.pageDataCode);
                     resolve({doc:pageAndLang.doc, lang:pageAndLang.lang, count:newPageDataCode.length});
                 }).catch(function(err) {
                     this.log('error', err);

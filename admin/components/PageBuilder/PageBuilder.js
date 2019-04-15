@@ -147,6 +147,8 @@ export default {
       this.contextPosition = (window.innerHeight - event.target.getBoundingClientRect().bottom < 200) ? 'top' : 'bottom';
     },
     modulePluralized(moduleName){
+      
+      console.log(moduleName);
       // TODO: error handling for when module type no longer exists
       return this.$store.state.globals.model.filter(item => {
         return item.listName === moduleName;

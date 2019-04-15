@@ -4,8 +4,6 @@ module.exports = async (arc, req, res) => {
 
 	const langObj = arc.getLangFromPath(req.header('Content-Language'));
 
-	console.log(langObj);
-
 	// temp workaround to handler issue
 	//asyncHandler(async (arc, req, res) => {
 		try {

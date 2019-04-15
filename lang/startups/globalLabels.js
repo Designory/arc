@@ -49,8 +49,6 @@ module.exports = async arc => {
 };
 
 const getAllGlobalLabels = (arc, model, paths) => {
-    
-    console.log('paths --->', paths);
 
     return new Promise((resolve, reject) => {
             

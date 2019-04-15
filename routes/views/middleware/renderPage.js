@@ -7,7 +7,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 
 		var view = new arc.View(req, res);
 
-		console.log("req.headers ---> ", req.headers)
+		//console.log("req.headers ---> ", req.headers)
 		//return res.json(res.locals);;
 		//console.log(view);
 

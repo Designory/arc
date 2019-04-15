@@ -106,7 +106,7 @@ module.exports = async (arc, pageModules, reqConfig) => {
 					}	
 
 					results = orderResults(results, item.itemIds);
-
+					
 					if (itemConfig.onRender) {
 
 						itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), data => {

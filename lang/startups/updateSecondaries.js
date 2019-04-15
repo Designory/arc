@@ -65,8 +65,6 @@ const getAllTreesData = (arc, config) => {
 
 const getTreeData = async (arc, lang, config = {}) => {
 
-    console.log('sdlkhjsdibdskjhds lksjdhdsjl ldskjdf kj sdh lsdkjhsdkjhlsfdj sdkj');
-
     return new Promise(async (resolve, reject) => {
         
         try {

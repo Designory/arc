@@ -12,6 +12,10 @@ export default {
         
         const path = getters.getLangPath;
 
+        console.log("state.globals.lang -- ", state.globals.lang);
+
+        //if (!state.globals.lang) return null;
+
         if (path === null || path === 'null') return null;
 
         if (state.globals.lang.primary.path === path) return state.globals.lang.primary;
@@ -31,10 +35,8 @@ export default {
     getModelFromPath: (state, getters) => {
         const langObj = getters.getLangObjFromPath;
 
-        console.log(state.globals.treeModel + langObj.modelPostfix)
-
-        if (langObj) return state.globals.treeModel + langObj.modelPostfix;
-        else return null;
+        if (!langObj) return null;
+        else return state.globals.treeModel + langObj.modelPostfix;
     },
 
     getRequestHeaders: (state, getters) => {

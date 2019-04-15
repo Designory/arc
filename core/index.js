@@ -5,7 +5,8 @@ const keystonePublish = require('keystone-publish');
 const dotenv = require('dotenv');
 const _ = require('lodash');
 const arcRouter = require('../routes/admin/');
-const viewRouter = require('../routes/views/');
+const populateLocals = require('../routes/views/locals');
+const viewRoutes = require('../routes/views/view');
 const logger = require('../logging/');
 const utilityFn = keystone.importer(__dirname)('../utils');
 
@@ -125,10 +126,21 @@ module.exports = function arcCore() {
 		}
 
 		setViewRoutes(customRoutes) {
+			
+			// {
+			// 	preArc:...,
+			// 	preArcLocals:...,
+			// 	preArcRender:...
+			// }
+
+
 			return this.set('routes', app => {
-				arcRouter(app, this); // arc application routes
-				customRoutes(app, this); // developer generated routes
-				viewRouter(app, this); // default page routes based on tree nesting
+				if (customRoutes.preArc) customRoutes.preArc(app, this); // developer generated routes at first entry, set for things like SSO
+				if (process.NODE_ENV !== 'production') arcRouter(app, this); // arc application routes
+				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); // developer generated routes before any locals are populated by a Arc
+				populateLocals(app, this); // arc application routes
+				if (customRoutes.preArcRender) customRoutes.preArcRender(app, this); // developer generated routes before any locals are populated by a Arc
+				viewRoutes(app, this); // default page routes based on tree nesting
 			});
 		}
 

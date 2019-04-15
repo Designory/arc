@@ -3,6 +3,8 @@ import axios from 'axios';
 export default {
   data() {
     
+    if (!this.$store.state.globals.lang) return {};
+
     // gather active path object at page load
     const activeItem = [this.$store.state.globals.lang.primary]
         .concat(this.$store.state.globals.lang.secondaries)

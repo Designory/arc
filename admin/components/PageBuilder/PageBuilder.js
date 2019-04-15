@@ -148,7 +148,9 @@ export default {
     },
     modulePluralized(moduleName){
       
-      console.log(moduleName);
+      console.log('moduleName. --->', moduleName)
+      if (!moduleName) moduleName = this.$store.state.treeModel;
+
       // TODO: error handling for when module type no longer exists
       return this.$store.state.globals.model.filter(item => {
         return item.listName === moduleName;

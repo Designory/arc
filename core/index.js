@@ -57,6 +57,7 @@ module.exports = function arcCore() {
 			this.config.treeModel = this.config.treeModel || 'Tree';
 			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu';
 			this.config.homeSlug = this.config.homeSlug || 'home';
+			this.config.stgPrefix = this.config.stgPrefix || 'Stg';
 
 			if (this.config.lang) this.langInit(configObject);
 
@@ -83,7 +84,8 @@ module.exports = function arcCore() {
 						lang:this.config.lang || null, 
 						app:this.config.adminUi, 
 						model:this.getModels(),
-						treeModel:this.config.treeModel
+						treeModel:this.config.treeModel,
+						stgPrefix:this.config.stgPrefix
 					}));
 
 					// this is not ideal, but we'll go with a little delay for now

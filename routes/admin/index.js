@@ -17,7 +17,7 @@ module.exports = (app, arc) => {
 	// TODO: hot-reload?
 	
 
-	router.use(routes.middleware.webpack);
+	//router.use(routes.middleware.webpack);
 	
 
 

@@ -13,8 +13,9 @@ module.exports = asyncHandler(async (req, res, next) => {
 	const currentPage = await arc.utils.getRawTree(arc, {
 		query: (query) => {
 			return query.where('url', res.locals.pageUrl);
-		}, 
-	}, arc.config.lang);
+		},
+		lang:arc.config.lang
+	});
 
 	if (currentPage.length) res.locals.page = currentPage[0];
 	else res.locals.page = {};

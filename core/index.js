@@ -127,6 +127,10 @@ module.exports = function arcCore() {
 			return this.keystone.list(modelName);
 		}
 
+		arcList(modelName){
+			return this.list(this.keystonePublish.getList(modelName));
+		}
+
 		setViewRoutes(customRoutes) {
 			
 			// {
@@ -134,7 +138,6 @@ module.exports = function arcCore() {
 			// 	preArcLocals:...,
 			// 	preArcRender:...
 			// }
-
 
 			return this.set('routes', app => {
 				if (customRoutes.preArc) customRoutes.preArc(app, this); // developer generated routes at first entry, set for things like SSO
@@ -155,5 +158,6 @@ module.exports = function arcCore() {
 			}
 			logger[level](msg);
 		}
+		
 	};
 };

@@ -7,6 +7,7 @@ module.exports = (app, arc) => {
 
 	// this should be the very last of all routes to be registered
 	app.use(
+		routes.middleware.processLang,
 		routes.middleware.getCurrentUrl,
 		routes.middleware.getNavigationTree,
 		routes.middleware.getCurrentPage,

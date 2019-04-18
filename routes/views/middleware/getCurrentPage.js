@@ -4,17 +4,13 @@ const url = require('url');
 
 module.exports = asyncHandler(async (req, res, next) => {
 
-	if (arc.config.lang) {
-		const splitUrlArr = res.locals.pageUrl.substring(1).split('/');
-		res.locals.lang = splitUrlArr.shift();
-		res.locals.pageUrl = '/' + splitUrlArr.join('/');
-	}
+	res.locals.pageUrl = res.locals.langPageUrl || req.originalUrl.split('?')[0];
 
 	const currentPage = await arc.utils.getRawTree(arc, {
 		query: (query) => {
 			return query.where('url', res.locals.pageUrl);
 		},
-		lang:arc.config.lang
+		lang: res.locals.lang || null 
 	});
 
 	if (currentPage.length) res.locals.page = currentPage[0];

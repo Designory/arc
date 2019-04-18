@@ -32,11 +32,11 @@ module.exports = async (arc, req, res) => {
 				customQuery: false
 			});
 			
-			arc.cache.set(cacheKey, loadedModules, function( err, success ){
-  				if (!err && success){
-    				console.log('cache =>> ', success);
-  				}
-			});
+			// arc.cache.set(cacheKey, loadedModules, function( err, success ){
+  			// 	if (!err && success){
+    		// 		console.log('cache =>> ', success);
+  			// 	}
+			// });
 
 			return res.apiResponse(loadedModules);
 

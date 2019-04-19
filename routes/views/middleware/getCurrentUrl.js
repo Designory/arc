@@ -9,6 +9,6 @@ module.exports = asyncHandler(async (req, res, next) => {
 		res.locals.pageUrl = arc.config.homeSlug || '/home';
 	} 
 
-	next();
+	return next();
 
 });

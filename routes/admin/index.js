@@ -51,7 +51,7 @@ module.exports = (app, arc) => {
 
 	router.get('/', (req, res) => {
 		const templatePath = path.resolve(__dirname, '../../admin/public/index.html');
-		res.sendFile(templatePath);
+		return res.sendFile(templatePath);
 	});
 
 	// assumes using Keystone's authentication
@@ -77,12 +77,10 @@ module.exports = (app, arc) => {
 	// revised API
 	router.get('/api/config', arc.middleware.api, routes.api.config.config);
 	router.get('/api/cache', arc.middleware.api, routes.api.config.cache);
-	router.get('/api/tree', arc.middleware.api, function(req, res){
-		routes.api.config.tree(arc, req, res);
-	});
-	router.get('/api/modules/:_id', arc.middleware.api, function(req, res){
-		routes.api.config.modules(arc, req, res);
-	});
+	router.get('/api/tree', arc.middleware.api, routes.api.config.tree);
+
+	router.get('/api/modules/:_id', arc.middleware.api, routes.api.config.modules);
+	
 	router.get('/api/:type', arc.middleware.api, routes.api.module.list); // list all items of type
 	router.get('/api/:type/multiple', arc.middleware.api, routes.api.module.multiple); // handles multiple get ids with a query parameter
 	router.get('/api/:type/:id', arc.middleware.api, routes.api.module.get); // get item of type, by id

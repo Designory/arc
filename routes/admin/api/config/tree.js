@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
+const arc = require('../../../../index');
 
-module.exports = async (arc, req, res) => {
+module.exports = async (req, res) => {
 
 	const langObj = arc.getLangFromPath(req.header('Content-Language'));
 

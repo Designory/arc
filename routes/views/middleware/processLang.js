@@ -17,6 +17,6 @@ module.exports = asyncHandler(async (req, res, next) => {
 	// force a redirect to primary lang if we come up empty
 	if (!res.locals.lang) return res.redirect(`/${arc.config.lang.primary.path}${req.originalUrl}`);
 
-	next();
+	return next();
 
 });

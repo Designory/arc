@@ -63,7 +63,7 @@ module.exports = ArcClass => {
 				
 				this.addModel(configObject, StgList, ProdList);
 				
-				this.cacheClearSaveHook(configObject, StgList, ProdList);
+				//this.cacheClearSaveHook(configObject, StgList, ProdList);
 				
 				this.setTreeConfig(configObject, StgList, ProdList);
 				

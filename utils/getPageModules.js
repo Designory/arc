@@ -25,7 +25,7 @@ module.exports = async (arc, pageModules, reqConfig) => {
 	return new Promise(async (resolve, reject) => {
 		
 		try {		
-
+			
 			// first, default comes from the db as a string
 			if (typeof pageModules === 'string') pageModules = JSON.parse(pageModules);
 
@@ -35,19 +35,28 @@ module.exports = async (arc, pageModules, reqConfig) => {
 	  		const promises = pageModules.map(item => {
 	  			return populateModule(item);
 	  		});
+			
 
-  			Promise.all(promises).then(function(modules) {
+			const modules = await Promise.all(promises.map(p => p.catch(e => e)));
+			
+			if (reqConfig.consolidateModules){
+				return resolve(modules)
+			} else {
+				return resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+			}
 
-				if (reqConfig.consolidateModules){
-					resolve(modules)
-				} else {
-					resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
-				}
+  			// return Promise.all(promises).then(function(modules) {
 
-    		}).catch(function(err) {
-      			arc.log('error', err);
-      			resolve([]);
-    		});
+			// 	if (reqConfig.consolidateModules){
+			// 		return resolve(modules)
+			// 	} else {
+			// 		return resolve(arc.utils.decodeModuleList(modules, {decode:reqConfig.decode, hashify:reqConfig.hashify}));
+			// 	}
+
+    		// }).catch(function(err) {
+      		// 	arc.log('error', err);
+      		// 	resolve([]);
+    		// });
 
 		} catch(err) {
 			arc.log('error', err);

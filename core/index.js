@@ -140,12 +140,25 @@ module.exports = function arcCore() {
 			// }
 
 			return this.set('routes', app => {
-				if (customRoutes.preArc) customRoutes.preArc(app, this); // developer generated routes at first entry, set for things like SSO
-				if (process.NODE_ENV !== 'production') arcRouter(app, this); // arc application routes
-				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); // developer generated routes before any locals are populated by a Arc
-				populateLocals(app, this); // arc application routes
+				
+				// developer generated routes at first entry, set for things like SSO
+				if (customRoutes.preArc) customRoutes.preArc(app, this); 
+				
+				// arc application routes
+				if (process.NODE_ENV !== 'production') arcRouter(app, this); 
+				
+				// developer generated routes before any locals are populated by a Arc
+				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); 
+				
+				// arc application routes
+				populateLocals(app, this); 
+				
+				// developer generated routes before any locals are populated by a Arc
 				if (customRoutes.preArcRender) customRoutes.preArcRender(app, this); // developer generated routes before any locals are populated by a Arc
-				viewRoutes(app, this); // default page routes based on tree nesting
+
+				// default page routes based on tree nesting
+				viewRoutes(app, this); 
+			
 			});
 		}
 
@@ -158,6 +171,5 @@ module.exports = function arcCore() {
 			}
 			logger[level](msg);
 		}
-		
 	};
 };

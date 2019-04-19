@@ -16,6 +16,6 @@ module.exports = asyncHandler(async (req, res, next) => {
 	if (rawTreeResults) res.locals.tree = rawTreeResults;
 	else res.locals.tree = [];
 
-	next();
+	return next();
 
 });

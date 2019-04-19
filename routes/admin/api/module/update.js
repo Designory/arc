@@ -6,6 +6,6 @@ module.exports = (req, res) => {
 	Arc.updateModule(params.type, params.id, query, req, (err, item) => {
 		if (err) res.apiError(err);
 
-		res.apiResponse({ updated: item });
+		return res.apiResponse({ updated: item });
 	});
 };

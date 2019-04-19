@@ -15,7 +15,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 	if (loadedModules && loadedModules.length) res.locals.page.modules = loadedModules;
 	else res.locals.page.modules = [];
 
-	next();
+	return next();
 
 });
 

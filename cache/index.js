@@ -20,16 +20,16 @@ module.exports = ArcClass => {
 			const self = this;
 
 			if (listConfig.listName === this.config['treeModel']){
-				stgList.schema.pre('save', async function(next) {
+				// stgList.schema.pre('save', async function(next) {
 
-					if (this.isModified('pageDataCode')) {
-  						await self.clearCacheByPrefix(`api__modules__${this._id}`);
-  						next();
-					} else {
-						next();
-					}	
+				// 	if (this.isModified('pageDataCode')) {
+  				// 		await self.clearCacheByPrefix(`api__modules__${this._id}`);
+  				// 		next();
+				// 	} else {
+				// 		next();
+				// 	}	
 
-				});
+				// });
 			}
 		}
 

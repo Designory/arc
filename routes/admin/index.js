@@ -80,7 +80,7 @@ module.exports = (app, arc) => {
 	router.get('/api/tree', arc.middleware.api, routes.api.config.tree);
 
 	router.get('/api/modules/:_id', arc.middleware.api, routes.api.config.modules);
-	
+
 	router.get('/api/:type', arc.middleware.api, routes.api.module.list); // list all items of type
 	router.get('/api/:type/multiple', arc.middleware.api, routes.api.module.multiple); // handles multiple get ids with a query parameter
 	router.get('/api/:type/:id', arc.middleware.api, routes.api.module.get); // get item of type, by id

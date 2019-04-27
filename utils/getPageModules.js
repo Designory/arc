@@ -1,16 +1,20 @@
-// reqConfig options
-// 	{
-// 		select,
-// 		onRender,
-// 		populate
-// 	}
+const defaultConfig = {
+	consolidateModules: false,
+	decode: false,
+	hashify: false,
+	select: null,
+	onRender: null,
+	lean: null,
+	customQuery: null,
+	populate: null,
+	archive: null
+};
+
 module.exports = async (arc, pageModules, reqConfig) => {
 
-	reqConfig = Object.assign({
-		consolidateModules: false,
-		decode: false,
-		hashify: false,
-	}, reqConfig);
+	reqConfig = Object.assign({}, defaultConfig, reqConfig);
+
+	//reqConfig.select = null;
 
 	// reqConfig can also receive:
 	// 		onRender
@@ -34,11 +38,10 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
 	  		const promises = pageModules.map(item => {
 	  			return populateModule(item);
-	  		});
-			
+	  		});	
 
 			const modules = await Promise.all(promises.map(p => p.catch(e => e)));
-			
+
 			if (reqConfig.consolidateModules){
 				return resolve(modules)
 			} else {
@@ -101,9 +104,9 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
 				// custom select
 				if (itemConfig.lean) itemQuery.lean();
+//console.log(itemQuery);
+				return itemQuery.exec((err, results) => {
 
-				itemQuery.exec((err, results) => {
-				
 					if (err) {
 						arc.log('error', err);
 						return reject('Issue querying results.');
@@ -113,17 +116,19 @@ module.exports = async (arc, pageModules, reqConfig) => {
 						arc.log('error', 'No database results querying for building site tree.');
 						return reject('Cannot find the site tree.');
 					}	
-
+//console.log('results ---> ', results);
 					results = orderResults(results, item.itemIds);
 					
 					if (itemConfig.onRender) {
 
-						itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), data => {
-							resolve({moduleName:item.moduleName, data:data});
+						return itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), data => {
+							
+							return resolve({moduleName:item.moduleName, data:data});
 						});
 						
 					} else {
-						resolve({moduleName:item.moduleName, data:results});
+
+						return resolve({moduleName:item.moduleName, data:results});
 					}
 
 				});

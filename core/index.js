@@ -143,7 +143,7 @@ module.exports = function arcCore() {
 				
 				// developer generated routes at first entry, set for things like SSO
 				if (customRoutes.preArc) customRoutes.preArc(app, this); 
-				
+
 				// arc application routes
 				if (process.NODE_ENV !== 'production') arcRouter(app, this); 
 				

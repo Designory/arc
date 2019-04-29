@@ -12,19 +12,8 @@ const defaultConfig = {
 
 module.exports = async (arc, pageModules, reqConfig) => {
 
+
 	reqConfig = Object.assign({}, defaultConfig, reqConfig);
-
-	//reqConfig.select = null;
-
-	// reqConfig can also receive:
-	// 		onRender
-	// 		lean
-	// 		select
-	// 		customQuery
-	// 		populate
-	// 		archive
-	// 		...and maybe more?
-	// called at `populateModule(item)` below
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -75,8 +64,6 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
 			const modelConfig = arc.getModels(item.moduleName);
 
-			//console.log(modelConfig.onRender);
-
 			if (!modelConfig) {
 				arc.log('error', 'Cannot get models for a module. Be sure that all models are registered with `Arc.register(...)`');
 				return resolve();
@@ -85,8 +72,8 @@ module.exports = async (arc, pageModules, reqConfig) => {
 			try {
 
 				// get the item configuration
-				const itemConfig = Object.assign(modelConfig, reqConfig);
-				
+				const itemConfig = Object.assign(reqConfig, modelConfig);
+
 				// bail if item item is archived (TODO: revist this approach)
 				if (itemConfig.archive) resolve(null);			
 
@@ -104,8 +91,8 @@ module.exports = async (arc, pageModules, reqConfig) => {
 
 				// custom select
 				if (itemConfig.lean) itemQuery.lean();
-//console.log(itemQuery);
-				return itemQuery.exec((err, results) => {
+
+				itemQuery.exec((err, results) => {
 
 					if (err) {
 						arc.log('error', err);
@@ -116,9 +103,9 @@ module.exports = async (arc, pageModules, reqConfig) => {
 						arc.log('error', 'No database results querying for building site tree.');
 						return reject('Cannot find the site tree.');
 					}	
-//console.log('results ---> ', results);
+
 					results = orderResults(results, item.itemIds);
-					
+					console.log(itemConfig.onRender, itemConfig.listName);
 					if (itemConfig.onRender) {
 
 						return itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), data => {

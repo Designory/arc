@@ -13,6 +13,8 @@ module.exports = asyncHandler(async (req, res, next) => {
 
 	const rawTreeResults = await arc.utils.getRawTree(arc, {select: arc.config.treeSelect || 'name key url indentLevel', sort:'sortOrder'});
 
+	//console.log(rawTreeResults);
+
 	if (rawTreeResults) res.locals.tree = rawTreeResults;
 	else res.locals.tree = [];
 

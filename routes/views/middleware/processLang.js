@@ -16,8 +16,6 @@ module.exports = asyncHandler(async (req, res, next) => {
 	res.locals.langPath = splitUrlArr.shift();
 	res.locals.pageUrl = '/' + splitUrlArr.join('/');
 
-console.log(res.locals.pageUrl);
-
 	res.locals.lang = arc.getAllLangs().find(lang => lang.path === res.locals.langPath);
 
 	//console.log(res.locals.lang);

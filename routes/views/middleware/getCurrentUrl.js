@@ -14,7 +14,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 	if (res.locals.pageUrl === '/') {
 		res.locals.pageUrl = arc.config.homeSlug || '/home';
 	} 
-	console.log(res.locals.pageUrl);
+	//console.log(res.locals.pageUrl);
 	return next();
 
 });

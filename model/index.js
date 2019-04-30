@@ -31,7 +31,9 @@ module.exports = ArcClass => {
 			// do all the model magic
 			this.modelInit(configObject, callback);	
 
-			if (this.config.lang && configObject.listName === this.config.treeModel) {
+			if (!this.config.lang) return;
+
+			if (configObject.listName === this.config.treeModel) { // || configObject.type.indexOf('template') != -1
 
 				this.config.lang.secondaries.forEach(item => {
 
@@ -41,7 +43,7 @@ module.exports = ArcClass => {
 					newConfigObject.listName += item.modelPostfix;
 					newConfigObject.lang = item;
 					
-					this.addPageFieldConfig(newConfigObject, true);
+					if (configObject.listName === this.config.treeModel) this.addPageFieldConfig(newConfigObject, true);
 
 					this.modelInit(newConfigObject, callback)
 
@@ -52,7 +54,7 @@ module.exports = ArcClass => {
 		}
 
 		modelInit(configObject, callback) {
-
+			
 			this.keystonePublish.register(configObject, (StgList, ProdList, next) => {
 				// get data merged with defaults
 				//const mergedData = defaults.merge(configObject);
@@ -177,7 +179,6 @@ module.exports = ArcClass => {
 					}
 					return this;
 				}
-
 				return this.populate(populations);
 			}
 

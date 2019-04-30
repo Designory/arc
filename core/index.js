@@ -72,7 +72,7 @@ module.exports = function arcCore() {
 			        
 			    	const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
 
-					this.socketInit(server);
+						this.socketInit(server);
 
 					// write config file to the admin client side 
 					// this allows the admin interface to start up 
@@ -127,7 +127,7 @@ module.exports = function arcCore() {
 			return this.keystone.list(modelName);
 		}
 
-		arcList(modelName){
+		arcList(modelName){			
 			return this.list(this.keystonePublish.getList(modelName));
 		}
 

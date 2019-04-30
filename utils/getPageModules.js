@@ -2,18 +2,19 @@ const defaultConfig = {
 	consolidateModules: false,
 	decode: false,
 	hashify: false,
-	select: null,
-	onRender: null,
-	lean: null,
-	customQuery: null,
-	populate: null,
-	archive: null
+	select: false,
+	onRender: false,
+	lean: false,
+	customQuery: false,
+	populate: false,
+	archive: false
 };
 
-module.exports = async (arc, pageModules, reqConfig) => {
+module.exports = async (arc, pageModules, config, locals) => {
 
+	//console.log(config);
 
-	reqConfig = Object.assign({}, defaultConfig, reqConfig);
+	const reqConfig = Object.assign({}, defaultConfig, config);
 
 	return new Promise(async (resolve, reject) => {
 		
@@ -61,7 +62,7 @@ module.exports = async (arc, pageModules, reqConfig) => {
 		return new Promise(async (resolve, reject) => {
 
 			//return resolve();
-
+			console.log(item.moduleName);
 			const modelConfig = arc.getModels(item.moduleName);
 
 			if (!modelConfig) {
@@ -70,9 +71,9 @@ module.exports = async (arc, pageModules, reqConfig) => {
 			}			 
 
 			try {
-
+				
 				// get the item configuration
-				const itemConfig = Object.assign(reqConfig, modelConfig);
+				const itemConfig = Object.assign({}, reqConfig, modelConfig);
 
 				// bail if item item is archived (TODO: revist this approach)
 				if (itemConfig.archive) resolve(null);			
@@ -105,24 +106,23 @@ module.exports = async (arc, pageModules, reqConfig) => {
 					}	
 
 					results = orderResults(results, item.itemIds);
-					console.log(itemConfig.onRender, itemConfig.listName);
+
 					if (itemConfig.onRender) {
 
-						return itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), data => {
-							
-							return resolve({moduleName:item.moduleName, data:data});
+						itemConfig.onRender(results, arc.keystonePublish.getList(item.moduleName), locals, data => {		
+							resolve({moduleName:item.moduleName, data:data});
 						});
 						
 					} else {
 
-						return resolve({moduleName:item.moduleName, data:results});
+						resolve({moduleName:item.moduleName, data:results});
 					}
 
 				});
 
 			} catch(err) {
 				arc.log('error', err);
-				return reject(err);
+				reject(err);
 			}	
 
 		});

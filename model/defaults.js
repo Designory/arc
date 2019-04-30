@@ -14,7 +14,7 @@ module.exports = {
 		populate: null, // optional - mongoose populations for list
 		select: null, // optional - mongoose field selections for list
 		svg: null, // optional - mongoose field selections for list
-		onRender: null, // optional - render middleware - params: onRender(data, stgPrefix, done){...}
+		onRender: null, // optional - render middleware - params: onRender(data, stgPrefix, locals, done){...}
 	},
 	required: [
 		{

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const globalLabels = require('./startups/globalLabels');
-const updateSecondaries = require('./startups/updateSecondaries');
+const updateSecondaryModules = require('./startups/updateSecondaryModules');
+const updateSecondaryTemplates = require('./startups/updateSecondaryTemplates');
 const primaryFieldConfigs = require('./primaryFieldConfigs');
 const secondaryFieldConfigs = require('./secondaryFieldConfigs');
 
@@ -134,8 +135,9 @@ module.exports = ArcClass => {
         async langStartup(){
             return new Promise(async (resolve, reject) => {
                 try {
-                    //await globalLabels(this);
-                    await updateSecondaries(this);
+                    await globalLabels(this);
+                    await updateSecondaryModules(this);
+                    //await updateSecondaryTemplates(this);
                     resolve();
                 } catch(err){
                     this.log('error', err);

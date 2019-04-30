@@ -16,6 +16,7 @@ module.exports = (app, arc) => {
 	app.use(
 		routes.middleware.processLang,
 		routes.middleware.getCurrentUrl,
+		routes.middleware.getGlobals,
 		routes.middleware.getNavigationTree,
 		routes.middleware.getCurrentPage,
 		routes.middleware.populateModules

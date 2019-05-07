@@ -70,7 +70,7 @@ module.exports = ArcClass => {
                 modelPostfix: modelPostfix,
                 fullModel:this.config.treeModel + modelPostfix
             } 
-        }
+        } 
 
         getLangFromPath(path){
             
@@ -125,8 +125,6 @@ module.exports = ArcClass => {
                         noedit:true
                     }
                 });
-
-                //console.log('config.fieldConfig --->', config.fieldConfig)
             } 
 
             return config;
@@ -137,7 +135,7 @@ module.exports = ArcClass => {
                 try {
                     await globalLabels(this);
                     await updateSecondaryModules(this);
-                    //await updateSecondaryTemplates(this);
+                    await updateSecondaryTemplates(this);
                     resolve();
                 } catch(err){
                     this.log('error', err);

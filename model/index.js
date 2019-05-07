@@ -25,15 +25,16 @@ module.exports = ArcClass => {
 
 			if (this.config.lang) configObject = this.langModuleFieldConfig(configObject);
 
-			//console.log(configObject.fieldConfig);
+			configObject.primary = true;
 
 			this.addPageFieldConfig(configObject);
+			
 			// do all the model magic
 			this.modelInit(configObject, callback);	
 
 			if (!this.config.lang) return;
 
-			if (configObject.listName === this.config.treeModel) { // || configObject.type.indexOf('template') != -1
+			if (configObject.listName === this.config.treeModel || configObject.type.indexOf('template') != -1) {
 
 				this.config.lang.secondaries.forEach(item => {
 
@@ -42,10 +43,15 @@ module.exports = ArcClass => {
 					newConfigObject.baseListName = newConfigObject.listName;
 					newConfigObject.listName += item.modelPostfix;
 					newConfigObject.lang = item;
+					newConfigObject.primary = false;
 					
-					if (configObject.listName === this.config.treeModel) this.addPageFieldConfig(newConfigObject, true);
+					(function(self, config, callback){
 
-					this.modelInit(newConfigObject, callback)
+						if (config.listName === self.config.treeModel) self.addPageFieldConfig(config, true);
+
+						self.modelInit(config, callback);
+
+					})(this, newConfigObject, callback)
 
 				});
 
@@ -55,9 +61,12 @@ module.exports = ArcClass => {
 
 		modelInit(configObject, callback) {
 			
+			//console.log('configObject.listName -----> ', configObject.listName);
+
 			this.keystonePublish.register(configObject, (StgList, ProdList, next) => {
 				// get data merged with defaults
-				//const mergedData = defaults.merge(configObject);
+				
+				const mergedData = defaults.merge(configObject);	
 
 				if (!configObject || configObject.archive) return next();
 
@@ -65,7 +74,7 @@ module.exports = ArcClass => {
 				
 				this.addModel(configObject, StgList, ProdList);
 				
-				//this.cacheClearSaveHook(configObject, StgList, ProdList);
+				this.cacheClearSaveHook(configObject, StgList, ProdList);
 				
 				this.setTreeConfig(configObject, StgList, ProdList);
 				
@@ -73,6 +82,7 @@ module.exports = ArcClass => {
 
 				// enable callback function
 				if (callback && typeof callback === 'function') {
+					//console.log('----> ', StgList.key, ProdList.key)
 					callback(StgList, ProdList, next);
 				} else {
 					next();
@@ -171,6 +181,7 @@ module.exports = ArcClass => {
 		 * @return n/a
 		 */
 		addModelPopulations(stgList, prodList, populations) {
+
 			function arcPopulate() {
 				if (!populations) return this;
 				else if (Array.isArray(populations)) {

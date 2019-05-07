@@ -66,7 +66,7 @@ module.exports = function arcCore() {
 		async start() {
 			
 			if (process.env.NODE_ENV === 'production') return this.keystone.start();
-
+			
 			return this.keystone.start({
 			    onStart: () => {
 			        
@@ -127,7 +127,7 @@ module.exports = function arcCore() {
 			return this.keystone.list(modelName);
 		}
 
-		arcList(modelName){			
+		arcList(modelName){
 			return this.list(this.keystonePublish.getList(modelName));
 		}
 

@@ -62,3 +62,5 @@ typings/
 
 admin/settings.json
 admin/public
+
+.DS_Store

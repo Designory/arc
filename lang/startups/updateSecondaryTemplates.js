@@ -1,42 +1,110 @@
 // alright here comes a ton of crap 
 
+const getTemplateData = async (arc, list) => {
+
+    return new Promise(async (resolve, reject) => {
+        
+        try {
+
+            const model = arc.arcList(list.listName).model;
+
+            model.find().lean().exec(async (err, docs) => {
+            
+                if (err) {
+                    arc.log('error', err);
+                } 
+
+                const results = [];
+
+                for (let doc of docs) {
+                    results.concat(...await updateFromPrimaryTemplate(arc, list.listName, doc));
+                }
+
+                console.log(results.length)
+
+                resolve(results);
+                
+            }); 
+        } catch(err) {
+            arc.log('error', err);
+        }
+    });
+};
+
+const updateFromPrimaryTemplate = async (arc, listName, doc) => {
+
+    return new Promise(async (resolve, reject) => {
+        
+        const updated = [];
+
+        try {
+
+            const primaryModel = arc.arcList(listName).model;
+
+            const results = [];
+
+            for (let lang of arc.config.lang.secondaries) {
+                await checkUpdateEachLang(arc, `${listName}${lang.modelPostfix}`, doc);
+            }
+
+            resolve(results);
+
+        } catch(err) {
+            arc.log('error', err);
+        }
+    });
+}
+
+const checkUpdateEachLang = async (arc, listName, primaryDoc) => {
+
+    return new Promise(async (resolve, reject) => {
+        
+        try {
+
+            const langModel = arc.arcList(listName).model;
+
+            langModel.findById(primaryDoc._id).exec((err, doc) => {
+            
+                if (err) {
+                    arc.log('error', err);
+                } 
+
+                if (!doc) {        
+
+                    langModel.create(primaryDoc, function (err, newDoc) {
+                        if (err) return arc.log('error', err);
+                        arc.log(`Added new ${listName}`);
+                        return resolve({
+                            listName: listName,
+                            _id: newDoc._id.toString()
+                        });
+                      });
+
+                } else {
+                    
+                    resolve([]);
+
+                }
+
+            });
+
+        } catch(err) {
+            arc.log('error', err);
+        }
+    });
+    
+}
+
 module.exports = async arc => {
     return new Promise(async (resolve, reject) => {
         try {
 
-        
+            const templates = arc.getModels().filter(item => item.type === 'template' && item.primary && item.listName !== arc.config.treeModel);
+            const updateList = {};
 
-        const primaryTreeData = await getTreeData(arc, null);
-        const secondaryTreesData = await getAllTreesData(arc, {idOnly:true});
-        const docs = docsToCreate(primaryTreeData, secondaryTreesData);
-        
-        if (!docs.length) return resolve();
-
-        const docsWithNewModules = await makeNewModulesForDocs(arc, docs);
-
-        let moduleCount = 0;
-        const promises = docsWithNewModules.map(item => {
-            moduleCount += item.count;
-
-            // avoid duplicate key errors
-            delete item.doc.key;
-            
-            return arc.utils.createTreePage(arc, item.doc, {lang:item.lang});
-        });
-        
-        arc.log('Validating lang pages and modules.');
-        arc.log(`Creating ${docsWithNewModules.length} secondary language page(s) with ${moduleCount} module(s).`);
-
-        // arc.config.lang.config.translatableUrl
-        // if (!arc.config.lang.config.translatableUrl)
-
-        Promise.all(promises).then(async docsWithNewModules => {
-            arc.log(`Done creating secondary languages.`);
-            resolve(docsWithNewModules);
-        }).catch(function(err) {
-            arc.log('error', err);
-            resolve(null);
-        });
+            for (let item of templates) {
+                updateList[item.listName] = await getTemplateData(arc, item);
+            }
 
         } catch(err) {
             arc.log('error', err);
@@ -45,129 +113,3 @@ module.exports = async arc => {
     });
 
 };
-
-const getAllTreesData = (arc, config) => {
-
-    return new Promise(async (resolve, reject) => {
-        
-        const promises = arc.config.lang.secondaries.map(item => {
-            return getTreeData(arc, item, {idOnly:config.idOnly});
-        });
-
-        Promise.all(promises).then(function(docs) {
-            resolve(docs);
-        }).catch(function(err) {
-            arc.log('error', err);
-            resolve(null);
-        });  
-
-    });
-}
-
-const getTreeData = async (arc, lang, config = {}) => {
-
-    return new Promise(async (resolve, reject) => {
-        
-        try {
-
-            const model = arc.utils.getTreeModel(arc, lang);
-
-            model.find().lean().exec((err, docs) => {
-            
-                if (err) {
-                    arc.log('error', err);
-                } 
-                //console.log(config);
-
-                if (config.idOnly){
-                    docs = docs.map(item => {
-                        return item._id.toString();
-                    });
-                }
-
-                if (lang) resolve({lang, docs});
-                else resolve(docs);
-                
-            }); 
-        } catch(err) {
-            arc.log('error', err);
-        }
-    });
-}
-
-const docsToCreate = (primary, secondary) => {
-    
-    const createArr = [];
-
-    primary.forEach(primaryItem => {
-
-        secondary.forEach(secondaryItem => {
-            if (!secondaryItem.docs.includes(primaryItem._id.toString())) {
-                createArr.push({doc:Object.assign({}, primaryItem), lang:secondaryItem.lang});
-            }
-        });
-
-    });
-
-    return createArr;
-
-}
-
-const compareLists = (arc, docs) => {
-    
-    const configLangs = arc.getAllLangs();
-    const createArr = [];
-
-    configLangs.forEach(langItem => {
-        let foundLang = false;
-        docs.forEach(docItem => {
-            if (langItem.path === docItem.path) foundLang = true;
-        });
-        if (!foundLang) createArr.push(langItem);
-    });
-
-    return createArr;
-}
-
-const addLangs = (arc, docs) => {
-    
-    const configLangs = arc.getAllLangs();
-    const createArr = [];
-
-    configLangs.forEach(langItem => {
-        let foundLang = false;
-        docs.forEach(docItem => {
-            if (langItem.path === docItem.path) foundLang = true;
-        });
-        if (!foundLang) createArr.push(langItem);
-    });
-
-    return createArr;
-}
-
-const makeNewModulesForDocs = (arc, docs) => {
-    
-    return new Promise((resolve, reject) => {
-        
-        try {
-
-            const promises = docs.map(item => {
-                return arc.langModuleCheckAndUpdate(item);
-            });
-
-            Promise.all(promises).then(async docsWithNewModules => {
-                resolve(docsWithNewModules);
-            }).catch(function(err) {
-                arc.log('error', err);
-                resolve(null);
-            });
-
-        } catch(err) {
-            arc.log('error', err);
-        }
-
-    });
-
-}
-
-

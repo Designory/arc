@@ -62,7 +62,7 @@ module.exports = async (arc, pageModules, config, locals) => {
 		return new Promise(async (resolve, reject) => {
 
 			//return resolve();
-			console.log(item.moduleName);
+			//console.log(item.moduleName);
 			const modelConfig = arc.getModels(item.moduleName);
 
 			if (!modelConfig) {

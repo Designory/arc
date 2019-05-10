@@ -16,15 +16,15 @@ module.exports = asyncHandler(async (req, res, next) => {
 
 	// if we have the force lang query param,
 	// set cookie
-	if (req.query.setDefaultLang) {
-		res.cookie('lang', req.query.setDefaultLang);
-	}
+	// if (req.query.setDefaultLang) {
+	// 	res.cookie('lang', req.query.setDefaultLang);
+	// }
 
 	// if we have a lang cookie, we set it this way
-	if (req.cookies.lang) {
-		if (res.locals.langPath !== req.cookies.lang) return res.redirect(`/${req.cookies.lang}${res.locals.pageUrl}`);
-		res.locals.langPath = req.cookies.lang;
-	}
+	// if (req.cookies.lang) {
+	// 	if (res.locals.langPath !== req.cookies.lang) return res.redirect(`/${req.cookies.lang}${res.locals.pageUrl}`);
+	// 	res.locals.langPath = req.cookies.lang;
+	// }
 
 	res.locals.lang = arc.getAllLangs().find(lang => lang.path === res.locals.langPath);
 

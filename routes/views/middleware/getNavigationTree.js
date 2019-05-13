@@ -11,7 +11,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 	// 	return next();
 	// }
 
-	const rawTreeResults = await arc.utils.getRawTree(arc, {select: arc.config.treeSelect || 'name key url indentLevel', sort:'sortOrder'});
+	const rawTreeResults = await arc.utils.getRawTree(arc, {select: arc.config.treeSelect || 'name key url indentLevel', sort:'sortOrder', lang: res.locals.lang || null});
 
 	//console.log(rawTreeResults);
 

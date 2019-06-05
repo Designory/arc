@@ -14,25 +14,27 @@ module.exports = asyncHandler(async (req, res, next) => {
 	res.locals.langPath = splitUrlArr.shift();
 	res.locals.pageUrl = '/' + splitUrlArr.join('/');
 
+
+
 	// if we have the force lang query param,
 	// set cookie
-	// if (req.query.setDefaultLang) {
-	// 	res.cookie('lang', req.query.setDefaultLang);
-	// }
+	if (req.query.setDefaultLang) {
+		res.cookie('lang', res.locals.langPath);
+	}
 
 	// if we have a lang cookie, we set it this way
-	// if (req.cookies.lang) {
-	// 	if (res.locals.langPath !== req.cookies.lang) return res.redirect(`/${req.cookies.lang}${res.locals.pageUrl}`);
-	// 	res.locals.langPath = req.cookies.lang;
-	// }
-
+	if (req.cookies.lang) {
+		if (res.locals.langPath !== req.cookies.lang) return res.redirect(`/${req.cookies.lang}${res.locals.pageUrl}`);
+		res.locals.langPath = req.cookies.lang;
+	}
+	
 	res.locals.lang = arc.getAllLangs().find(lang => lang.path === res.locals.langPath);
 
 	// force a redirect to primary lang if we come up empty
 	if (!res.locals.lang) {	
 		// best guess at browser language settings with primary lang backup
 		const langGuess = req.locale || arc.config.lang.primary.path;	
-		return res.redirect(`/${langGuess}${res.originalUrl}`);
+		return res.redirect(`/${langGuess}${req.originalUrl}`);
 	}
 
 	res.locals.langList = arc.getAllLangs().map(item => {

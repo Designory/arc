@@ -12,6 +12,7 @@ module.exports = asyncHandler(async (req, res, next) => {
 		//console.log(view);
 
 		return view.render('index');
+
 		//
 		//
 		//

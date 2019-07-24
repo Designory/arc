@@ -1,9 +1,10 @@
 const _ = require('lodash');
-const globalLabels = require('./startups/globalLabels');
-const updateSecondaryModules = require('./startups/updateSecondaryModules');
-const updateSecondaryTemplates = require('./startups/updateSecondaryTemplates');
+const globalLabels = require('./newLangs/globalLabels');
+const updateSecondaryModules = require('./newLangs/updateSecondaryModules');
+const updateSecondaryTemplates = require('./newLangs/updateSecondaryTemplates');
 const primaryFieldConfigs = require('./primaryFieldConfigs');
 const secondaryFieldConfigs = require('./secondaryFieldConfigs');
+const onModulesUpdate = require('./onModulesUpdate');
 
 module.exports = ArcClass => {
 
@@ -103,34 +104,34 @@ module.exports = ArcClass => {
         langSecondaryFieldConfig(config){
             return secondaryFieldConfigs(config, this);
         }
-
-        langModuleFieldConfig(config){
-            if (config.type.indexOf('module') != -1) {
-
-                config.fieldConfig.push({
-                    heading:'Module Language Settings'
-                });
-
-                config.fieldConfig.push({
-                    langParentId: { 
-                        type:this.Field.Types.Text,    
-                        noedit:true 
-                    },
-                    langPath: { 
-                        type:this.Field.Types.Text,    
-                        noedit:true 
-                    },
-                    lastSavedPageId: {
-                        type:this.Field.Types.Text,
-                        noedit:true
-                    }
-                });
-            } 
-
-            return config;
+        
+        async langUpdateSecondaryModules(pageId, pageDataCode){
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await onModulesUpdate(this, pageId, pageDataCode);
+                    resolve();
+                } catch(err){
+                    this.log('error', err);
+                }
+            });
         }
 
+
+        
+        // async langUpdateSecondaryTemplates(){
+        //     return new Promise(async (resolve, reject) => {
+        //         try {
+        //             await globalLabels(this);
+        //             await updateSecondaryTemplates(this);
+        //             resolve();
+        //         } catch(err){
+        //             this.log('error', err);
+        //         }
+        //     });
+        // }
+
         async langStartup(){
+            
             return new Promise(async (resolve, reject) => {
                 try {
                     await globalLabels(this);
@@ -144,19 +145,21 @@ module.exports = ArcClass => {
         }
 
         async langModuleCheckAndUpdate(pageAndLang){
+            
             return new Promise(async (resolve, reject) => {
             
-                const pageDataCode = JSON.parse(pageAndLang.doc.pageDataCode);
+                const pageDataCode = (typeof pageAndLang.doc.pageDataCode === 'string') ? JSON.parse(pageAndLang.doc.pageDataCode) : pageAndLang.doc.pageDataCode;
 
                 const promises = pageDataCode.map(item => {
                     return this.itemCheckOrUpdate(item, pageAndLang.doc, pageAndLang.lang);
                 });
 
                 Promise.all(promises).then(async newPageDataCode => {
+                    
                     pageAndLang.doc.pageDataCode = JSON.stringify(newPageDataCode);
                     
-                    //console.log(pageAndLang.doc.pageDataCode);
                     resolve({doc:pageAndLang.doc, lang:pageAndLang.lang, count:newPageDataCode.length});
+                
                 }).catch(function(err) {
                     this.log('error', err);
                     resolve(null);
@@ -165,6 +168,7 @@ module.exports = ArcClass => {
         }
 
         async itemCheckOrUpdate(item, doc, lang) {
+            
             return new Promise(async (resolve, reject) => {
 
                 const model = this.list(this.keystonePublish.getList(item.moduleName)).model;
@@ -174,7 +178,9 @@ module.exports = ArcClass => {
                     if (err) this.log('error', err);
                     
                     if (moduleDoc) {
-                        resolve({itemIds:[item.itemIds[0]], moduleName:item.moduleName});
+                        
+                        resolve({itemIds:[moduleDoc._id], moduleName:item.moduleName});
+
                     } else {
                         
                         model.findById(item.itemIds[0]).lean().exec((err, masterModuleDoc) => { 

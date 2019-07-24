@@ -12,6 +12,8 @@ module.exports = (mergedData, StgList, ProdList, arc) => {
 		// new items receive thier own special emit via the page change trigger
 		if (!this.wasNew) arc.io.emit('MODULECHANGE', {_id:null, modules:{[this._id]:Object.assign({}, this._doc, {_listName:mergedData.listName})}});
 
+
+
 	});
 
 	StgList.schema.post('remove', async function(doc){

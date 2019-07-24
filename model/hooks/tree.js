@@ -13,7 +13,8 @@ module.exports = (mergedData, StgList, ProdList, arc) => {
 		this.stoppingPostSaveHook = this.stopPostSaveHook;
 		this.stopPostSaveHook = false;
 		this.pageDataCodeWasModified = this.isModified('pageDataCode');
-		
+		//this.wasPublishedToProduction = this.publishToProduction;
+
 		next();
 
 	});
@@ -29,15 +30,23 @@ module.exports = (mergedData, StgList, ProdList, arc) => {
 		if (this.pageDataCodeWasModified) {
 
 			try {
+
+				const parsedPageDataCode = JSON.parse(doc.pageDataCode)
+
                 // TODO: consolidate to utils function
-                const loadedModules = await arc.utils.getPageModules(arc, JSON.parse(doc.pageDataCode), {
+                const loadedModules = await arc.utils.getPageModules(arc, parsedPageDataCode, {
                     select:'name matchesLive existsOnLive visible state archive key __v', 
                     onRender:null, 
                     consolidateModules:false
                 });
 
-                arc.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
-                
+				arc.io.emit('MODULECHANGE', {_id:doc._id, modules:loadedModules});
+
+				// update all secondary lang module according to the change of the primary
+				if (mergedData.primary && arc.config.lang) {
+					const updatedLangModules = await arc.langUpdateSecondaryModules(doc._id, parsedPageDataCode, this.wasPublishedToProduction);
+				}
+
             } catch(err){
                 // TODO: set up error reporting to the UI
                 //arc.io.to(socket.id).emit('serverError', {issue:'Cannot get page modules.', error:error});

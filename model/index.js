@@ -23,7 +23,7 @@ module.exports = ArcClass => {
 
 			configObject = defaults.merge(configObject);
 
-			if (this.config.lang) configObject = this.langModuleFieldConfig(configObject);
+			//if (this.config.lang) configObject.lang = this.config.lang.primary.path;
 
 			configObject.primary = true;
 
@@ -48,6 +48,8 @@ module.exports = ArcClass => {
 					(function(self, config, callback){
 
 						if (config.listName === self.config.treeModel) self.addPageFieldConfig(config, true);
+
+						//console.log(newConfigObject.listName);
 
 						self.modelInit(config, callback);
 
@@ -131,6 +133,7 @@ module.exports = ArcClass => {
 		}
 
 		addPageFieldConfig(configObject, secondaryLang) {
+			
 			configObject.fieldConfig.push({
 				stopPostSaveHook: { 
 					type: this.Field.Types.Boolean,
@@ -139,10 +142,16 @@ module.exports = ArcClass => {
 				}
 			});
 
+			if (this.config.lang && configObject.type === 'module') {
+				configObject.fieldConfig.push({
+					langParentId: { 
+						type:this.Field.Types.Text
+					}
+				});
+			}
+
 			if (this.config.lang && configObject.listName === this.config.treeModel) this.langPrimaryFieldConfig(configObject);
 			if (this.config.lang && secondaryLang) this.langSecondaryFieldConfig(configObject);
-
-
 
 		}
  

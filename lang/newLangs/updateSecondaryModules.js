@@ -3,39 +3,37 @@ module.exports = async arc => {
     return new Promise(async (resolve, reject) => {
         try {
 
-        
-
-        const primaryTreeData = await getTreeData(arc, null);
-        const secondaryTreesData = await getAllTreesData(arc, {idOnly:true});
-        const docs = docsToCreate(primaryTreeData, secondaryTreesData);
-        
-        if (!docs.length) return resolve();
-
-        const docsWithNewModules = await makeNewModulesForDocs(arc, docs);
-
-        let moduleCount = 0;
-        const promises = docsWithNewModules.map(item => {
-            moduleCount += item.count;
-
-            // avoid duplicate key errors
-            delete item.doc.key;
+            const primaryTreeData = await getTreeData(arc, null);
+            const secondaryTreesData = await getAllTreesData(arc, {idOnly:true});
+            const docs = docsToCreate(primaryTreeData, secondaryTreesData);
             
-            return arc.utils.createTreePage(arc, item.doc, {lang:item.lang});
-        });
-        
-        arc.log('Validating lang pages and modules.');
-        arc.log(`Creating ${docsWithNewModules.length} secondary language page(s) with ${moduleCount} module(s).`);
+            if (!docs.length) return resolve();
 
-        // arc.config.lang.config.translatableUrl
-        // if (!arc.config.lang.config.translatableUrl)
+            const docsWithNewModules = await makeNewModulesForDocs(arc, docs);
 
-        Promise.all(promises).then(async docsWithNewModules => {
-            arc.log(`Done creating secondary languages.`);
-            resolve(docsWithNewModules);
-        }).catch(function(err) {
-            arc.log('error', err);
-            resolve(null);
-        });
+            let moduleCount = 0;
+            const promises = docsWithNewModules.map(item => {
+                moduleCount += item.count;
+
+                // avoid duplicate key errors
+                delete item.doc.key;
+                
+                return arc.utils.createTreePage(arc, item.doc, {lang:item.lang});
+            });
+            
+            arc.log('Validating lang pages and modules.');
+            arc.log(`Creating ${docsWithNewModules.length} secondary language page(s) with ${moduleCount} module(s).`);
+
+            // arc.config.lang.config.translatableUrl
+            // if (!arc.config.lang.config.translatableUrl)
+
+            Promise.all(promises).then(async docsWithNewModules => {
+                arc.log(`Done creating secondary languages.`);
+                resolve(docsWithNewModules);
+            }).catch(function(err) {
+                arc.log('error', err);
+                resolve(null);
+            });
 
         } catch(err) {
             arc.log('error', err);
@@ -44,24 +42,6 @@ module.exports = async arc => {
     });
 
 };
-
-const getAllTreesData = (arc, config) => {
-
-    return new Promise(async (resolve, reject) => {
-        
-        const promises = arc.config.lang.secondaries.map(item => {
-            return getTreeData(arc, item, {idOnly:config.idOnly});
-        });
-
-        Promise.all(promises).then(function(docs) {
-            resolve(docs);
-        }).catch(function(err) {
-            arc.log('error', err);
-            resolve(null);
-        });  
-
-    });
-}
 
 const getTreeData = async (arc, lang, config = {}) => {
 
@@ -91,6 +71,24 @@ const getTreeData = async (arc, lang, config = {}) => {
         } catch(err) {
             arc.log('error', err);
         }
+    });
+}
+
+const getAllTreesData = (arc, config) => {
+
+    return new Promise(async (resolve, reject) => {
+        
+        const promises = arc.config.lang.secondaries.map(item => {
+            return getTreeData(arc, item, {idOnly:config.idOnly});
+        });
+
+        Promise.all(promises).then(function(docs) {
+            resolve(docs);
+        }).catch(function(err) {
+            arc.log('error', err);
+            resolve(null);
+        });  
+
     });
 }
 

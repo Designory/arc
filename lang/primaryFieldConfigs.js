@@ -19,6 +19,15 @@ module.exports = (config, arc) => {
         heading: 'Language Settings'
     });
 
+	// this is yet to be used
+	config.fieldConfig.push({
+		forceLanguageOverwrite: { 
+			type:arc.Field.Types.Select, 	
+			options: overwriteOptions 
+		}
+	});
+
+	// this is yet to be used
 	config.fieldConfig.push({
 		forceLanguageOverwrite: { 
 			type:arc.Field.Types.Select, 	

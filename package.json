@@ -1,31 +1,69 @@
 {
-  "name": "arc",
-  "version": "1.0.0-alpha",
-  "description": "Nodejs page builder CMS built upon Keystonejs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "_from": "github:Designory/arc#lang3",
+  "_id": "arc@1.0.0-alpha",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/arc",
+  "_phantomChildren": {
+    "babel-code-frame": "6.26.0",
+    "chalk": "1.1.3",
+    "concat-stream": "1.6.2",
+    "doctrine": "2.1.0",
+    "escope": "3.6.0",
+    "espree": "3.5.4",
+    "esquery": "1.0.1",
+    "estraverse": "4.2.0",
+    "esutils": "2.0.2",
+    "file-entry-cache": "2.0.0",
+    "glob": "7.1.4",
+    "globals": "9.18.0",
+    "ignore": "3.3.10",
+    "imurmurhash": "0.1.4",
+    "inquirer": "0.12.0",
+    "is-my-json-valid": "2.20.0",
+    "is-resolvable": "1.1.0",
+    "js-yaml": "3.13.1",
+    "json-stable-stringify": "1.0.1",
+    "levn": "0.3.0",
+    "lodash": "4.17.15",
+    "mkdirp": "0.5.1",
+    "ms": "2.0.0",
+    "natural-compare": "1.4.0",
+    "optionator": "0.8.2",
+    "path-is-inside": "1.0.2",
+    "pluralize": "1.2.1",
+    "progress": "1.1.8",
+    "require-uncached": "1.0.3",
+    "shelljs": "0.7.8",
+    "strip-bom": "3.0.0",
+    "strip-json-comments": "2.0.1",
+    "table": "3.8.3",
+    "text-table": "0.2.0",
+    "user-home": "2.0.0"
   },
-  "repository": {
+  "_requested": {
     "type": "git",
-    "url": "git+https://github.com/Designory/arc.git"
+    "raw": "arc@github:Designory/arc#lang3",
+    "name": "arc",
+    "escapedName": "arc",
+    "rawSpec": "github:Designory/arc#lang3",
+    "saveSpec": "github:Designory/arc#lang3",
+    "fetchSpec": null,
+    "gitCommittish": "lang3"
   },
-  "keywords": [
-    "cms",
-    "page",
-    "builder",
-    "keystonejs",
-    "developer",
-    "and",
-    "designer",
-    "oriented"
+  "_requiredBy": [
+    "/"
   ],
-  "author": "designory team",
-  "license": "Apache-2.0",
+  "_resolved": "github:Designory/arc#6326b8327c9842d152af75576321d9b4f4f494d5",
+  "_spec": "arc@github:Designory/arc#lang3",
+  "_where": "/Users/kevin.middlesworth/projects/egplus/egplusww-website",
+  "author": {
+    "name": "designory team"
+  },
   "bugs": {
     "url": "https://github.com/Designory/arc/issues"
   },
-  "homepage": "https://github.com/Designory/arc#readme",
+  "bundleDependencies": false,
   "dependencies": {
     "async": "^2.6.1",
     "axios": "^0.18.0",
@@ -76,5 +114,29 @@
     "webpack-cli": "^3.0.8",
     "webpack-dev-middleware": "^3.5.0",
     "webpack-merge": "^4.2.1"
-  }
+  },
+  "deprecated": false,
+  "description": "Nodejs page builder CMS built upon Keystonejs",
+  "homepage": "https://github.com/Designory/arc#readme",
+  "keywords": [
+    "cms",
+    "page",
+    "builder",
+    "keystonejs",
+    "developer",
+    "and",
+    "designer",
+    "oriented"
+  ],
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "name": "arc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Designory/arc.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0-alpha"
 }

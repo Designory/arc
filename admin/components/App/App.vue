@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class="arc-root" ondragstart="return false;" ondrop="return false;">
+    class="arc-root">
 
     <Header />
     <!-- <transition name="fade"> -->

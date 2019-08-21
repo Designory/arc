@@ -11,7 +11,7 @@ export default {
 
 		// funny enough, we might not need to worry about {lang}, 
 		// although we include it in the payload
-
+	
 	    // if message value is an array, straight replace
 		if (Array.isArray(payload.tree)) {
 
@@ -86,6 +86,8 @@ export default {
 
 	SOCKET_MODULECHANGE({ dispatch, commit, state }, payload) {
 		
+		// NOTE: need to add lang aspect
+
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 		
 
@@ -93,12 +95,14 @@ export default {
 		//if (!state.route.query || !state.route.query.pageId || state.route.query.pageId !== payload._id) return false;
 
 		// if message value is an array, straight replace
-		if (Array.isArray(payload.modules) && state.route.query.pageId !== payload._id) {
+		//if (Array.isArray(payload.modules) && state.route.query.pageId !== payload._id) {
+		if (Array.isArray(payload.modules)) {
 
 			commit('UPDATE_MODULE', payload.modules);
 	      	
 		// if payload in an object, assume hash, and replace only 
 		// what's in the hash object
+
 		} else if (!Array.isArray(payload.modules)) {
 
 			let moduleIsOnPage = false;
@@ -156,10 +160,13 @@ export default {
 					}	
 
 				});
-
-				commit('UPDATE_MODULE', newArr);
+				
 			}
+
+			commit('UPDATE_MODULE', newArr);
 		
+		} else {
+			console.log('lost it all');
 		}
 
 		if (state.route.query && Object.keys(payload.modules).includes(state.route.query.moduleId)) router.replace({query:{pageId:state.route.query.pageId}});

@@ -8,8 +8,10 @@ export default {
     },
     
     UPDATE_MODULE(state, payload) {
-
+   
       state.currentModulesData = payload;
+
+      //debugger;
 
     },
 

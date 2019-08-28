@@ -1,4 +1,4 @@
-const ArcCore = require('./core')();
+const ArcCore = require('./base')();
 const ArcAPI = require('./api')(ArcCore);
 const ArcModel = require('./model')(ArcAPI);
 const ArcLang = require('./lang')(ArcModel);

@@ -67,6 +67,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "axios": "^0.18.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-loader": "7.0.0",
     "clean-webpack-plugin": "^1.0.0",
     "cookie-parser": "^1.4.4",
@@ -86,7 +87,7 @@
     "locale": "^0.1.0",
     "lodash": "^4.17.11",
     "log4js": "^3.0.6",
-    "marked": "^0.6.3",
+    "marked": "^0.7.0",
     "mini-css-extract-plugin": "^0.4.1",
     "node-cache": "^4.2.0",
     "node-sass": "^4.9.2",

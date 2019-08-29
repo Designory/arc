@@ -7,11 +7,15 @@ export default {
 		
 		payload = payload[0] || payload; // don't know why the socket puts this into an array 
 
-		console.log('treechange is triggered --> ', typeof payload.tree);
+		console.log(payload);
+
+		// we only want to make the update when the updating page is open 
+		if (payload._id !== state.route.query.pageId) return false;
 
 		// funny enough, we might not need to worry about {lang}, 
 		// although we include it in the payload
-	
+		
+
 	    // if message value is an array, straight replace
 		if (Array.isArray(payload.tree)) {
 

@@ -14,10 +14,8 @@ import PageBuilderControls from '../components/Controls/PageBuilderControls.vue'
 //import TemplateEditor from '../components/TemplateEditor/TemplateEditor.vue';
 //import TemplateEditorPane from '../components/Panes/TemplateEditorPane/TemplateEditorPane.vue';
 
-//import TemplateList from '../components/TemplateList/TemplateList.vue';
-///import TemplateSideBar from '../components/TemplateSideBar/TemplateSideBar.vue';
-
-import settings from '../settings.json';
+import ListMain from '../components/ListMain/ListMain.vue';
+import ListSideBar from '../components/ListSideBar/ListSideBar.vue';
 
 Vue.use(Router);
 
@@ -70,24 +68,24 @@ export default new Router({
 					}
 				}
 			]
+		},
+		{
+			path: '/:lang/list/:listName',
+			name: 'templateView',
+			components: {
+				main: ListMain,
+				navigation: ListSideBar
+			},
+			children: [
+				{
+					path: ':id',
+					components: {
+						main: ListMain,
+						navigation: ListSideBar
+					}
+				}
+			]
 		}//,
-		// {
-		// 	path: '/:lang/template/:listName',
-		// 	name: 'templateView',
-		// 	components: {
-		// 		main: TemplateList,
-		// 		navigation: TemplateSideBar,
-		// 	},
-		// 	children: [
-		// 		{
-		// 			path: '',
-		// 			components: {
-		// 				controls: null,
-		// 				sidebar: TemplateEditorPane
-		// 			}
-		// 		},
-		// 	]
-		// }//,
 		// {
 		// 	path: '/:lang/labels/:listName',
 		// 	name: 'templateView',

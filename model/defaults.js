@@ -8,13 +8,14 @@ module.exports = {
 		initialConfig: null, // required - keystone/mongoose init config
 		fieldConfig: null, // required - keystone/mongoose field types
 		sortOrder: 100, // optional - define the order of display on the arc admin UI
-		type: 'none', // options: module, template, meta, archive
-		archive: false, // pulls list from all available entry
-		listDependants: null, // optional - tells arc admin about supporting lists
+		type: 'none', // options: module, list
+		archive: false, // pulls list from all available entry (<== not sure what this means)
+		relatedLists: null, // optional - tells arc admin about supporting lists in comma-delimited string
+		noTranslate: null, // optional - 'true' means that this particular list does not take translations
 		populate: null, // optional - mongoose populations for list
 		select: null, // optional - mongoose field selections for list
 		svg: null, // optional - mongoose field selections for list
-		onRender: null, // optional - render middleware - params: onRender(data, stgPrefix, locals, done){...}
+		onRender: null // optional - render middleware - params: onRender(data, stgPrefix, locals, done){...}
 	},
 	required: [
 		{

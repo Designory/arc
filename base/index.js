@@ -128,7 +128,21 @@ module.exports = function arcCore() {
 		}
 
 		arcList(modelName){
+			
+			// for multilang we need to make sure the postfix was not 
+			// accidently added to the modelName for non-translatable lists
+			if (modelName.includes('__')) {
+
+				const currentModel = this.getModels().find(item => {
+					return modelName === item.listName;
+				});
+
+				if (currentModel.noTranslate) modelName = modelName.split('__')[0];
+
+			}
+	
 			return this.list(this.keystonePublish.getList(modelName));
+		
 		}
 
 		setViewRoutes(customRoutes) {

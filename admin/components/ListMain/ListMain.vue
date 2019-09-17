@@ -19,5 +19,5 @@
   </div>
 </template>
 
-<style src="./TemplateEditor.scss"></style>
-<script src="./TemplateEditor.js"></script> 
+<style src="./ListMain.scss"></style>
+<script src="./ListMain.js"></script> 

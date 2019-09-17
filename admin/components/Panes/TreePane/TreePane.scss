@@ -11,10 +11,10 @@
   $toggleSize:14px;
 
   background-color: white;
-  height: calc(100% - #{$headerHeight});
+  //height: calc(100% - #{$headerHeight});
   overflow-y: scroll;
   //padding: 25px;
-  margin-left:10px;
+  padding-left:10px;
   
   &__instruction-text {
     font-size: 10px;
@@ -44,6 +44,7 @@
       // background-color: #eee;
       // color: $expandTreeColor;
       font-weight:bold;
+      cursor: pointer;
   }
 
   .sl-vue-tree-node-item:hover,

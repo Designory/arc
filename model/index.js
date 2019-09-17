@@ -34,7 +34,7 @@ module.exports = ArcClass => {
 
 			if (!this.config.lang) return;
 
-			if (configObject.listName === this.config.treeModel || configObject.type.indexOf('template') != -1) {
+			if (configObject.listName === this.config.treeModel || (configObject.type.indexOf('list') != -1 && !configObject.noTranslate)) {
 
 				this.config.lang.secondaries.forEach(item => {
 
@@ -125,7 +125,7 @@ module.exports = ArcClass => {
 
 				moduleModelHooks(mergedData, StgList, ProdList, this);
 			
-			} else if (mergedData.type.indexOf('template') != -1) {
+			} else if (mergedData.type.indexOf('list') != -1) {
 
 				templateModelHooks(mergedData, StgList, ProdList, this);
 				

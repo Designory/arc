@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar" v-if="list.length">
     <div class="tree__list">
       <div class="tree">
         <div class="tree__list">
@@ -12,9 +12,9 @@
             <div class="sl-vue-tree-node" v-for="item in list">
               <router-link
               tag="div" 
-              :to="{path: `state.route.params.lang/list/listName`}"
+              :to="{path: `/state.route.params.lang/list/${item.slug}`}"
               >
-               v-for="item in list" item.name v-for="item in list" :key="item._id"
+               {{item.name}}
               </router-link> 
             </div>
             

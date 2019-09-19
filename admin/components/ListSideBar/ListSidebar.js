@@ -3,30 +3,25 @@ export default {
     computed: {
         list(){
             
-            const activeList = this.$store.getters.getListObject;
+            const activeList = this.$store.getters.getActiveList;
+            const currentLang = this.$store.getters.getLangObjFromPath || {modelPostfix:''};
             
-            console.log(activeList);
+            if (!activeList.relatedLists) return [];
 
-            // const currentLang = this.$store.getters.getLangObjFromPath || {modelPostfix:''};
-            
-            // // first we need to see if this particular list is intended to be translated
-            // // or if the translation feature is off, select the proper model
-            // const activeListNameNoLang = this.$store.state.route.params.listName;
-            // let activeItem = this.$store.state.globals.model.find(({listName}) => this.$store.state.route.params.listName === listName);
-
-            // if (currentLang && !returnObj.activeItem.noTranslate) {
-            //     activeItem = this.$store.state.globals.model.find(({listName}) => activeItem.listName + currentLang.modelPostfix === listName);
-            // }
-            
-            
-            // const relatedList = returnObj.activeItem.relatedLists.split(',').map(item => item = item.trim());
-
-            // return {
-            //     name: item.name,
-            //     slug: item.staging.path
-            // };
-
-
+            return activeList.relatedLists.split(',').map(relatedListName => {   
+                
+                relatedListName = relatedListName.trim();
+                
+                let activeItem = this.$store.state.globals.model.find(({listName}) => relatedListName === listName);
+                
+                if (currentLang && !activeItem.noTranslate) {
+                    activeItem = this.$store.state.globals.model.find(({listName}) => activeItem.listName + currentLang.modelPostfix === listName);
+                }
+                return {
+                    name:activeItem.label || activeItem.listLabel || activeItem.listName,
+                    slug:activeItem.listName
+                }
+            });
         }
     },
     methods: {

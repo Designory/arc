@@ -18,7 +18,7 @@
 					:key="list" 
 					class="landing-screen__list-item" 
 					tag="li" 
-					:to="{ path: `/${$store.getters.getLangPath}/template-view/${list}`}">
+					:to="{ path: `/${$store.getters.getLangPath}/list/${list}`}">
 					{{list}}
 				</router-link>
 			</ul>

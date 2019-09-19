@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export default {
+
   data() {
     
     if (!this.$store.state.globals.lang) return {};
@@ -11,6 +12,9 @@ export default {
         .filter(item => {
           return item.path === this.$store.state.route.params.lang;
         })[0]; 
+
+
+   
 
     return {
       langSelectActive:null,
@@ -27,6 +31,10 @@ export default {
         .filter(item => {
           return item.path !== this.activeLang.path;
         });
+    },
+    hideBackArrow(){
+      const internalPathSlugs = ['list', 'page-builder'];
+      return !internalPathSlugs.some(slug => this.$route.path.includes(slug))
     }
   },
   methods: {

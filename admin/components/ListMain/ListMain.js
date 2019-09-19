@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const css = `
     .primary-navbar,
     .Toolbar,
@@ -20,15 +18,18 @@ const css = `
 let styleTag;
 
 export default {
-  data(){
+  data(){    
     return {
-      listName: null,
-      moduleId: null,
-      moduleName: null,
-      list: null,
       pageOrigin:window.location.origin
     }
   },
+  computed: {
+    list(){
+        const activeList = this.$store.getters.getActiveList;
+        if (activeList) return activeList.staging.path
+        else return null;
+    }
+},
   beforeMount(){
     this.listName = this.$route.params.listName.toLowerCase();
     this.moduleId = this.$route.query.moduleId;
@@ -37,16 +38,6 @@ export default {
     styleTag.type ='text/css';
     styleTag.appendChild(document.createTextNode(css));
 
-    if(this.moduleId && this.moduleId !== 'create') {
-      axios
-        .get(`/arc/api/${this.listName}/${this.moduleId}`)
-        .then(response => {
-          this.list = response.data.data;
-          this.moduleName = this.list.name;
-        }).catch(error => {
-          console.log(error);
-        });
-    }
   },
   mounted(){
 

@@ -1,10 +1,11 @@
 <template>
   <header class="arc-header">
     <div class="arc-header__left">
-      <router-link class="arc-header__logo" tag="a" to="/">
-        Arc
+      <router-link class="arc-header__logo" tag="a" :to="`/${activeLang}`">
+       {{!hideBackArrow ? '&larr; ' : ' '}}Arc
       </router-link> 
     </div>
+    {{activeLang}}
     <div class="arc-header__right">
       <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">
         Build

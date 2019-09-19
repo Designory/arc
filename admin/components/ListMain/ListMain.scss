@@ -1,34 +1,18 @@
 @import '../Globals/Globals';
 
-.template-editor {
+.list-editor {
+  position:relative;
   height: calc(100vh - (#{$headerHeight}));
   overflow-y: hidden;
-  
-  &__top {
-    align-items: center;
-    background-color: white;
-    border-bottom: 1px solid $dividerColor;
-    display: flex;
-    height: $headerHeight;
-    justify-content: space-between;
-    padding: 0 25px;
-    width: 100%;
-  }
-
-  &__title {
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: capitalize;
-  }
 
   &__iframe {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
     border: none;
-    height: calc(100vh - (#{$headerHeight} * 2));
-    opacity: 0;
+    height: 100%;
     width: 100%;
-
-    &--create{
-      height: calc(100vh - #{$headerHeight});
-    }
   }
 }

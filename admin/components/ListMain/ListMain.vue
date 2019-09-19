@@ -1,20 +1,10 @@
 <template>
-  <div class="template-editor" v-if="moduleId">
-    <div class="template-editor__top">
-      <div class="template-editor__title">
-        {{moduleName}}
-      </div>
-      <div>
-        <button class="btn btn--small btn--green">
-          Publish Changes
-        </button>
-      </div>
-    </div>
+  <div class="template-editor list-editor">
     <iframe
-      :src="`${pageOrigin}/keystone/stg-${listName}/${moduleId}`"
-      class="template-editor__iframe" 
+      :src="`${pageOrigin}/keystone/${list}`"
+      class="list-editor__iframe" 
       name="keystone-iframe"
-      data-iframe>
+      ref="list-iframe">
     </iframe>
   </div>
 </template>

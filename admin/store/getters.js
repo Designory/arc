@@ -54,17 +54,17 @@ export default {
     },
     getActiveList: (state, getters) => {
 
-        if (!his.$store.state.route.params.listName) return null;
+        if (!state.route.params.listName) return null;
 
-        const currentLang = this.$store.getters.getLangObjFromPath || {modelPostfix:''};
-            
+        const currentLang = getters.getLangObjFromPath || {modelPostfix:''};
+         
         // first we need to see if this particular list is intended to be translated
         // or if the translation feature is off, select the proper model
-        const activeListNameNoLang = this.$store.state.route.params.listName;
-        let activeItem = this.$store.state.globals.model.find(({listName}) => this.$store.state.route.params.listName === listName);
+        const activeListNameNoLang = state.route.params.listName;
+        let activeItem = state.globals.model.find(({listName}) => listName === activeListNameNoLang);
 
-        if (currentLang && !returnObj.activeItem.noTranslate) {
-            activeItem = this.$store.state.globals.model.find(({listName}) => activeItem.listName + currentLang.modelPostfix === listName);
+        if (currentLang && !activeItem.noTranslate) {
+            activeItem = state.globals.model.find(({listName}) => activeItem.listName + currentLang.modelPostfix === listName);
         }
 
         return activeItem;

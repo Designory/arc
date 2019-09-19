@@ -12,8 +12,8 @@
     "escope": "3.6.0",
     "espree": "3.5.4",
     "esquery": "1.0.1",
-    "estraverse": "4.2.0",
-    "esutils": "2.0.2",
+    "estraverse": "4.3.0",
+    "esutils": "2.0.3",
     "file-entry-cache": "2.0.0",
     "glob": "7.1.4",
     "globals": "9.18.0",
@@ -43,9 +43,7 @@
   },
   "_requested": {
     "type": "git",
-    "raw": "arc@github:Designory/arc#lang3",
-    "name": "arc",
-    "escapedName": "arc",
+    "raw": "github:Designory/arc#lang3",
     "rawSpec": "github:Designory/arc#lang3",
     "saveSpec": "github:Designory/arc#lang3",
     "fetchSpec": null,
@@ -54,8 +52,8 @@
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "github:Designory/arc#6326b8327c9842d152af75576321d9b4f4f494d5",
-  "_spec": "arc@github:Designory/arc#lang3",
+  "_resolved": "github:Designory/arc#a069baa2bab64f58eef07b2f415d4168362e2cba",
+  "_spec": "github:Designory/arc#lang3",
   "_where": "/Users/kevin.middlesworth/projects/egplus/egplusww-website",
   "author": {
     "name": "designory team"

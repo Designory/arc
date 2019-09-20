@@ -4,6 +4,10 @@ const path = require('path');
 const router = express.Router();
 
 module.exports = (app, arc) => {
+
+	console.trace("Here I am!")
+	console.log("Here I am!")
+
 	const importRoutes = arc.importer(__dirname);
 
 	const routes = {

@@ -66,7 +66,7 @@ module.exports = function arcCore() {
 		async start() {
 			
 			if (process.env.NODE_ENV === 'production') return this.keystone.start();
-			
+
 			return this.keystone.start({
 			    onStart: () => {
 			        
@@ -158,14 +158,19 @@ module.exports = function arcCore() {
 				// developer generated routes at first entry, set for things like SSO
 				if (customRoutes.preArc) customRoutes.preArc(app, this); 
 
-				// arc application routes
-				if (process.NODE_ENV !== 'production') arcRouter(app, this); 
+				// arc application GUI routes
+				// we do not want arc to run in production
+				// so we will bail if we are in production
+				if (process.env.NODE_ENV !== 'production') {
+					console.log('should not be here!!!!')
+					arcRouter(app, this); 
+				}
 				
 				// developer generated routes before any locals are populated by a Arc
 				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); 
 				
 				// arc application routes
-				populateLocals(app, this); 
+				populateLocals(app, this); 	
 				
 				// developer generated routes before any locals are populated by a Arc
 				if (customRoutes.preArcRender) customRoutes.preArcRender(app, this); // developer generated routes before any locals are populated by a Arc

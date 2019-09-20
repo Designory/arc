@@ -162,7 +162,6 @@ module.exports = function arcCore() {
 				// we do not want arc to run in production
 				// so we will bail if we are in production
 				if (process.env.NODE_ENV !== 'production') {
-					console.log('should not be here!!!!')
 					arcRouter(app, this); 
 				}
 				

@@ -69,7 +69,8 @@ module.exports = ArcClass => {
                 primary: item.primary,
                 label: item.label || _.startCase(item.path),
                 modelPostfix: modelPostfix,
-                fullModel:this.config.treeModel + modelPostfix
+                fullModel:this.config.treeModel + modelPostfix,
+                translatedLabel: item.translatedLabel || item.label || _.startCase(item.path)
             } 
         } 
 

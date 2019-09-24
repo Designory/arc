@@ -132,7 +132,6 @@ module.exports = function arcCore() {
 			// for multilang we need to make sure the postfix was not 
 			// accidently added to the modelName for non-translatable lists
 			if (modelName.includes('__')) {
-
 				const currentModel = this.getModels().find(item => {
 					return modelName === item.listName;
 				});

@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const nodeCache = require('node-cache');
+const redis = require('redis');
 
 dotenv.load();
 

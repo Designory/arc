@@ -15,7 +15,7 @@ import PageBuilderControls from '../components/Controls/PageBuilderControls.vue'
 //import TemplateEditorPane from '../components/Panes/TemplateEditorPane/TemplateEditorPane.vue';
 
 import ListMain from '../components/ListMain/ListMain.vue';
-import ListSideBar from '../components/ListSideBar/ListSideBar.vue';
+import ListSideBar from '../components/ListSideBar/ListSidebar.vue';
 
 Vue.use(Router);
 

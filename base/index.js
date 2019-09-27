@@ -58,6 +58,7 @@ module.exports = function arcCore() {
 			this.config.treeModelSelect = this.config.treeModelSelect || 'sortOrder matchesLive name indentLevel hideFromMenu';
 			this.config.homeSlug = this.config.homeSlug || 'home';
 			this.config.stgPrefix = this.config.stgPrefix || 'Stg';
+			this.config.cachekey = this.config.cachekey || '__CACHE__';
 
 			if (this.config.lang) this.langInit(configObject);
 
@@ -154,6 +155,9 @@ module.exports = function arcCore() {
 
 			return this.set('routes', app => {
 				
+				// top level page caching
+				if (this.config.cache) app.use(this.cacheRoutesMiddleware);
+
 				// developer generated routes at first entry, set for things like SSO
 				if (customRoutes.preArc) customRoutes.preArc(app, this); 
 

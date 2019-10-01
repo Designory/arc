@@ -1,5 +1,5 @@
 {
-  "_from": "github:Designory/arc#lang4",
+  "_from": "github:Designory/arc#feature/cache",
   "_id": "arc@1.0.0-alpha",
   "_inBundle": false,
   "_integrity": "",
@@ -45,19 +45,19 @@
   },
   "_requested": {
     "type": "git",
-    "raw": "arc@github:Designory/arc#lang4",
+    "raw": "arc@github:Designory/arc#feature/cache",
     "name": "arc",
     "escapedName": "arc",
-    "rawSpec": "github:Designory/arc#lang4",
-    "saveSpec": "github:Designory/arc#lang4",
+    "rawSpec": "github:Designory/arc#feature/cache",
+    "saveSpec": "github:Designory/arc#feature/cache",
     "fetchSpec": null,
-    "gitCommittish": "lang4"
+    "gitCommittish": "feature/cache"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "github:Designory/arc#fbf8fceff62b6810ccedd0c2f6138b389e95cb8c",
-  "_spec": "arc@github:Designory/arc#lang4",
+  "_resolved": "github:Designory/arc#72eaf5c5723d72018922e1f60ac2ef3ed423e7b7",
+  "_spec": "arc@github:Designory/arc#feature/cache",
   "_where": "/Users/kevin.middlesworth/projects/egplus/egplusww-website",
   "author": {
     "name": "designory team"

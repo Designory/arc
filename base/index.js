@@ -70,8 +70,12 @@ module.exports = function arcCore() {
 
 			return this.keystone.start({
 			    onStart: () => {
-			        
-			    	const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
+						
+						if (this.cache) {
+							this.cacheFlush();
+						}
+
+						const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
 
 						this.socketInit(server);
 
@@ -155,11 +159,9 @@ module.exports = function arcCore() {
 
 			return this.set('routes', app => {
 				
-				// top level page caching
-				if (this.config.cache) app.use(this.cacheRoutesMiddleware);
-
 				// developer generated routes at first entry, set for things like SSO
 				if (customRoutes.preArc) customRoutes.preArc(app, this); 
+
 
 				// arc application GUI routes
 				// we do not want arc to run in production
@@ -171,6 +173,13 @@ module.exports = function arcCore() {
 				// developer generated routes before any locals are populated by a Arc
 				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); 
 				
+				// top level page caching
+				if (this.config.cache) {
+					app.use((req, res, next) => {
+						this.cacheRoutesMiddleware(req, res, next);
+					});
+				}
+
 				// arc application routes
 				populateLocals(app, this); 	
 				

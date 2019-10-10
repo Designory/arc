@@ -27,10 +27,10 @@ export default {
       if (!this.$store.state.globals.lang) return [];
 
       return [this.$store.state.globals.lang.primary]
-        .concat(this.$store.state.globals.lang.secondaries)
-        .filter(item => {
-          return item.path !== this.activeLang.path;
-        });
+        .concat(this.$store.state.globals.lang.secondaries);
+        // .filter(item => {
+        //   return item.path !== this.activeLang.path;
+        // });
     },
     hideBackArrow(){
       const internalPathSlugs = ['list', 'page-builder'];

@@ -115,5 +115,15 @@
         transform:rotate(-135deg) translateY(-4px) translateX(-4px);
       }
     }
+    li {
+      font-weight:200 !important; 
+      &:hover {
+        font-weight:bold !important;
+      }
+      &.active {
+        font-weight:bold !important;
+        pointer-events:none !important;
+      }
+    }
   }
 }

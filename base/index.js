@@ -4,6 +4,7 @@ const keystone = require('keystone');
 const keystonePublish = require('keystone-publish');
 const dotenv = require('dotenv');
 const _ = require('lodash');
+const initUiDefaults = require('./adminUiMiddleware');
 const arcRouter = require('../routes/admin/');
 const populateLocals = require('../routes/views/locals');
 const viewRoutes = require('../routes/views/view');
@@ -62,12 +63,17 @@ module.exports = function arcCore() {
 
 			if (this.config.lang) this.langInit(configObject);
 
+			// see admin UI config being attached on the start command
+
 		}
 
 		async start() {
 			
 			if (process.env.NODE_ENV === 'production') return this.keystone.start();
 
+			// admin ui config
+			this.config.adminUi = initUiDefaults(this.config, this);
+		
 			return this.keystone.start({
 			    onStart: () => {
 						

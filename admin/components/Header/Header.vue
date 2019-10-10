@@ -1,11 +1,10 @@
 <template>
   <header class="arc-header">
     <div class="arc-header__left">
-      <router-link class="arc-header__logo" tag="a" :to="`/${activeLang}`">
+      <router-link class="arc-header__logo" tag="a" :to="`/${activeLang.path}`">
        {{!hideBackArrow ? '&larr; ' : ' '}}Arc
       </router-link> 
     </div>
-    {{activeLang}}
     <div class="arc-header__right">
       <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">
         Build
@@ -14,7 +13,7 @@
         <div class="">{{activeLang.label}}</div>
           <div v-if="langSelectActive" class="context-menu context-from-select">
           <ul>
-            <li v-for="lang in langs" @click="changeLang(lang)">{{lang.label}}</li>
+            <li v-for="lang in langs" @click="changeLang(lang)" :class="{active: lang.path === activeLang.path}">{{lang.label}}</li>
           </ul>
         </div>
       </div>

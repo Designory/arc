@@ -1,26 +1,24 @@
 <template>
 	<div class="landing-screen">
-		<ul class="landing-screen__list">
-			<router-link 
-				class="landing-screen__list-item" 
-				tag="li" 
-				:to="{ path: `/${$store.getters.getLangPath}/page-builder`}">
-				Page Builder
-			</router-link>
-		</ul>
-		<div v-for="item in collections" :key="item.title">
-			<h6 class="landing-screen__list-title">
-				{{item.title}}
-			</h6>
+		<div class="landing-screen__row-wrapper" v-for="row in links" :key="row.title">
+			<div class="landing-screen__row-label">{{row.title}}</div>
 			<ul class="landing-screen__list">
-				<router-link 
-					v-for="list in item.lists" 
-					:key="list" 
-					class="landing-screen__list-item" 
-					tag="li" 
-					:to="{ path: `/${$store.getters.getLangPath}/list/${list}`}">
-					{{list}}
-				</router-link>
+				<li class="landing-screen__list-item-wrapper" :key="item.listName || item.href" v-for="item in row.items">
+					
+					<router-link 
+						v-if="item.listName"  
+						class="landing-screen__list-item"
+						tag="span" 
+						:to="{ path: (item.type !== 'builder') ? `/${$store.getters.getLangPath}/list/${item.listName}` : `/${$store.getters.getLangPath}/page-builder`}">
+						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
+						{{item.label}}
+					</router-link>
+					
+					<a v-else class="landing-screen__list-item href" :href="item.href" :target="item.target || '_blank'">
+						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
+						{{item.label}}
+					</a>
+				</li>
 			</ul>
 		</div>
 	</div>

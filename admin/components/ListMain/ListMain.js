@@ -1,4 +1,9 @@
 const css = `
+    
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600,700');  
+
+    *:not(.octicon):not(.mce-ico) {font-family: Open Sans,sans-serif !important;}
+
     .primary-navbar,
     .Toolbar,
     [data-keystone-footer],
@@ -11,7 +16,7 @@ const css = `
       margin: 25px 0;
     }
     #react-root {
-      padding-top:4em;
+      padding-top:0;
     }
  `;
 
@@ -26,6 +31,9 @@ export default {
   computed: {
     list(){
         const activeList = this.$store.getters.getActiveList;
+        
+        console.log(activeList);
+        
         if (activeList) return activeList.staging.path
         else return null;
     }
@@ -43,13 +51,15 @@ export default {
 
     let self = this;
 
-    if(this.moduleId){
-      let iframe = document.querySelector('[data-iframe]');
-      let iframeName = iframe.name;
-      
-      frames[iframeName].addEventListener('load', () => {
-        frames[iframeName].document.head.appendChild(styleTag);
-        iframe.style.opacity = '1';
+    console.log(this.$refs);
+
+    const listIframe = this.$refs['list-iframe'];
+
+
+    if(listIframe){
+      listIframe.addEventListener('load', () => {
+        listIframe.contentDocument.head.appendChild(styleTag);
+        listIframe.style.opacity = '1';
       });
     }
   }

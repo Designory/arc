@@ -60,7 +60,8 @@ module.exports = (config, arc) => {
 					svg: svgify(item.svg || modelData.svg || defaultSvg(type), returnObj.theme.primaryColor),
 					description: item.descroption || modelData.description,
 					hidden: item.hidden || modelData.arcHidden,
-					type: type
+					type: type,
+					linkToProd:item.linkToProd || modelData.linkToProd
 				}
 
 			} else {
@@ -96,7 +97,8 @@ console.log(modelData.listName);
 			svg: svgify(modelData.svg || defaultSvg('translation-label'), returnObj.theme.primaryColor),
 			description: modelData.description,
 			hidden: modelData.arcHidden,
-			type: 'translation-label'
+			type: 'translation-label',
+			linkToProd:false
 		});
 	}
 
@@ -113,7 +115,8 @@ console.log(modelData.listName);
 			svg: svgify(modelData.svg || defaultSvg('builder'), returnObj.theme.primaryColor),
 			description: modelData.description,
 			hidden: modelData.arcHidden,
-			type: 'builder'
+			type: 'builder',
+			linkToProd:false
 		});
 
 	}

@@ -34,7 +34,8 @@ export default {
         
         console.log(activeList);
         
-        if (activeList) return activeList.staging.path
+        if (activeList && activeList.linkToProd) return activeList.production.path;
+        else if (activeList) return activeList.staging.path
         else return null;
     }
 },

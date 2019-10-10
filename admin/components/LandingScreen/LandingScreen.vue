@@ -9,7 +9,8 @@
 						v-if="item.listName"  
 						class="landing-screen__list-item"
 						tag="span" 
-						:to="{ path: (item.type !== 'builder') ? `/${$store.getters.getLangPath}/list/${item.listName}` : `/${$store.getters.getLangPath}/page-builder`}">
+						:to="{ path: (item.type !== 'builder') ? `/${$store.getters.getLangPath}/list/${item.listName}` : `/${$store.getters.getLangPath}/page-builder`}"
+						:style="{'border-color':alphaOnHex($store.state.globals.app.theme.primaryColor, '.2')}">
 						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
 						{{item.label}}
 					</router-link>

@@ -13,7 +13,7 @@
     font-weight: 600;
     color: #4a4a4a;
     text-transform: uppercase;
-    padding: 80px 0 10px;
+    padding: 80px 0 22px;
   }
 
   &__row-wrapper:first-child {
@@ -44,7 +44,7 @@
     border-radius: $borderRadius;
     cursor: pointer;
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     justify-content: center;
     margin: 0 20px 20px 0;
     text-transform: capitalize;
@@ -54,6 +54,10 @@
     text-align: center;
     padding:30px 20px;
     font-weight:200;
+    border-style: solid;
+    border-width:1px;
+    border-radius: 3px;
+    background:#ffffff;
 
     &.href {
       text-decoration: none;

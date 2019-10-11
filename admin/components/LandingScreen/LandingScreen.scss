@@ -57,11 +57,17 @@
     border-style: solid;
     border-width:1px;
     border-radius: 3px;
-    //background:#ffffff;
+
+    &:hover, &:active {
+      background:rgba(255, 255, 255, .5);
+    }
+   
 
     &.href {
       text-decoration: none;
       color:inherit;
+      border-width:1px;
+      border-radius: 3px;
 
       // &[target="_blank"]:after {
       //   display: inline-block;

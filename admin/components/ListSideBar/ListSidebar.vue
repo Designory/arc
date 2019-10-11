@@ -25,5 +25,5 @@
   </div>
 </template>
 
-<script src="./ListSideBar.js"></script>
-<style scoped src="./ListSideBar.scss"></style>
+<script src="./ListSidebar.js"></script>
+<style scoped src="./ListSidebar.scss"></style>

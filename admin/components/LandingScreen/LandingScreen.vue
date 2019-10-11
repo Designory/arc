@@ -15,7 +15,7 @@
 						{{item.label}}
 					</router-link>
 					
-					<a v-else class="landing-screen__list-item href" :href="item.href" :target="item.target || '_blank'">
+					<a v-else class="landing-screen__list-item href" :href="item.href" :target="item.target || '_blank'" :style="{'border-color':alphaOnHex($store.state.globals.app.theme.primaryColor, '.2')}">
 						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
 						{{item.label}}
 					</a>

@@ -33,6 +33,12 @@ export default {
 
       state.activePage = payload.pageId;
 
+    },
+
+    SET_IFRAME_REF(state, payload) {
+
+      state.iframeRef = payload;
+    
     }
 
 };

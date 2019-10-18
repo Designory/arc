@@ -18,7 +18,8 @@ export default {
 
     return {
       langSelectActive:null,
-      activeLang:activeItem || this.$store.state.globals.lang.primary
+      activeLang:activeItem || this.$store.state.globals.lang.primary,
+      backToList:''
     }
   },
   computed: {
@@ -56,13 +57,74 @@ export default {
     },
     closeBuildModal(event){
       
+    },
+    goBack() {
+      this.$store.state.iframeRef.back();
     }
   },
   beforeCreate(){
     
-    console.log(this.$store.getters.getRequestHeaders);
+    //console.log(this.$store.getters.getRequestHeaders);
 
     axios.defaults.headers = this.$store.getters.getRequestHeaders;
+
+  },
+  beforeMount(){
+    this.$router.beforeEach((to, from, next) => {
+      this.$store.commit('SET_IFRAME_REF', null);
+      next();
+    });
+    
+    this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'SET_IFRAME_REF' && mutation.payload !== null) {
+        
+        // if we have the capacity to go back
+        if (mutation.payload.contentDocument.location.href.split('/keystone/')[0].indexOf('/') !== -1) {
+          this.backToList = true;
+        } else {
+          this.backToList = null;
+        } 
+        //this.$store.state.route.params.listName
+
+        const srcObj = {
+          src:mutation.payload.contentDocument.location.href
+        }
+
+        // window.Object.observe(srcObj, function(changes) {
+        //   console.log(changes);
+        // });
+
+                // Select the node that will be observed for mutations
+        const targetNode = mutation.payload.contentDocument.querySelector('body');
+
+        // Options for the observer (which mutations to observe)
+        //const config = { attributes: true, childList: true, subtree: true };
+
+        // // Callback function to execute when mutations are observed
+        // const callback = function(mutationsList, observer) {
+        //     for(let mutation of mutationsList) {
+        //         console.log(mutation);
+        //         // if (mutation.type === 'childList') {
+        //         //     console.log('A child node has been added or removed.');
+        //         // }
+        //         // else if (mutation.type === 'attributes') {
+        //         //     console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        //         // }
+        //     }
+        // };
+
+        // // Create an observer instance linked to the callback function
+        // const observer = new MutationObserver(callback);
+
+        // // Start observing the target node for configured mutations
+        // observer.observe(targetNode, config);
+
+        // Later, you can stop observing
+        //observer.disconnect();
+
+      }
+    
+    })
 
   }
 };

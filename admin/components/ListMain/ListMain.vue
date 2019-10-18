@@ -5,7 +5,8 @@
       :style="{opacity:0}"
       class="list-editor__iframe" 
       name="keystone-iframe"
-      ref="list-iframe">
+      ref="list-iframe"
+      >
     </iframe>
   </div>
 </template>

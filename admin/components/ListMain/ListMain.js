@@ -1,3 +1,5 @@
+import Button from '../SubComponents/Button/Button.vue';
+
 const css = `
     
     @import url('https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600,700');  
@@ -19,6 +21,7 @@ const css = `
       padding-top:0;
     }
  `;
+ 
 
 let styleTag;
 
@@ -28,17 +31,18 @@ export default {
       pageOrigin:window.location.origin
     }
   },
+  components: {
+    'action-button':Button
+  },
   computed: {
     list(){
         const activeList = this.$store.getters.getActiveList;
-        
-        console.log(activeList);
         
         if (activeList && activeList.linkToProd) return activeList.production.path;
         else if (activeList) return activeList.staging.path
         else return null;
     }
-},
+  },
   beforeMount(){
     this.listName = this.$route.params.listName.toLowerCase();
     this.moduleId = this.$route.query.moduleId;
@@ -50,17 +54,15 @@ export default {
   },
   mounted(){
 
-    let self = this;
-
-    console.log(this.$refs);
+    //console.log(this.$refs);
 
     const listIframe = this.$refs['list-iframe'];
 
-
-    if(listIframe){
+    if (listIframe){
       listIframe.addEventListener('load', () => {
         listIframe.contentDocument.head.appendChild(styleTag);
         listIframe.style.opacity = '1';
+        this.$store.commit('SET_IFRAME_REF', listIframe);
       });
     }
   }

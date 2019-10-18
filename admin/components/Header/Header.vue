@@ -2,8 +2,9 @@
   <header class="arc-header">
     <div class="arc-header__left">
       <router-link class="arc-header__logo" tag="a" :to="`/${activeLang.path}`">
-       {{!hideBackArrow ? '&larr; ' : ' '}}Arc
+       {{!hideBackArrow ? '&larr; ' : ' '}} Arc
       </router-link> 
+      <span v-if="backToList"> / <span  :click="goBack">back to list</span></span>
     </div>
     <div class="arc-header__right">
       <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">

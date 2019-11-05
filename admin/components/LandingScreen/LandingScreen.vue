@@ -1,25 +1,26 @@
 <template>
 	<div class="landing-screen">
-		<div class="landing-screen__row-wrapper" v-for="row in links" :key="row.title">
-			<div class="landing-screen__row-label">{{row.title}}</div>
+		<ul class="landing-screen__list">
+			<router-link 
+				class="landing-screen__list-item" 
+				tag="li" 
+				:to="{ path: `/${$store.getters.getLangPath}/page-builder`}">
+				Page Builder
+			</router-link>
+		</ul>
+		<div v-for="item in collections" :key="item.title">
+			<h6 class="landing-screen__list-title">
+				{{item.title}}
+			</h6>
 			<ul class="landing-screen__list">
-				<li class="landing-screen__list-item-wrapper" :key="index || item.href" v-for="(item, index) in row.items">
-					
-					<router-link 
-						v-if="item.listName"  
-						class="landing-screen__list-item"
-						tag="span" 
-						:to="{ path: (item.type !== 'builder') ? `/${$store.getters.getLangPath}/list/${item.listName}` : `/${$store.getters.getLangPath}/page-builder`}"
-						:style="{'border-color':alphaOnHex($store.state.globals.app.theme.primaryColor, '.2')}">
-						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
-						{{item.label}}
-					</router-link>
-					
-					<a v-else class="landing-screen__list-item href" :href="item.href" :target="item.target || '_blank'" :style="{'border-color':alphaOnHex($store.state.globals.app.theme.primaryColor, '.2')}">
-						<span class="landing-screen__list-icon" v-html="item.svg || ''"></span>
-						{{item.label}}
-					</a>
-				</li>
+				<router-link 
+					v-for="list in item.lists" 
+					:key="list" 
+					class="landing-screen__list-item" 
+					tag="li" 
+					:to="{ path: `/${$store.getters.getLangPath}/list/${list}`}">
+					{{list}}
+				</router-link>
 			</ul>
 		</div>
 	</div>

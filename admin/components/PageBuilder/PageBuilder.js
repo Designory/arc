@@ -8,11 +8,6 @@ import GhostModule from './ghostModule.js';
 import universalUtils from '../../../utils/universal';
 
 const css = `
-    
-    @import url('https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,500,600,700');  
-
-    *:not(.octicon):not(.mce-ico) {font-family: Open Sans,sans-serif !important;}
-
     body {
       padding: 0px 30px;
     }

@@ -1,7 +1,5 @@
 const dotenv = require('dotenv');
 const nodeCache = require('node-cache');
-const redis = require('redis');
-const _ = require('lodash');
 
 dotenv.load();
 
@@ -15,114 +13,104 @@ module.exports = ArcClass => {
 	
 			if (!this.config.cache) return null;
 			
-			if (this.config.cache.redisUrl) {
-				this.cache = redis.createClient(this.config.cache.redisUrl);
+			if (this.config.cache.redisPort) {
+				this.cache = redis.createClient(this.config.cache.redisPort);
 				this.cacheType = 'redis';
 			} else {
 				// if we're not using Redis, we'll fall back to simple memory caching
-				this.cache = new nodeCache();
+				this.cache = new NodeCache();
 				this.cacheType = 'memory';
 			}
-
-			// node-cache uses event handlers, 
-			// so we account for flush success here
-			if (this.cacheType === 'memory') {
-				this.cache.on( 'flush', function(){
-					console.log('Cache flushed');
-				});
-			}
+			// this.cache = (this.config.cache.servers || process.env.MEMCACHIER_SERVERS) ? memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
+			// 	failover: true,  // default: false
+			// 	timeout: 1,      // default: 0.5 (seconds)
+			// 	keepAlive: true  // default: false
+			//   }) : memjs.Client.create();
 
 		}
 
 		async getCache(key, prefix){
-
+			
 			const fullKey = (prefix) ? prefix + key : this.config.cache.defaultPrefix + key;
 
 			return new Promise(async (resolve, reject) => {
 				this.cache.get(fullKey, function(err, value) {
 					if (err) return reject(err);
-					if (value !== null) {
-						return resolve(value);
-					}
+					if (value !== null) return resolve(val);
 					else resolve(null);
 				});
 			});
 		}
 
-		setCache(key, prefix, value, expires){
+		setCache(key, prefix, value){
 			
-			const fullKey = (prefix) ? prefix + key : this.config.cache.defaultPrefix + key;
-
-			if (this.cacheType === 'redis') {
-				if (expires || this.config.cache.expires) this.cache.set(fullKey, value, 'EX', expires || this.config.cache.expires);	
-				else this.cache.set(fullKey, value);
-			} else if (this.cacheType === 'memory') {
-				if (expires || this.config.cache.expires) this.cache.set(fullKey, value, expires || this.config.cache.expires);
-				else this.cache.set(fullKey, value);
-			}
+			const fullKey = (prefix) ? prefix + key : this.config.cache.defaultPrefix + key;	
+			
+			this.cache.set(fullKey, value);
 			
 		}
 
 		async cacheRoutesMiddleware(req, res, next){
-
+			
 			if (!this.config.cache) return next();
 
 			if (this.config.cache.excludesRegex) {
 				const pattern = new RegExp(this.config.cache.excludesRegex);
 				if (pattern.test(req.originalUrl || req.ur)) return next();	
-			}	
-
-			// we don't want to cache any POST requests
-			// noting like all form posts coming in the same :)
-			if (!this.config.cache.enableCacheOnPost) {
-				if (req.method == "POST") return next();
 			}
 
-			const cachedValue = await this.getCache(req.originalUrl || req.url);
+			const cachedValue = await getCache(req.originalUrl || req.url);
 
-			if (cachedValue) {
-			console.log('found key! yay!')
-				return res.send(cachedValue);
-
-			} else {
+			if (cachedValue) return res.send(cachedValue.toString('utf8'));
+			else {
 				// if the url is not cached, then hijack the send function to capture the value
 				// Cache the rendered view for future requests
 				res.sendRes = res.send
 				res.send = async body => {
-					this.setCache(req.originalUrl || req.url, null, body);	
+					const cacheSet = setCache(req.originalUrl || req.url, null, body);	
 					return res.sendRes(body);
 				}
 
 				next();
 			}
 		}
-		// fluhes the full cache unless
-		// key provided (when functionality built)
-		// TODO: add key recognition
-		cacheFlush(key) {
+
+		cacheClearSaveHook(listConfig, stgList, prodList){
 			
-			if (this.cacheType === 'redis') {
-				this.cache.flushdb((err, succeeded) => {
-					if (succeeded) console.log('Cache flushed'); // will be true if successfull
-				});
-			} else if (this.cacheType === 'memory') {
-				this.cache.flushAll();
+			const self = this;
+
+			if (listConfig.listName === this.config['treeModel']){
+				// stgList.schema.pre('save', async function(next) {
+
+				// 	if (this.isModified('pageDataCode')) {
+  				// 		await self.clearCacheByPrefix(`api__modules__${this._id}`);
+  				// 		next();
+				// 	} else {
+				// 		next();
+				// 	}	
+
+				// });
 			}
 		}
 
-		cacheClearSaveHook(listConfig, stgList, prodList){
+		clearCacheByPrefix(key){
+		
+			// return new Promise(async (resolve, reject) => {
 
-			const self = this;
+			// 	try {
+			// 		this.cache.del(key, (err, count) => {
+			// 			if (!err ){
+			// 				this.log(`${key} cache key removed.`);
+			// 				resolve();
+			// 			}
+			// 		});
 
-			if (listConfig.listName === this.config['treeModel'] || listConfig.flushCache){				
-				stgList.schema.post('save', async function(next) {
-					_.debounce(self.cacheFlush, self.config.cache.debounceWait * 1000 || 10 * 1000);
-				});
-				prodList.schema.post('save', async function(next) {
-					_.debounce(self.cacheFlush, self.config.cache.debounceWait * 1000 || 10 * 1000);
-				});
-			}
-			
+			// 	} catch(err) {
+			// 		this.log('error', err);
+			// 		resolve();
+			// 	}
+
+			// });
 		}
 
 	};

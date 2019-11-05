@@ -4,7 +4,7 @@ const _ = require('lodash');
 module.exports = {
 	defaults: {
 		listName: null, // required - model name
-		listLabel: null, // optional - alternate option for Arc cms labeling
+		listLabel: null, // optional - alternate option for Arc cma labeling
 		initialConfig: null, // required - keystone/mongoose init config
 		fieldConfig: null, // required - keystone/mongoose field types
 		sortOrder: 100, // optional - define the order of display on the arc admin UI
@@ -59,7 +59,7 @@ module.exports = {
 	},
 	merge: function(data) {	
 		
-		if (!data.label) data.label = _.startCase(data.listName);
+		if (!data.label) data.label = data.listName;
 
 		const validation = this.validateRequired(data);
 

@@ -4,7 +4,6 @@ const keystone = require('keystone');
 const keystonePublish = require('keystone-publish');
 const dotenv = require('dotenv');
 const _ = require('lodash');
-const initUiDefaults = require('./adminUiMiddleware');
 const arcRouter = require('../routes/admin/');
 const populateLocals = require('../routes/views/locals');
 const viewRoutes = require('../routes/views/view');
@@ -63,25 +62,16 @@ module.exports = function arcCore() {
 
 			if (this.config.lang) this.langInit(configObject);
 
-			// see admin UI config being attached on the start command
-
 		}
 
 		async start() {
 			
 			if (process.env.NODE_ENV === 'production') return this.keystone.start();
 
-			// admin ui config
-			this.config.adminUi = initUiDefaults(this.config, this);
-		
 			return this.keystone.start({
 			    onStart: () => {
-						
-						if (this.cache) {
-							this.cacheFlush();
-						}
-
-						const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
+			        
+			    	const server = keystone.httpsServer ? keystone.httpsServer : keystone.httpServer;
 
 						this.socketInit(server);
 
@@ -165,9 +155,11 @@ module.exports = function arcCore() {
 
 			return this.set('routes', app => {
 				
+				// top level page caching
+				if (this.config.cache) app.use(this.cacheRoutesMiddleware);
+
 				// developer generated routes at first entry, set for things like SSO
 				if (customRoutes.preArc) customRoutes.preArc(app, this); 
-
 
 				// arc application GUI routes
 				// we do not want arc to run in production
@@ -179,13 +171,6 @@ module.exports = function arcCore() {
 				// developer generated routes before any locals are populated by a Arc
 				if (customRoutes.preArcLocals) customRoutes.preArcLocals(app, this); 
 				
-				// top level page caching
-				if (this.config.cache) {
-					app.use((req, res, next) => {
-						this.cacheRoutesMiddleware(req, res, next);
-					});
-				}
-
 				// arc application routes
 				populateLocals(app, this); 	
 				

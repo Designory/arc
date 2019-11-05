@@ -1,35 +1,15 @@
 @import '../Globals/Globals';
 
 .landing-screen {
-
-  $svgSize:60px;
-
-  padding: 60px $edgePadding 0;
-  max-width:1000px;
-  margin: 0 auto;
-
-  &__row-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #4a4a4a;
-    text-transform: uppercase;
-    padding: 80px 0 22px;
-  }
-
-  &__row-wrapper:first-child {
-    .landing-screen__row-label {
-      margin-top: 0;
-      padding-top: 0;
-    }
-  }
+  padding: 20px $edgePadding 0;
 
   &__list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     list-style: none;
+    margin: 0;
     padding: 0;
-    margin:0;
   }
 
   &__list-title {
@@ -40,54 +20,21 @@
 
   &__list-item {
     align-items: center;
-    background-color: transparent;
+    background-color: white;
+    border: 1px solid $mainTypographyColor;
     border-radius: $borderRadius;
     cursor: pointer;
-    display: block;
-    font-size: 14px;
+    display: flex;
+    font-size: 24px;
+    height: 250px;
     justify-content: center;
     margin: 0 20px 20px 0;
     text-transform: capitalize;
     transition: background-color 0.2s ease-in-out;
-    width: 150px;
-    height: 150px;
-    text-align: center;
-    padding:30px 20px;
-    font-weight:200;
-    border-style: solid;
-    border-width:1px;
-    border-radius: 3px;
+    width: 250px;
 
-    &:hover, &:active {
-      background:rgba(255, 255, 255, .5);
-    }
-   
-
-    &.href {
-      text-decoration: none;
-      color:inherit;
-      border-width:1px;
-      border-radius: 3px;
-
-      // &[target="_blank"]:after {
-      //   display: inline-block;
-      //   content: "⇱";
-      //   position: relative;
-      //   top: -5px;
-      //   margin-left: 2px;
-      //   transform: rotate(90deg);
-      // }
-
-    }
-
-    svg {
-      min-width: $svgSize;
-      min-height: $svgSize;
-      max-height: $svgSize;
+    &:hover {
+      background-color: $arcGray;
     }
   }
-  &__list-icon {
-      display:block;
-      padding-bottom:2px;
-    }
 }

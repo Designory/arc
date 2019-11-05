@@ -9,7 +9,8 @@
   justify-content: space-between;
   left: 0;
   line-height: $headerHeight;
-  padding: 0 $edgePadding 0 ($edgePadding - 10);
+  //padding: 0 $edgePadding 0 ($edgePadding - 10);
+  padding: 0 4px 0 19px;
   position: fixed;
   right: 0;
   top: 0;
@@ -20,6 +21,16 @@
     font-size: 20px;
     font-weight: bold;
     text-decoration: none;
+  }
+
+  &__breadcrumb {
+    color:white;
+    padding: 0 8px;
+    font-size: 15px;
+    span {
+      cursor:pointer;
+      padding-left: 4px;
+    }
   }
 
   &__left {

@@ -3,7 +3,7 @@
 		<div class="landing-screen__row-wrapper" v-for="row in links" :key="row.title">
 			<div class="landing-screen__row-label">{{row.title}}</div>
 			<ul class="landing-screen__list">
-				<li class="landing-screen__list-item-wrapper" :key="item.listName || item.href" v-for="item in row.items">
+				<li class="landing-screen__list-item-wrapper" :key="index || item.href" v-for="(item, index) in row.items">
 					
 					<router-link 
 						v-if="item.listName"  

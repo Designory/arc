@@ -4,12 +4,9 @@
       <router-link class="arc-header__logo" tag="a" :to="`/${activeLang.path}`">
        {{!hideBackArrow ? '&larr; ' : ' '}} Arc
       </router-link> 
-      <span v-if="backToList"> / <span  :click="goBack">back to list</span></span>
+      <span class="arc-header__breadcrumb" v-if="backToListVisible"> / <span @click="goBack()">back to list</span></span>
     </div>
     <div class="arc-header__right">
-      <!-- <button v-on:click="showBuildModal" class="btn btn--white btn--small">
-        Build
-      </button> -->
       <div v-if="langs.length && activeLang" @click="langSelectActive = !langSelectActive" class="arc-header__lang-select" :class="{active:langSelectActive}">
         <div class="">{{activeLang.label}}</div>
           <div v-if="langSelectActive" class="context-menu context-from-select">
@@ -18,20 +15,6 @@
           </ul>
         </div>
       </div>
-    </div>
-    <!-- <div class="arc-header__build-modal-container" v-on:click="closeBuildModal" data-build-modal>
-      <div class="arc-header__build-modal">
-        <div class="arc-header__build-modal-title">
-          Build
-          <button v-on:click="closeBuildModal" data-close-button 
-                  class="arc-header__build-modal-close btn btn--red btn--small">
-            X
-          </button>
-        </div>
-        <div class="arc-header__build-modal-body">
-          Build information will go here
-        </div>
-      </div> -->
     </div>
   </header>
 </template>

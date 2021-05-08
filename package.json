@@ -44,7 +44,7 @@
     "importer": "^0.7.2",
     "keystone": "^4.0.0",
     "keystone-publish": "1.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "log4js": "^3.0.6",
     "marked": "^0.3.19",
     "mini-css-extract-plugin": "^0.4.1",

@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/Designory/arc#readme",
   "dependencies": {
-    "async": "^2.6.1",
+    "async": "^3.2.2",
     "axios": "^0.18.0",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^1.0.0",

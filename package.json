@@ -70,7 +70,7 @@
     "vuex": "^3.0.1",
     "vuex-router-sync": "^5.0.0",
     "webpack": "^4.28.4",
-    "webpack-cli": "^3.0.8",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^3.5.0",
     "webpack-merge": "^4.2.1"
   }
